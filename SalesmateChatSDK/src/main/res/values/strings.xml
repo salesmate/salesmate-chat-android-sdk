@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="dialog_ok">@android:string/ok</string>
+    <string name="dialog_cancel">No</string>
+    <string name="error">Error</string>
+    <string name="unknown_error_message">The app is unable to connect to the API server. Please retry. If the issue persists, contact the support center.</string>
+    <string name="dialog_close">Close</string>
+    <string name="dialog_retry">Retry</string>
+    <string name="df_no_network_connection_tv_msg">No network connection\nPlease try again</string>
+</resources>
