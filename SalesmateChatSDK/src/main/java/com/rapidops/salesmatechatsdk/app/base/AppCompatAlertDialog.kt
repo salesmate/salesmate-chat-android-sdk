@@ -1,8 +1,7 @@
 package com.rapidops.salesmatechatsdk.app.base
 
-import android.app.Activity
 import android.app.Dialog
-import android.content.Intent
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,7 @@ import androidx.fragment.app.DialogFragment
 import java.io.Serializable
 
 
-class AppCompatAlertDialog : DialogFragment() {
+internal class AppCompatAlertDialog : DialogFragment() {
     private var builder: Builder? = null
 
     override fun onCreateView(
@@ -42,30 +41,22 @@ class AppCompatAlertDialog : DialogFragment() {
         }
         if (builder!!.negativeTextResId != -1) {
             alertDialogBuilder =
-                alertDialogBuilder.setNegativeButton(builder!!.negativeTextResId) { dialogInterface, _ ->
-                    targetFragment?.onActivityResult(
-                        targetRequestCode,
-                        Activity.RESULT_CANCELED,
-                        Intent()
-                    )
+                alertDialogBuilder.setNegativeButton(builder!!.negativeTextResId) { dialogInterface, which ->
+                    builder!!.mNegativeButtonListener?.onClick(dialogInterface, which)
                     dialogInterface.cancel()
                 }
         }
         if (builder!!.positiveTextResId != -1) {
             alertDialogBuilder =
-                alertDialogBuilder.setPositiveButton(builder!!.positiveTextResId) { dialogInterface, _ ->
-                    targetFragment?.onActivityResult(
-                        targetRequestCode,
-                        Activity.RESULT_OK,
-                        Intent()
-                    )
+                alertDialogBuilder.setPositiveButton(builder!!.positiveTextResId) { dialogInterface, which ->
+                    builder!!.mPositiveButtonListener?.onClick(dialogInterface, which)
                     dialogInterface.dismiss()
                 }
         }
         return alertDialogBuilder.create()
     }
 
-    class Builder : Serializable {
+    class Builder() : Serializable {
         @StringRes
         var titleResId = -1
             private set
@@ -81,9 +72,15 @@ class AppCompatAlertDialog : DialogFragment() {
         @StringRes
         var negativeTextResId = -1
             private set
+
+        private var requestKey = ""
+
         private var title = ""
         private var message = ""
         private var cancellable: Boolean = false
+
+        var mPositiveButtonListener: DialogInterface.OnClickListener? = null
+        var mNegativeButtonListener: DialogInterface.OnClickListener? = null
 
         fun setTitle(title: String): Builder {
             this.title = title
@@ -110,8 +107,26 @@ class AppCompatAlertDialog : DialogFragment() {
             return this
         }
 
+        fun setPositiveButton(
+            @StringRes textResId: Int,
+            listener: DialogInterface.OnClickListener
+        ): Builder {
+            this.positiveTextResId = textResId
+            this.mPositiveButtonListener = listener
+            return this
+        }
+
         fun setNegativeButton(@StringRes textResId: Int): Builder {
             this.negativeTextResId = textResId
+            return this
+        }
+
+        fun setNegativeButton(
+            @StringRes textResId: Int,
+            listener: DialogInterface.OnClickListener
+        ): Builder {
+            this.negativeTextResId = textResId
+            this.mNegativeButtonListener = listener
             return this
         }
 
@@ -122,6 +137,15 @@ class AppCompatAlertDialog : DialogFragment() {
 
         fun isCancellable(): Boolean {
             return cancellable
+        }
+
+        fun setRequestKey(setRequestKey: String): Builder {
+            this.requestKey = setRequestKey.trim()
+            return this
+        }
+
+        fun getRequestKey(): String {
+            return requestKey
         }
 
         fun getMessage(): String {

@@ -3,7 +3,7 @@ package com.rapidops.salesmatechatsdk.data.utils
 import android.content.Context
 import android.content.SharedPreferences
 
-object Prefs {
+internal object Prefs {
 
     private lateinit var preferences: SharedPreferences
 
@@ -49,6 +49,6 @@ object Prefs {
 
     fun getFloat(key: String, defValue: Float = 0.0F) = preferences.getFloat(key, defValue)
 
-    fun getString(key: String, defValue: String? = null) = preferences.getString(key, defValue)
+    fun getString(key: String, defValue: String = "") = preferences.getString(key, defValue)
 
 }

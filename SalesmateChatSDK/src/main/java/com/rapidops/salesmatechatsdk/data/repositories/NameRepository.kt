@@ -5,7 +5,7 @@ import com.rapidops.salesmatechatsdk.data.webserivce.IService
 import com.rapidops.salesmatechatsdk.domain.datasources.INameDataSource
 import com.rapidops.salesmatechatsdk.domain.exception.APIResponseMapper
 
-class NameRepository(private val service: IService) : INameDataSource {
+internal class NameRepository(private val service: IService) : INameDataSource {
 
     override suspend fun getData(): JsonElement {
         return APIResponseMapper.getResponse {

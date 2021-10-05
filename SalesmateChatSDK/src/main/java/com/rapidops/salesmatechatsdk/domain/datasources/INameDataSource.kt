@@ -2,7 +2,7 @@ package com.rapidops.salesmatechatsdk.domain.datasources
 
 import com.google.gson.JsonElement
 
-interface INameDataSource {
+internal interface INameDataSource {
 
     suspend fun getData(): JsonElement
 }

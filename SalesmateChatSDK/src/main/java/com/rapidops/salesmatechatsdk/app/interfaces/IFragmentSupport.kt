@@ -1,6 +1,6 @@
 package com.rapidops.salesmatechatsdk.app.interfaces
 
-interface IFragmentSupport {
+internal interface IFragmentSupport {
     fun getContainerLayoutId(): Int
 
 }

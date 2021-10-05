@@ -1,5 +1,5 @@
 package com.rapidops.salesmatechatsdk.app.interfaces
 
-interface IBackPress {
+internal interface IBackPress {
     fun onBackPressed() : Boolean
 }

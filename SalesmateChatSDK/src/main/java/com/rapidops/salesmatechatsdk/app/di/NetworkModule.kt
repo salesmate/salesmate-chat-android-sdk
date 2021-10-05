@@ -5,8 +5,10 @@ import com.google.gson.Gson
 import com.rapidops.salesmatechatsdk.BuildConfig
 import com.rapidops.salesmatechatsdk.app.coroutines.CoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
+import com.rapidops.salesmatechatsdk.data.interceptor.RequestInterceptor
 import com.rapidops.salesmatechatsdk.data.utils.GsonUtils
 import com.rapidops.salesmatechatsdk.data.webserivce.IService
+import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import dagger.Module
 import dagger.Provides
 import okhttp3.Interceptor
@@ -19,7 +21,7 @@ import java.util.concurrent.TimeUnit
 
 
 @Module
-class NetworkModule(
+internal class NetworkModule(
     private val baseUrl: String,
     private val debuggable: Boolean
 ) {
@@ -62,14 +64,23 @@ class NetworkModule(
 
     @Provides
     @ApplicationScope
+    fun provideRequestInterceptor(
+        appSettingsDataSource: IAppSettingsDataSource
+    ): RequestInterceptor {
+        return RequestInterceptor(appSettingsDataSource)
+    }
+
+    @Provides
+    @ApplicationScope
     fun provideCoroutineContextProvider(): ICoroutineContextProvider {
         return CoroutineContextProvider()
     }
 
     @Provides
     @ApplicationScope
-    fun getInterceptorList(): MutableList<Interceptor> {
+    fun getInterceptorList(requestInterceptor: RequestInterceptor): MutableList<Interceptor> {
         val interceptorList = ArrayList<Interceptor>()
+        interceptorList.add(requestInterceptor)
         val loggingInterceptor = HttpLoggingInterceptor()
         if (BuildConfig.DEBUG) {
             loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY

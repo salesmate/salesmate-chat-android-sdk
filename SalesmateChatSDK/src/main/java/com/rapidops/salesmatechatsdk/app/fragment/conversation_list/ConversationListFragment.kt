@@ -1,4 +1,4 @@
-package com.rapidops.salesmatechatsdk.app.fragment
+package com.rapidops.salesmatechatsdk.app.fragment.conversation_list
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,13 +6,13 @@ import com.rapidops.salesmatechatsdk.app.base.BaseFragment
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
 import com.rapidops.salesmatechatsdk.databinding.FHomeBinding
 
-class HomeFragment : BaseFragment<HomeViewModel>() {
+internal class ConversationListFragment : BaseFragment<ConversationListViewModel>() {
 
     private lateinit var binding: FHomeBinding
 
     companion object {
-        fun newInstance(): HomeFragment {
-            return HomeFragment()
+        fun newInstance(): ConversationListFragment {
+            return ConversationListFragment()
         }
     }
 
@@ -21,8 +21,8 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         return binding.root
     }
 
-    override fun initializeViewModel(): HomeViewModel {
-        return obtainViewModel(HomeViewModel::class.java)
+    override fun initializeViewModel(): ConversationListViewModel {
+        return obtainViewModel(ConversationListViewModel::class.java)
     }
 
     override fun setUpUI() {

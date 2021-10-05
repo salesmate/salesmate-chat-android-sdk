@@ -5,7 +5,7 @@ import com.rapidops.salesmatechatsdk.domain.datasources.INameDataSource
 import javax.inject.Inject
 
 
-class GetDataUseCase @Inject constructor(private val nameDataSource: INameDataSource) :
+internal class GetDataUseCase @Inject constructor(private val nameDataSource: INameDataSource) :
     UseCase<String, JsonElement>() {
 
 

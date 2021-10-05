@@ -1,11 +1,12 @@
 package com.rapidops.salesmatechatsdk.domain.exception
 
 import com.google.gson.JsonParser
+import com.rapidops.salesmatechatsdk.data.utils.GsonUtils
 import okhttp3.ResponseBody
 import retrofit2.Response
 import java.io.IOException
 
-object APIResponseMapper {
+internal object APIResponseMapper {
 
     suspend fun <T> getResponse(call: suspend () -> Response<T>): T {
         try {
@@ -17,19 +18,21 @@ object APIResponseMapper {
             response.errorBody()?.let { requestBody ->
                 val error = decodeErrorResponse(requestBody)
                 error.httpCode = response.code()
-                throw SalesMateChatException(SalesMateChatException.Kind.REST_API, error)
-            } ?: throw SalesMateChatException(SalesMateChatException.Kind.UNEXPECTED)
+                throw SalesmateChatException(SalesmateChatException.Kind.REST_API, error)
+            } ?: throw SalesmateChatException(SalesmateChatException.Kind.UNEXPECTED)
         } catch (e: Exception) {
             when (e) {
-                is IOException -> throw SalesMateChatException(SalesMateChatException.Kind.NETWORK)
-                is SalesMateChatException -> throw e
-                else -> throw SalesMateChatException(SalesMateChatException.Kind.UNEXPECTED)
+                is IOException -> throw SalesmateChatException(SalesmateChatException.Kind.NETWORK)
+                is SalesmateChatException -> throw e
+                else -> throw SalesmateChatException(SalesmateChatException.Kind.UNEXPECTED)
             }
         }
     }
 
     private fun decodeErrorResponse(errorBody: ResponseBody): Error {
-        var apiErrorCode = 0
+        val jsonObject = JsonParser.parseString(errorBody.string()).asJsonObject
+        return GsonUtils.gson.fromJson(jsonObject, Error::class.java)
+        /*var apiErrorCode = 0
         var errorName = ""
         var errorMessage = ""
 
@@ -39,11 +42,20 @@ object APIResponseMapper {
             if (errorJsonObj.has("Code")) {
                 apiErrorCode = errorJsonObj.get("Code").asInt
             }
+            if (errorJsonObj.has("code")) {
+                apiErrorCode = errorJsonObj.get("code").asInt
+            }
             if (errorJsonObj.has("Name")) {
                 errorName = errorJsonObj.get("Name").asString
             }
+            if (errorJsonObj.has("name")) {
+                errorName = errorJsonObj.get("name").asString
+            }
             if (errorJsonObj.has("Message")) {
                 errorMessage = errorJsonObj.get("Message").asString
+            }
+            if (errorJsonObj.has("message")) {
+                errorMessage = errorJsonObj.get("message").asString
             }
         }
 
@@ -51,6 +63,6 @@ object APIResponseMapper {
             apiErrorCode,
             errorName,
             errorMessage
-        )
+        )*/
     }
 }

@@ -7,23 +7,23 @@ import com.facebook.stetho.Stetho
 import com.rapidops.salesmatechatsdk.BuildConfig
 import com.rapidops.salesmatechatsdk.app.activity.main.MainActivity
 import com.rapidops.salesmatechatsdk.app.di.*
+import java.util.*
 
-internal class SalesmateChat(private val application: Application) : SalesmateChatSDK() {
+internal class SalesmateChat(
+    private val application: Application,
+    private val salesMateChatSettings: SalesmateChatSettings
+) : SalesmateChatSDK() {
 
     companion object {
         lateinit var daggerDataComponent: DataComponent
 
         private val TAG: String = SalesmateChat::class.java.simpleName
 
-        private lateinit var instance: SalesmateChat
-
-        fun create(application: Application): SalesmateChatSDK {
-            if (::instance.isInitialized.not()) {
-                synchronized(SalesmateChat::javaClass) {
-                    instance = SalesmateChat(application)
-                }
-            }
-            return instance
+        fun create(
+            application: Application,
+            salesMateChatSettings: SalesmateChatSettings
+        ): SalesmateChatSDK {
+            return SalesmateChat(application, salesMateChatSettings)
         }
     }
 
@@ -31,14 +31,20 @@ internal class SalesmateChat(private val application: Application) : SalesmateCh
         onCreate()
     }
 
+
     private fun onCreate() {
         daggerDataComponent = DaggerDataComponent.builder()
             .contextModule(ContextModule(application))
             .dataModule(DataModule())
-            .networkModule(NetworkModule("https://google.com", BuildConfig.DEBUG))
+            .networkModule(NetworkModule(BuildConfig.BASE_URL, BuildConfig.DEBUG))
             .viewModelModule(ViewModelModule())
             .build()
 
+        val appSettingsDataSource = daggerDataComponent.getAppSettingsDataSource()
+        appSettingsDataSource.salesMateChatSetting = salesMateChatSettings
+        if (appSettingsDataSource.androidUniqueId.isEmpty()) {
+            appSettingsDataSource.androidUniqueId = UUID.randomUUID().toString()
+        }
         initDebuggers()
 
     }

@@ -5,7 +5,7 @@ import android.view.View
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseActivity
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
-import com.rapidops.salesmatechatsdk.app.fragment.HomeFragment
+import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.ConversationListFragment
 import com.rapidops.salesmatechatsdk.app.interfaces.IFragmentSupport
 import com.rapidops.salesmatechatsdk.databinding.AMainBinding
 
@@ -28,9 +28,16 @@ internal class MainActivity : BaseActivity<MainViewModel>(), IFragmentSupport {
 
     override fun setUpUI(savedInstanceState: Bundle?) {
 
-        //viewModel.subscribe()
-        addFragment(HomeFragment.newInstance())
+        observeViewModel()
 
+        viewModel.subscribe()
+
+    }
+
+    private fun observeViewModel() {
+        viewModel.showConversationList.observe(this, {
+            addFragment(ConversationListFragment.newInstance())
+        })
     }
 
 }

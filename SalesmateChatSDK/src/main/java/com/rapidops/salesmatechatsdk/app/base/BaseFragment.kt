@@ -8,10 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.interfaces.IBackPress
-import com.rapidops.salesmatechatsdk.domain.exception.SalesMateChatException
+import com.rapidops.salesmatechatsdk.domain.exception.SalesmateChatException
 
 
-abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPress {
+internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPress {
 
     protected abstract fun getLayoutView(inflater: LayoutInflater): View
 
@@ -108,12 +108,12 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPress {
     }
 
 
-    fun showSoftError(refreshException: SalesMateChatException) {
+    fun showSoftError(refreshException: SalesmateChatException) {
         refreshException.printStackTrace()
         when (refreshException.kind) {
-            SalesMateChatException.Kind.UNEXPECTED -> showUnknownErrorAlertMessage()
-            SalesMateChatException.Kind.NETWORK -> showAlertMessage(getString(R.string.df_no_network_connection_tv_msg))
-            SalesMateChatException.Kind.REST_API -> {
+            SalesmateChatException.Kind.UNEXPECTED -> showUnknownErrorAlertMessage()
+            SalesmateChatException.Kind.NETWORK -> showAlertMessage(getString(R.string.df_no_network_connection_tv_msg))
+            SalesmateChatException.Kind.REST_API -> {
                 refreshException.error?.let {
                     showAlertMessage(it.message)
                 }

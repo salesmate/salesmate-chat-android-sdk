@@ -11,10 +11,10 @@ import androidx.fragment.app.Fragment
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.interfaces.IFragmentSupport
 import com.rapidops.salesmatechatsdk.databinding.ABaseLayoutBinding
-import com.rapidops.salesmatechatsdk.domain.exception.SalesMateChatException
+import com.rapidops.salesmatechatsdk.domain.exception.SalesmateChatException
 
 
-abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
+internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
 
 
     private lateinit var baseBinding: ABaseLayoutBinding
@@ -171,11 +171,11 @@ abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
             .show(supportFragmentManager, AppCompatAlertDialog::class.java.simpleName)
     }
 
-    fun showSoftError(kpsException: SalesMateChatException) {
+    fun showSoftError(kpsException: SalesmateChatException) {
         when (kpsException.kind) {
-            SalesMateChatException.Kind.UNEXPECTED -> showUnknownErrorAlertMessage()
-            SalesMateChatException.Kind.NETWORK -> showAlertMessage(getString(R.string.df_no_network_connection_tv_msg))
-            SalesMateChatException.Kind.REST_API -> {
+            SalesmateChatException.Kind.UNEXPECTED -> showUnknownErrorAlertMessage()
+            SalesmateChatException.Kind.NETWORK -> showAlertMessage(getString(R.string.df_no_network_connection_tv_msg))
+            SalesmateChatException.Kind.REST_API -> {
                 kpsException.error?.let {
                     showAlertMessage(it.message)
                 }

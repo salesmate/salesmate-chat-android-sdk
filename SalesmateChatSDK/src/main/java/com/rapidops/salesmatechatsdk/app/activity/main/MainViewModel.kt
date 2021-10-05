@@ -1,30 +1,34 @@
 package com.rapidops.salesmatechatsdk.app.activity.main
 
-import com.google.gson.JsonElement
 import com.rapidops.salesmatechatsdk.app.base.BaseViewModel
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.utils.SingleLiveEvent
-import com.rapidops.salesmatechatsdk.domain.usecases.GetDataUseCase
+import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
+import com.rapidops.salesmatechatsdk.domain.usecases.PingAndGenerateTokenUseCase
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(
+internal class MainViewModel @Inject constructor(
     private val coroutineContextProvider: ICoroutineContextProvider,
-    private val getDataUseCase: GetDataUseCase
+    private val pingAndGenerateTokenUseCase: PingAndGenerateTokenUseCase,
+    private val appSettingsDataSource: IAppSettingsDataSource,
 ) : BaseViewModel(coroutineContextProvider) {
 
-    val dataLive = SingleLiveEvent<JsonElement>()
-
+    val showConversationList = SingleLiveEvent<Nothing>()
 
     fun subscribe() {
-        withProgress({
-            val data = getDataUseCase.execute("")
-            withContext(coroutineContextProvider.ui) {
-                dataLive.value = data
-            }
-        }, {
-            defaultErrorHandler(it)
-        })
+        if (appSettingsDataSource.pingRes.linkname.isEmpty()) {
+            withProgress({
+                pingAndGenerateTokenUseCase.execute()
+                withContext(coroutineContextProvider.ui) {
+                    showConversationList.call()
+                }
+            }, {
+                defaultErrorHandler(it)
+            })
+        } else {
+            showConversationList.call()
+        }
 
     }
 

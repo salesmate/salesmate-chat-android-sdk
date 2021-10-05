@@ -3,14 +3,14 @@ package com.rapidops.salesmatechatsdk.app.base
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
-import com.rapidops.salesmatechatsdk.domain.exception.SalesMateChatException
+import com.rapidops.salesmatechatsdk.domain.exception.SalesmateChatException
 import kotlinx.coroutines.*
 
-open class BaseViewModel(private val dispatcher: ICoroutineContextProvider) : ViewModel() {
+internal open class BaseViewModel(private val dispatcher: ICoroutineContextProvider) : ViewModel() {
     private var scope = CoroutineScope(Job() + Dispatchers.Main)
     val progress = MutableLiveData<Boolean>()
     val dataProgress = MutableLiveData<Boolean>()
-    val salesMateChatException = MutableLiveData<SalesMateChatException>()
+    val salesMateChatException = MutableLiveData<SalesmateChatException>()
 
     var cancellableScope = CoroutineScope(Job() + Dispatchers.Main)
 
@@ -30,8 +30,8 @@ open class BaseViewModel(private val dispatcher: ICoroutineContextProvider) : Vi
     }
 
     protected fun defaultErrorHandler(exception: Exception) {
-        salesMateChatException.value = if (exception is SalesMateChatException) exception
-        else SalesMateChatException(SalesMateChatException.Kind.UNEXPECTED)
+        salesMateChatException.value = if (exception is SalesmateChatException) exception
+        else SalesmateChatException(SalesmateChatException.Kind.UNEXPECTED)
     }
 
 
