@@ -18,7 +18,7 @@ internal data class PingRes(
     @SerializedName("linkname")
     var linkname: String = "",
     @SerializedName("lookAndFeel")
-    var lookAndFeel: LookAndFeel? = null,
+    var lookAndFeel: LookAndFeel = LookAndFeel(),
     @SerializedName("misc")
     var misc: Misc? = null,
     @SerializedName("securitySettings")

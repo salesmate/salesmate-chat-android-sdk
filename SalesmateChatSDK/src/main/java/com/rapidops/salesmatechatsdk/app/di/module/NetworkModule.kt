@@ -1,10 +1,11 @@
-package com.rapidops.salesmatechatsdk.app.di
+package com.rapidops.salesmatechatsdk.app.di.module
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.Gson
 import com.rapidops.salesmatechatsdk.BuildConfig
 import com.rapidops.salesmatechatsdk.app.coroutines.CoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
+import com.rapidops.salesmatechatsdk.app.di.ApplicationScope
 import com.rapidops.salesmatechatsdk.data.interceptor.RequestInterceptor
 import com.rapidops.salesmatechatsdk.data.utils.GsonUtils
 import com.rapidops.salesmatechatsdk.data.webserivce.IService

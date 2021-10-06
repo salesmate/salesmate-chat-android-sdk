@@ -51,7 +51,7 @@ internal class PingDs : JsonDeserializer<PingRes> {
             }
 
             dataObject.getJsonArray("welcomeMessages")?.let {
-                val listType = object : TypeToken<List<OfficeHour>>() {}.type
+                val listType = object : TypeToken<List<WelcomeMessage>>() {}.type
                 pingRes.welcomeMessages =
                     gson.fromJson(it, listType)
             }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_zero">0dp</dimen>
+    <dimen name="padding_micro2">2dp</dimen>
+    <dimen name="padding_micro3">4dp</dimen>
+    <dimen name="padding_micro4">6dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_small2">10dp</dimen>
+    <dimen name="padding_small3">14dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_large">20dp</dimen>
+    <dimen name="padding_xlarge">25dp</dimen>
+    <dimen name="padding_xxlarge">50dp</dimen>
+</resources>

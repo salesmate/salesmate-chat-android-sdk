@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.interfaces.IFragmentSupport
@@ -77,32 +78,32 @@ internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
         })
     }
 
-    fun showProgress() {
-        getProgressView().visibility = View.VISIBLE
+    private fun showProgress() {
+        getProgressView().isVisible = true
     }
 
-    fun hideProgress() {
-        if (!isDestroyed) getProgressView().visibility = View.GONE
+    private fun hideProgress() {
+        if (!isDestroyed) getProgressView().isVisible = false
     }
 
-    fun showDataProgress() {
+    private fun showDataProgress() {
         getProgressView().setBackgroundColor(
             ContextCompat.getColor(
                 this,
                 R.color.white
             )
         )
-        getProgressView().visibility = View.VISIBLE
+        getProgressView().isVisible = true
     }
 
-    fun hideDataProgress() {
+    private fun hideDataProgress() {
         getProgressView().setBackgroundColor(
             ContextCompat.getColor(
                 this,
                 android.R.color.transparent
             )
         )
-        getProgressView().visibility = View.GONE
+        getProgressView().isVisible = false
     }
 
     fun replaceFragment(

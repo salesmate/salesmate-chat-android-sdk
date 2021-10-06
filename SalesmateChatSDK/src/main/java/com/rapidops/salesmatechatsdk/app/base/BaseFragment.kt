@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.interfaces.IBackPress
+import com.rapidops.salesmatechatsdk.databinding.FBaseLayoutBinding
 import com.rapidops.salesmatechatsdk.domain.exception.SalesmateChatException
 
 
@@ -20,6 +23,8 @@ internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPres
     protected lateinit var viewModel: VM
 
     abstract fun setUpUI()
+
+    private var fBaseBinding: FBaseLayoutBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,15 +54,22 @@ internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPres
         })
     }
 
+    protected open fun getProgressView(): View? {
+        return fBaseBinding?.fContentLoadProgress
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        fBaseBinding = FBaseLayoutBinding.inflate(layoutInflater, container, false)
+        val layoutView = getLayoutView(inflater)
+        fBaseBinding?.fBaseLayoutContent?.addView(layoutView)
 
         observeBaseViewModel()
 
-        return getLayoutView(inflater)
+        return fBaseBinding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,24 +81,33 @@ internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPres
         getBaseActivity().hideSoftKeyboard()
     }
 
-    fun showSoftKeyboard(view: View) {
-        getBaseActivity().showSoftKeyboard(view)
-    }
-
     private fun showProgress() {
-        getBaseActivity().showProgress()
+        getProgressView()?.isVisible = true
     }
 
     private fun hideProgress() {
-        getBaseActivity().hideProgress()
+        if (childFragmentManager.isStateSaved) return
+        getProgressView()?.isVisible = false
     }
 
     private fun showDataProgress() {
-        getBaseActivity().showDataProgress()
+        getProgressView()?.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.white
+            )
+        )
+        getProgressView()?.isVisible = true
     }
 
     private fun hideDataProgress() {
-        getBaseActivity().hideDataProgress()
+        getProgressView()?.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                android.R.color.transparent
+            )
+        )
+        getProgressView()?.isVisible = false
     }
 
     fun showAlertMessage(message: String, title: String? = null) {

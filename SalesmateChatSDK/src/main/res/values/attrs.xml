@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="AppTextView">
+        <attr name="textColorStyle" format="enum">
+            <enum name="backgroundForegroundColor" value="1" />
+            <enum name="backgroundSecondaryForegroundColor" value="2" />
+            <enum name="actionForegroundColor" value="3" />
+            <enum name="actionSecondaryForegroundColor" value="4" />
+            <enum name="actionColor" value="5" />
+        </attr>
+    </declare-styleable>
+
+
+</resources>

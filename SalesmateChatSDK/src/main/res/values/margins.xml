@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="margin_zero">0dp</dimen>
+    <dimen name="margin_micro1">1dp</dimen>
+    <dimen name="margin_micro2">2dp</dimen>
+    <dimen name="margin_micro3">4dp</dimen>
+    <dimen name="margin_micro4">5dp</dimen>
+    <dimen name="margin_micro5">6dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_small2">10dp</dimen>
+    <dimen name="margin_small3">12dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_large">20dp</dimen>
+    <dimen name="margin_xlarge">25dp</dimen>
+    <dimen name="margin_xxlarge">30dp</dimen>
+    <dimen name="margin_xxxlarge">40dp</dimen>
+    <dimen name="margin_xxxxlarge">50dp</dimen>
+
+</resources>

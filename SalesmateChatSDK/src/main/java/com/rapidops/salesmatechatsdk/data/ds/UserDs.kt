@@ -24,7 +24,7 @@ internal class UserDs : JsonDeserializer<User> {
 
         user.id = jsonObject.getString("id") ?: ""
         user.firstName = jsonObject.getString("firstName") ?: ""
-        user.firstName = jsonObject.getString("lastName") ?: ""
+        user.lastName = jsonObject.getString("lastName") ?: ""
         user.profileId = jsonObject.getInt("profileId")
         user.roleId = jsonObject.getInt("roleId")
         user.profileUrl = jsonObject.getString("profileUrl") ?: ""

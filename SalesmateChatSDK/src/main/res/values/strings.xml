@@ -8,4 +8,14 @@
     <string name="dialog_close">Close</string>
     <string name="dialog_retry">Retry</string>
     <string name="df_no_network_connection_tv_msg">No network connection\nPlease try again</string>
+
+    <string name="lbl_close">Close</string>
+
+    <string name="lbl_let_chat">Let’s Chat</string>
+    <string name="lbl_the_team_typically_replies_in">The team typically replies %s</string>
+    <string name="lbl_made_with">Made with</string>
+    <string name="lbl_by_salesmate">by Salesmate</string>
+    <string name="lbl_start_new_chat">Start New Chat</string>
+    <string name="lbl_recent_chats">Recent Chats</string>
+    <string name="lbl_view_all">View all</string>
 </resources>

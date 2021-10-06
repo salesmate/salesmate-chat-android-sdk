@@ -6,7 +6,12 @@ import android.util.Log
 import com.facebook.stetho.Stetho
 import com.rapidops.salesmatechatsdk.BuildConfig
 import com.rapidops.salesmatechatsdk.app.activity.main.MainActivity
-import com.rapidops.salesmatechatsdk.app.di.*
+import com.rapidops.salesmatechatsdk.app.di.component.DaggerDataComponent
+import com.rapidops.salesmatechatsdk.app.di.component.DataComponent
+import com.rapidops.salesmatechatsdk.app.di.module.ContextModule
+import com.rapidops.salesmatechatsdk.app.di.module.DataModule
+import com.rapidops.salesmatechatsdk.app.di.module.NetworkModule
+import com.rapidops.salesmatechatsdk.app.di.module.ViewModelModule
 import java.util.*
 
 internal class SalesmateChat(

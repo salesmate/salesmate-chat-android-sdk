@@ -3,6 +3,7 @@ package com.rapidops.salesmatechatsdk.data.utils
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.rapidops.salesmatechatsdk.data.ds.*
+import com.rapidops.salesmatechatsdk.data.resmodels.ConversationRes
 import com.rapidops.salesmatechatsdk.data.resmodels.GenerateTokenRes
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.domain.models.*
@@ -36,6 +37,9 @@ internal object GsonUtils {
         gsonBuilder.registerTypeAdapter(Channel::class.java, ChannelDs())
         gsonBuilder.registerTypeAdapter(ChannelsItem::class.java, ChannelsItemDs())
         gsonBuilder.registerTypeAdapter(Events::class.java, EventsDs())
+        gsonBuilder.registerTypeAdapter(ConversationRes::class.java, ConversationResDs())
+        gsonBuilder.registerTypeAdapter(Conversations::class.java, ConversationDs())
+        gsonBuilder.registerTypeAdapter(LastMessageData::class.java, EventsDs())
 
     }
 }

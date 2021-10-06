@@ -14,20 +14,20 @@ internal class MainViewModel @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
 ) : BaseViewModel(coroutineContextProvider) {
 
-    val showConversationList = SingleLiveEvent<Nothing>()
+    val showRecentChatList = SingleLiveEvent<Nothing>()
 
     fun subscribe() {
         if (appSettingsDataSource.pingRes.linkname.isEmpty()) {
             withProgress({
                 pingAndGenerateTokenUseCase.execute()
                 withContext(coroutineContextProvider.ui) {
-                    showConversationList.call()
+                    showRecentChatList.call()
                 }
             }, {
                 defaultErrorHandler(it)
             })
         } else {
-            showConversationList.call()
+            showRecentChatList.call()
         }
 
     }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llLetsChat"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@+id/llPoweredBy"
+    android:gravity="center"
+    android:padding="@dimen/padding_medium"
+    android:orientation="vertical"
+    android:visibility="gone"
+    tools:visibility="visible"
+    tools:showIn="@layout/f_recent_chat_list">
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.rapidops.salesmatechatsdk.app.view.AppTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lbl_let_chat"
+        android:textColor="@color/text_black"
+        style="@style/TextMedium"
+        android:textSize="@dimen/font_size_xlarge" />
+
+
+    <com.rapidops.salesmatechatsdk.app.view.AppTextView
+        android:id="@+id/txtReplyTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_micro5"
+        android:text="@string/lbl_the_team_typically_replies_in"
+        android:textColor="@color/text_black"
+        android:textSize="@dimen/font_size_small" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:listitem="@layout/r_user_item"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.rapidops.salesmatechatsdk.app.view.AppTextView
+        android:id="@+id/txtStartNewChat"
+        android:layout_width="wrap_content"
+        android:drawableEnd="@drawable/ic_send"
+        android:background="@drawable/drw_corner_background"
+        android:paddingHorizontal="@dimen/padding_xxlarge"
+        android:paddingVertical="@dimen/padding_small3"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        style="@style/TextMedium"
+        android:drawablePadding="@dimen/padding_small2"
+        app:textColorStyle="actionForegroundColor"
+        android:textSize="@dimen/font_size_medium"
+        android:text="@string/lbl_start_new_chat" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>
+
+            

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgUser"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        tools:tint="@color/default_background_color"
+        tools:src="@drawable/drw_circle_background" />
+
+    <com.rapidops.salesmatechatsdk.app.view.AppTextView
+        android:id="@+id/txtCount"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/drw_circle_background"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:textColor="@color/text_gray"
+        android:textSize="@dimen/font_size_medium2"
+        tools:text="+3" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/drw_circle_ring" />
+
+</FrameLayout>

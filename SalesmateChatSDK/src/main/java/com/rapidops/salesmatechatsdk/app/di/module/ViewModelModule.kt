@@ -1,9 +1,12 @@
-package com.rapidops.salesmatechatsdk.app.di
+package com.rapidops.salesmatechatsdk.app.di.module
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.rapidops.salesmatechatsdk.app.activity.main.MainViewModel
-import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.ConversationListViewModel
+import com.rapidops.salesmatechatsdk.app.di.ApplicationScope
+import com.rapidops.salesmatechatsdk.app.di.ViewModelFactory
+import com.rapidops.salesmatechatsdk.app.di.ViewModelKey
+import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.RecentChatViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -27,14 +30,14 @@ internal class ViewModelModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(ConversationListViewModel::class)
-    internal fun conversationListViewModel(conversationListViewModel: ConversationListViewModel): ViewModel {
-        return conversationListViewModel
+    @ViewModelKey(RecentChatViewModel::class)
+    internal fun recentChatViewModel(recentChatViewModel: RecentChatViewModel): ViewModel {
+        return recentChatViewModel
     }
 
     /*@Binds
     @IntoMap
     @ViewModelKey(ConversationListViewModel::class)
-    internal abstract fun conversationListViewModel(viewModel: ConversationListViewModel): ViewModel*/
+    internal abstract fun recentChatViewModel(viewModel: ConversationListViewModel): ViewModel*/
 
 }

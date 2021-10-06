@@ -5,9 +5,10 @@ import android.view.View
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseActivity
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
-import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.ConversationListFragment
+import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.RecentChatFragment
 import com.rapidops.salesmatechatsdk.app.interfaces.IFragmentSupport
 import com.rapidops.salesmatechatsdk.databinding.AMainBinding
+
 
 internal class MainActivity : BaseActivity<MainViewModel>(), IFragmentSupport {
 
@@ -35,9 +36,16 @@ internal class MainActivity : BaseActivity<MainViewModel>(), IFragmentSupport {
     }
 
     private fun observeViewModel() {
-        viewModel.showConversationList.observe(this, {
-            addFragment(ConversationListFragment.newInstance())
+        viewModel.showRecentChatList.observe(this, {
+            addFragment(RecentChatFragment.newInstance())
+            setStatusColor()
         })
+    }
+
+    private fun setStatusColor() {
+        /*val window: Window = window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = Color.TRANSPARENT*/
     }
 
 }

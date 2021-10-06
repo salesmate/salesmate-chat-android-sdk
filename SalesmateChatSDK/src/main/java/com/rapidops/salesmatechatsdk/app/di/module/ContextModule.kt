@@ -1,6 +1,7 @@
-package com.rapidops.salesmatechatsdk.app.di
+package com.rapidops.salesmatechatsdk.app.di.module
 
 import android.content.Context
+import com.rapidops.salesmatechatsdk.app.di.ApplicationScope
 import dagger.Module
 import dagger.Provides
 

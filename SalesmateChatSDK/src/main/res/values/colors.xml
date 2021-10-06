@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <color name="default_background_color">#1F62FF</color>
+
+    <color name="default_action_color">#1F62FF</color>
+
+    <color name="text_black">#091E42</color>
+
+    <color name="text_powered_by">#6B778C</color>
+
+    <color name="count_back">#EBECF0</color>
+
+    <color name="text_gray">#505F79</color>
+
+    <color name="text_gray_medium">#7A869A</color>
+
 </resources>
