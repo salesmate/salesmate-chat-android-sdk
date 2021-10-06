@@ -5,7 +5,7 @@ import android.view.View
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseActivity
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
-import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.RecentChatFragment
+import com.rapidops.salesmatechatsdk.app.fragment.recent_list.RecentChatFragment
 import com.rapidops.salesmatechatsdk.app.interfaces.IFragmentSupport
 import com.rapidops.salesmatechatsdk.databinding.AMainBinding
 

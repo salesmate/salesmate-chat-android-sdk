@@ -39,7 +39,7 @@ internal object GsonUtils {
         gsonBuilder.registerTypeAdapter(Events::class.java, EventsDs())
         gsonBuilder.registerTypeAdapter(ConversationRes::class.java, ConversationResDs())
         gsonBuilder.registerTypeAdapter(Conversations::class.java, ConversationDs())
-        gsonBuilder.registerTypeAdapter(LastMessageData::class.java, EventsDs())
+        gsonBuilder.registerTypeAdapter(LastMessageData::class.java, LastMessageDataDs())
 
     }
 }

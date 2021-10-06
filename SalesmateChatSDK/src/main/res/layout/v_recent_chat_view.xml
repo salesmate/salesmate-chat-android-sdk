@@ -49,31 +49,26 @@
         android:layout_weight="1"
         android:layout_marginTop="@dimen/margin_medium"
         tools:listitem="@layout/r_conversation_item"
+        android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
 
     <com.rapidops.salesmatechatsdk.app.view.AppTextView
         android:id="@+id/txtStartNewChatList"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:drawableEnd="@drawable/ic_send"
         android:background="@drawable/drw_corner_background"
         android:paddingHorizontal="@dimen/padding_xxlarge"
         android:paddingVertical="@dimen/padding_small3"
-        android:layout_height="wrap_content"
         android:textColor="@color/white"
         style="@style/TextMedium"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginBottom="@dimen/margin_xxxxlarge"
         app:textColorStyle="actionForegroundColor"
         android:layout_gravity="center"
         android:drawablePadding="@dimen/padding_small2"
         android:textSize="@dimen/font_size_medium"
         android:text="@string/lbl_start_new_chat" />
 
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
 </LinearLayout>

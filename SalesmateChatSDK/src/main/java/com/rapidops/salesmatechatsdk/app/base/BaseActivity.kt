@@ -129,11 +129,18 @@ internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
     }
 
 
-    fun addFragment(fragment: Fragment, addToBackStack: Boolean = true) {
+    fun addFragment(
+        fragment: Fragment,
+        addToBackStack: Boolean = true,
+        showAnimation: Boolean = true
+    ) {
         if (supportFragmentManager.isStateSaved) return
         val tag = fragment.javaClass.name
         val transaction = supportFragmentManager.beginTransaction()
-
+        if (showAnimation) {
+            transaction
+                .setCustomAnimations(R.anim.enter_fragment, R.anim.exit_fragment, R.anim.pop_enter_fragment, R.anim.pop_exit_fragment)
+        }
         val currentFragment = getCurrentFragment()
         if (currentFragment != null) {
             transaction.hide(currentFragment)

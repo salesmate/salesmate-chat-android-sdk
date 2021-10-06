@@ -48,4 +48,4 @@ internal data class Conversations(
 
 	@field:SerializedName("status")
 	var status: String = ""
-)
+) : BaseModel()

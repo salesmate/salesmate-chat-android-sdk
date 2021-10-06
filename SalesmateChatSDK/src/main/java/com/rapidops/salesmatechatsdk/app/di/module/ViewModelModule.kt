@@ -6,7 +6,7 @@ import com.rapidops.salesmatechatsdk.app.activity.main.MainViewModel
 import com.rapidops.salesmatechatsdk.app.di.ApplicationScope
 import com.rapidops.salesmatechatsdk.app.di.ViewModelFactory
 import com.rapidops.salesmatechatsdk.app.di.ViewModelKey
-import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.RecentChatViewModel
+import com.rapidops.salesmatechatsdk.app.fragment.recent_list.RecentChatViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap

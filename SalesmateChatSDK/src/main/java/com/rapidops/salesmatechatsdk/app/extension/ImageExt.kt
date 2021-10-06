@@ -2,7 +2,6 @@ package com.rapidops.salesmatechatsdk.app.extension
 
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -21,7 +20,7 @@ fun ImageView.loadImage(url: String?) {
 }
 
 
-fun ImageView.loadCircleProfileImage(url: String?, name: String = "") {
+fun ImageView.loadCircleProfileImage(url: String?, name: String? = "") {
     if (url.isNullOrEmpty()) {
         setImageDrawable(getTextDrawableFromName(name, layoutParams.height))
     } else {
@@ -37,10 +36,10 @@ fun ImageView.loadCircleProfileImage(url: String?, name: String = "") {
 }
 
 private fun getTextDrawableFromName(
-    text: String,
+    text: String?,
     imageSize: Int
 ): TextDrawable {
-    val value = text.takeIf { it.isNotEmpty() }?.first() ?: "A"
+    val value = text?.takeIf { it.isNotEmpty() }?.first() ?: "A"
     val colorGenerator = ColorGenerator.MATERIAL4
     val color = colorGenerator.getColor(value)
     return builder().beginConfig()

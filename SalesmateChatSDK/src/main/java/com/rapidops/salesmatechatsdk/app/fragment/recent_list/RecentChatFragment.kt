@@ -1,4 +1,4 @@
-package com.rapidops.salesmatechatsdk.app.fragment.conversation_list
+package com.rapidops.salesmatechatsdk.app.fragment.recent_list
 
 import android.view.*
 import androidx.core.view.isVisible
@@ -7,11 +7,14 @@ import com.rapidops.salesmatechatsdk.app.base.BaseFragment
 import com.rapidops.salesmatechatsdk.app.extension.loadImage
 import com.rapidops.salesmatechatsdk.app.extension.loadPattern
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
+import com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter.ConversationAdapter
+import com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter.UserAdapter
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.databinding.FRecentChatListBinding
+import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 
 
 internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
@@ -60,7 +63,7 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
             if (it.isEmpty()) {
                 showLetsChatView()
             } else {
-                showRecentChatView()
+                showRecentChatView(it)
             }
         })
 
@@ -89,20 +92,37 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
                 val userAdapter = UserAdapter(availableUseList.size)
                 userAdapter.setItems(availableUseList.take(4).toMutableList())
                 rvUser.adapter = userAdapter
+
+                txtStartNewChat.isVisible = canVisitorOrContactStartNewConversation
             }
 
         }
     }
 
-    private fun showRecentChatView() {
+    private fun showRecentChatView(list: List<ConversationDetailItem>) {
         binding.flProgress.isVisible = false
         binding.incLetsChat.llLetsChat.isVisible = false
         binding.incRecentChat.llRecentChats.isVisible = true
-        binding.incRecentChat.apply {
-            txtStartNewChatList.updateActionTint()
-            txtStartNewChatList.compoundDrawablesRelative.forEach {
-                it?.setTint(ColorUtil.actionColor.foregroundColor())
+        viewModel.pingRes.apply {
+            binding.incRecentChat.apply {
+                txtStartNewChatList.updateActionTint()
+                txtStartNewChatList.compoundDrawablesRelative.forEach {
+                    it?.setTint(ColorUtil.actionColor.foregroundColor())
+                }
+                txtStartNewChatList.isVisible = canVisitorOrContactStartNewConversation
+
+
+                val conversationAdapter = ConversationAdapter()
+                conversationAdapter.setItems(list.take(2).toMutableList())
+                rvRecentConversation.adapter = conversationAdapter
+
+                txtViewAll.isVisible = list.size >= 3
+
             }
+        }
+
+        binding.incRecentChat.txtViewAll.setOnClickListener {
+
         }
     }
 

@@ -1,4 +1,4 @@
-package com.rapidops.salesmatechatsdk.app.fragment.conversation_list
+package com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter
 
 import android.view.View
 import androidx.core.view.isVisible
