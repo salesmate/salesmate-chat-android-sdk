@@ -1,6 +1,7 @@
 package com.rapidops.salesmatechatsdk.app.utils
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.DrawableCompat
@@ -106,5 +107,14 @@ internal object ColorUtil {
         DrawableCompat.setTint(wrappedDrawable, actionColor)
     }
 
+    fun Drawable.setTintFromBackground() {
+        DrawableCompat.setTint(this, backGroundColor.foregroundColor())
+    }
+
+    fun Drawable.getDrawableForBackground(): Drawable? {
+        val wrappedDrawable = DrawableCompat.wrap(this)
+        DrawableCompat.setTint(wrappedDrawable, backGroundColor.foregroundColor())
+        return wrappedDrawable
+    }
 
 }

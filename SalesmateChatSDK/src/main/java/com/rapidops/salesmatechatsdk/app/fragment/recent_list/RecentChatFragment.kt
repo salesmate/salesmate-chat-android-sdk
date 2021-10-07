@@ -7,10 +7,12 @@ import com.rapidops.salesmatechatsdk.app.base.BaseFragment
 import com.rapidops.salesmatechatsdk.app.extension.loadImage
 import com.rapidops.salesmatechatsdk.app.extension.loadPattern
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
+import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.ConversationListFragment
 import com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter.ConversationAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter.UserAdapter
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
+import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.databinding.FRecentChatListBinding
@@ -122,7 +124,7 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
         }
 
         binding.incRecentChat.txtViewAll.setOnClickListener {
-
+            getBaseActivity().addFragment(ConversationListFragment.newInstance())
         }
     }
 
@@ -133,6 +135,8 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_conversation_list, menu)
+        menu.findItem(R.id.action_close).icon.setTintFromBackground()
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

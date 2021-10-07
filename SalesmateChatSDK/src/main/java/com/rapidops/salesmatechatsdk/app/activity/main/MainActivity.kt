@@ -38,14 +38,7 @@ internal class MainActivity : BaseActivity<MainViewModel>(), IFragmentSupport {
     private fun observeViewModel() {
         viewModel.showRecentChatList.observe(this, {
             addFragment(RecentChatFragment.newInstance())
-            setStatusColor()
         })
-    }
-
-    private fun setStatusColor() {
-        /*val window: Window = window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = Color.TRANSPARENT*/
     }
 
 }

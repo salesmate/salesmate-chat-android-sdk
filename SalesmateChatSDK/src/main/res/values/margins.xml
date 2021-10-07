@@ -17,4 +17,6 @@
     <dimen name="margin_xxxlarge">40dp</dimen>
     <dimen name="margin_xxxxlarge">50dp</dimen>
 
+    <dimen name="margin_statusbar">24dp</dimen>
+
 </resources>

@@ -37,17 +37,20 @@ internal open class AppTextView : AppCompatTextView {
             val styleValue = attr.getInt(R.styleable.AppTextView_textColorStyle, 0)
 
             when (styleValue) {
-                1 -> {
+                1 -> {//backgroundForegroundColor  (When TextView that on top of background color)
                     setTextColor(ColorUtil.backGroundColor.foregroundColor())
                 }
-                2 -> {
+                2 -> {//backgroundSecondaryForegroundColor  (When Secondary TextView that on top of background color)
                     setTextColor(ColorUtil.backGroundColor.secondaryForegroundColor())
                 }
-                3 -> {
+                3 -> {//actionForegroundColor  (When TextView that on top of action color)
                     setTextColor(ColorUtil.actionColor.foregroundColor())
                 }
-                4 -> {
+                4 -> {//actionSecondaryForegroundColor  (When Secondary TextView that on top of action color)
                     setTextColor(ColorUtil.actionColor.secondaryForegroundColor())
+                }
+                5 -> {//actionColor  (When TextView that on top of normal color for action color)
+                    setTextColor(ColorUtil.actionColor)
                 }
             }
         }

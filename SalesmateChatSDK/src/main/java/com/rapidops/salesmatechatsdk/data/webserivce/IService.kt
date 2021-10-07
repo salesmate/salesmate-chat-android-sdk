@@ -24,7 +24,7 @@ internal interface IService {
 
     @GET("v1/widget/conversations")
     suspend fun getConversations(
-        @Query("row") rows: Int,
+        @Query("rows") rows: Int,
         @Query("offset") offset: Int
     ): Response<ConversationRes>
 

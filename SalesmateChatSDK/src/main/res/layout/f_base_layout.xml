@@ -22,7 +22,7 @@
         tools:visibility="visible"
         android:focusable="true">
 
-        <ProgressBar
+        <com.rapidops.salesmatechatsdk.app.view.AppProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"

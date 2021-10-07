@@ -11,7 +11,7 @@ internal data class User(
     @SerializedName("firstName")
     var firstName: String = "",
     @SerializedName("id")
-    var id: Any? = null,
+    var id: String? = null,
     @SerializedName("lastName")
     var lastName: String = "",
     @SerializedName("last_seen_at")

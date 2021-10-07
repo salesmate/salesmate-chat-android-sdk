@@ -18,4 +18,5 @@
     <string name="lbl_start_new_chat">Start New Chat</string>
     <string name="lbl_recent_chats">Recent Chats</string>
     <string name="lbl_view_all">View all</string>
+    <string name="lbl_your_conversation">Your Conversation</string>
 </resources>

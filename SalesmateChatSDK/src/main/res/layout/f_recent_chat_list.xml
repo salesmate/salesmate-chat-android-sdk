@@ -67,7 +67,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:background="@drawable/drw_corner_top_background_white">
 
             <include
@@ -87,7 +86,7 @@
                 tools:visibility="visible">
 
 
-                <ProgressBar
+                <com.rapidops.salesmatechatsdk.app.view.AppProgressBar
                     android:id="@+id/progress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

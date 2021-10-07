@@ -3,10 +3,20 @@
 
     <declare-styleable name="AppTextView">
         <attr name="textColorStyle" format="enum">
+
+            <!--When TextView that on top of background color-->
             <enum name="backgroundForegroundColor" value="1" />
+
+            <!--When Secondary TextView that on top of background color-->
             <enum name="backgroundSecondaryForegroundColor" value="2" />
+
+            <!--When TextView that on top of action color-->
             <enum name="actionForegroundColor" value="3" />
+
+            <!--When Secondary TextView that on top of action color-->
             <enum name="actionSecondaryForegroundColor" value="4" />
+
+            <!--When TextView that on top of normal color for action color-->
             <enum name="actionColor" value="5" />
         </attr>
     </declare-styleable>

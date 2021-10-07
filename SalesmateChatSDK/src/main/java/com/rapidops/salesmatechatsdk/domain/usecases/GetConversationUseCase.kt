@@ -3,6 +3,7 @@ package com.rapidops.salesmatechatsdk.domain.usecases
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.datasources.IConversationDataSource
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
+import com.rapidops.salesmatechatsdk.domain.models.User
 import javax.inject.Inject
 
 
@@ -20,9 +21,14 @@ internal class GetConversationUseCase @Inject constructor(
             conversationParam.offSet
         )
         val conversationDetailItemList = arrayListOf<ConversationDetailItem>()
+        val workspaceData = appSettingsDataSource.pingRes.workspaceData
         conversationsRes.conversationList.forEach { conversations ->
-            val user =
+            val user = if (conversations.lastParticipatingUserId.isEmpty()) {
+                User(id = workspaceData?.id ?: "", firstName = workspaceData?.name ?: "")
+            } else {
                 appSettingsDataSource.pingRes.users.find { it.id == conversations.lastParticipatingUserId }
+            }
+
             conversationDetailItemList.add(ConversationDetailItem(conversations, user))
         }
         return conversationDetailItemList
