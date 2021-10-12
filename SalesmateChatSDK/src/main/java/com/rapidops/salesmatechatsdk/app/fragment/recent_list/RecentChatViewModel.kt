@@ -13,6 +13,7 @@ import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationUseCase
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.withContext
+import java.util.*
 import javax.inject.Inject
 
 internal class RecentChatViewModel @Inject constructor(
@@ -45,33 +46,26 @@ internal class RecentChatViewModel @Inject constructor(
             defaultErrorHandler(it)
         })
 
-        subscribeEvent {
-            EventBus.events.filterIsInstance<AppEvent.NewMessageEvent>().collectLatest { event ->
-                val find = showConversationList.value?.find {
-                    it.conversations?.id == event.data.conversationId
-                }
-                find?.let {
-                    loadConversationDetail(it.conversations?.id!!)
-                } ?: run {
-                    subscribe(false)
-                }
-            }
-        }
+        subscribeEvents()
     }
 
-    private fun loadConversationDetail(conversationId: String) {
-        withoutProgress({
-            val conversationDetailItem = getConversationDetailUseCase.execute(
-                GetConversationDetailUseCase.Param(conversationId)
-            )
-            val list = showConversationList.value?.toMutableList() ?: mutableListOf()
-            list.removeAll { it.conversations?.id == conversationId }
-            list.add(0, conversationDetailItem)
-            withContext(coroutineContextProvider.ui) {
-                showConversationList.value = list
-            }
-
-        })
+    private fun subscribeEvents() {
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.UpdateConversationDetailEvent>()
+                .collectLatest { updateConversationDetail ->
+                    val conversationDetailItem = updateConversationDetail.data
+                    val list = showConversationList.value?.toMutableList() ?: mutableListOf()
+                    val indexOfFirst =
+                        list.indexOfFirst { it.conversations?.id == conversationDetailItem.conversations?.id }
+                    if (indexOfFirst != -1) {
+                        list[indexOfFirst] = conversationDetailItem
+                        Collections.swap(list, indexOfFirst, 0)
+                    } else {
+                        list.add(0, conversationDetailItem)
+                    }
+                    showConversationList.value = list
+                }
+        }
     }
 
 

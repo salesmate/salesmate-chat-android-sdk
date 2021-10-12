@@ -16,11 +16,13 @@ import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.getDrawableForBackgroun
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
 import com.rapidops.salesmatechatsdk.databinding.FConversationListBinding
+import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
+import java.util.*
 
 
 internal class ConversationListFragment : BaseFragment<ConversationListViewModel>() {
 
-    private var conversationAdapter = ConversationAdapter()
+    private val conversationAdapter = ConversationAdapter()
     private lateinit var binding: FConversationListBinding
     private lateinit var endlessScrollListener: EndlessScrollListener
 
@@ -89,6 +91,20 @@ internal class ConversationListFragment : BaseFragment<ConversationListViewModel
 
         viewModel.showLoadMore.observe(this, {
             conversationAdapter.showLoadMore(it)
+        })
+
+        viewModel.updateConversationItem.observe(this, { conversationDetailItem ->
+            val list = conversationAdapter.getItems()
+            val indexOfFirst =
+                list.indexOfFirst { it.conversations?.id == conversationDetailItem.conversations?.id }
+            if (indexOfFirst != -1) {
+                list[indexOfFirst] = conversationDetailItem
+                Collections.swap(list, indexOfFirst, 0)
+                conversationAdapter.notifyItemMoved(indexOfFirst, 0)
+            } else {
+                list.add(0, conversationDetailItem)
+                conversationAdapter.notifyItemInserted(0)
+            }
         })
     }
 
