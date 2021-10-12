@@ -66,6 +66,8 @@ internal class SalesmateChat(
     }
 
     private fun initDebuggers(){
-        Stetho.initializeWithDefaults(application)
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(application)
+        }
     }
 }

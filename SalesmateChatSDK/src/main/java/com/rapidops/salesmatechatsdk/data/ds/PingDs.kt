@@ -71,12 +71,12 @@ internal class PingDs : JsonDeserializer<PingRes> {
             }
 
             dataObject.getJsonArray("unReadConversations")?.let {
-                val listType = object : TypeToken<List<Any>>() {}.type
+                val listType = object : TypeToken<List<String>>() {}.type
                 pingRes.unReadConversations = gson.fromJson(it, listType)
             }
 
             dataObject.getJsonArray("contactData")?.let {
-                pingRes.contactData = gson.fromJson(it, Any::class.java)
+                pingRes.contactData = gson.fromJson(it, ContactData::class.java)
             }
 
             dataObject.getJsonArray("emojiMapping")?.let {

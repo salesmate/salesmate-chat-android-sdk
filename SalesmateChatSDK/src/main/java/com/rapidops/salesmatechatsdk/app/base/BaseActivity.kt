@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.interfaces.IFragmentSupport
+import com.rapidops.salesmatechatsdk.app.utils.ConnectivityLiveData
 import com.rapidops.salesmatechatsdk.databinding.ABaseLayoutBinding
 import com.rapidops.salesmatechatsdk.domain.exception.SalesmateChatException
 
@@ -51,6 +52,8 @@ internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
 
 
         observeBaseViewModel()
+
+        addConnectivityListener()
 
         setUpUI(savedInstanceState)
 
@@ -213,5 +216,13 @@ internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) finish()
         else super.onBackPressed()
+    }
+
+    private fun addConnectivityListener() {
+        ConnectivityLiveData(application).observe(this, { isConnected ->
+            if (isConnected) {
+                viewModel.connectSocket()
+            }
+        })
     }
 }

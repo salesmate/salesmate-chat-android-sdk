@@ -3,6 +3,7 @@ package com.rapidops.salesmatechatsdk.app.base
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
+import com.rapidops.salesmatechatsdk.core.SalesmateChat
 import com.rapidops.salesmatechatsdk.domain.exception.SalesmateChatException
 import kotlinx.coroutines.*
 
@@ -82,5 +83,21 @@ internal open class BaseViewModel(private val dispatcher: ICoroutineContextProvi
                 }
             }
         }
+    }
+
+    private var eventScope = CoroutineScope(Job() + Dispatchers.Main)
+    fun subscribeEvent(event: suspend () -> Unit) {
+        eventScope.launch {
+            event()
+        }
+    }
+
+    fun unsubscribe() {
+        eventScope.cancel()
+    }
+
+    private val socketController = SalesmateChat.daggerDataComponent.getSocketController()
+    fun connectSocket() {
+        socketController.connect()
     }
 }

@@ -87,4 +87,9 @@ dependencies {
     //Joda
     implementation 'joda-time:joda-time:2.10.6'
     implementation 'org.joda:joda-convert:2.2.1'
+
+    //Socket
+    implementation ('io.github.sac:SocketclusterClientJava:2.0.0'){
+        exclude group :'org.json', module: 'json'
+    }
 }

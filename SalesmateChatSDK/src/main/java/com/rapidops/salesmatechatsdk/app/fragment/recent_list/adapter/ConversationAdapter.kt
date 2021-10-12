@@ -1,6 +1,7 @@
 package com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter
 
 import android.view.View
+import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.LoadMoreBaseRecyclerViewAdapter
@@ -35,6 +36,9 @@ internal class ConversationAdapter : LoadMoreBaseRecyclerViewAdapter<Conversatio
 
         private val bind = RConversationItemBinding.bind(itemView)
         fun bindViewHolder(item: ConversationDetailItem) {
+
+            bind.imgStatus.isInvisible = item.conversations?.contactHasRead ?: true
+
             bind.imgConversation.loadCircleProfileImage(
                 item.user?.profileUrl,
                 item.user?.firstName

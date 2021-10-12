@@ -21,7 +21,9 @@ abstract class SalesmateChatSDK {
         }
 
         private fun isSettingsValid(salesmateChatSettings: SalesmateChatSettings): Boolean {
-            return salesmateChatSettings.appKey.isNotEmpty() && salesmateChatSettings.tenantId.isNotEmpty() && salesmateChatSettings.workspaceId.isNotEmpty()
+            return salesmateChatSettings.appKey.isNotEmpty() &&
+                    salesmateChatSettings.tenantId.isNotEmpty() &&
+                    salesmateChatSettings.workspaceId.isNotEmpty()
         }
 
         fun getInstance(): SalesmateChatSDK {

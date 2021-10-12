@@ -1,14 +1,12 @@
 package com.rapidops.salesmatechatsdk.data.webserivce
 
 import com.google.gson.JsonElement
+import com.rapidops.salesmatechatsdk.data.resmodels.ConversationDetailRes
 import com.rapidops.salesmatechatsdk.data.resmodels.ConversationRes
 import com.rapidops.salesmatechatsdk.data.resmodels.GenerateTokenRes
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 internal interface IService {
 
@@ -27,5 +25,11 @@ internal interface IService {
         @Query("rows") rows: Int,
         @Query("offset") offset: Int
     ): Response<ConversationRes>
+
+    @GET("v1/widget/conversations/{conversationId}")
+    suspend fun getConversations(
+        @Path("conversationId") conversationId: String,
+        @Query("messages") messages: Boolean
+    ): Response<ConversationDetailRes>
 
 }

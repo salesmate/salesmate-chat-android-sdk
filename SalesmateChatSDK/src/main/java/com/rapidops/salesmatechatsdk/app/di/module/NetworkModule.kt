@@ -6,6 +6,7 @@ import com.rapidops.salesmatechatsdk.BuildConfig
 import com.rapidops.salesmatechatsdk.app.coroutines.CoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.di.ApplicationScope
+import com.rapidops.salesmatechatsdk.app.socket.SocketController
 import com.rapidops.salesmatechatsdk.data.interceptor.RequestInterceptor
 import com.rapidops.salesmatechatsdk.data.utils.GsonUtils
 import com.rapidops.salesmatechatsdk.data.webserivce.IService
@@ -90,5 +91,11 @@ internal class NetworkModule(
         }
         interceptorList.add(loggingInterceptor)
         return interceptorList
+    }
+
+    @Provides
+    @ApplicationScope
+    fun provideSocketCluster(appSettingsDataSource: IAppSettingsDataSource): SocketController {
+        return SocketController(appSettingsDataSource)
     }
 }

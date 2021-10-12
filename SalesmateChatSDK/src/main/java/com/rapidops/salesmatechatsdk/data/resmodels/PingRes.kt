@@ -10,7 +10,7 @@ internal data class PingRes(
     @SerializedName("canVisitorOrContactStartNewConversation")
     var canVisitorOrContactStartNewConversation: Boolean = false,
     @SerializedName("contactData")
-    var contactData: Any? = null,
+    var contactData: ContactData? = null,
     @SerializedName("conversationsSettings")
     var conversationsSettings: ConversationsSettings? = null,
     @SerializedName("emojiMapping")
@@ -24,7 +24,7 @@ internal data class PingRes(
     @SerializedName("securitySettings")
     var securitySettings: SecuritySettings? = null,
     @SerializedName("unReadConversations")
-    var unReadConversations: List<Any> = listOf(),
+    var unReadConversations: List<String> = listOf(),
     @SerializedName("upfrontEmailCollection")
     var upfrontEmailCollection: UpfrontEmailCollection? = null,
     @SerializedName("users")

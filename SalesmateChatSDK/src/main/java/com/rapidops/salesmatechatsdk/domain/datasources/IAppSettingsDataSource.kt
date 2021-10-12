@@ -15,4 +15,6 @@ internal interface IAppSettingsDataSource {
 
     var pingRes: PingRes
     var channel: Channel
+
+    val linkName: String
 }

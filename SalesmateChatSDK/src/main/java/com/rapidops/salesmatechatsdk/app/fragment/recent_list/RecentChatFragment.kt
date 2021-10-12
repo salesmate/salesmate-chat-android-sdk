@@ -16,12 +16,14 @@ import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.databinding.FRecentChatListBinding
+import com.rapidops.salesmatechatsdk.domain.models.AvailabilityStatus
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 
 
 internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
 
     private lateinit var binding: FRecentChatListBinding
+    private val conversationAdapter = ConversationAdapter()
 
     companion object {
         fun newInstance(): RecentChatFragment {
@@ -90,7 +92,8 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
 
                 rvUser.addItemDecoration(OverlapDecoration())
 
-                val availableUseList = users.filter { it.status == "available" }
+                val availableUseList =
+                    users.filter { it.status == AvailabilityStatus.AVAILABLE.value }
                 val userAdapter = UserAdapter(availableUseList.size)
                 userAdapter.setItems(availableUseList.take(4).toMutableList())
                 rvUser.adapter = userAdapter
@@ -114,7 +117,6 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
                 txtStartNewChatList.isVisible = canVisitorOrContactStartNewConversation
 
 
-                val conversationAdapter = ConversationAdapter()
                 conversationAdapter.setItems(list.take(2).toMutableList())
                 rvRecentConversation.adapter = conversationAdapter
 

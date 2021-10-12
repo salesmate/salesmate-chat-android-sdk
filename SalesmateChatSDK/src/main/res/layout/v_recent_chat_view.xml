@@ -6,17 +6,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_above="@+id/llPoweredBy"
-    android:padding="@dimen/padding_medium"
+    android:paddingVertical="@dimen/padding_medium"
     android:orientation="vertical"
     android:gravity="center"
     android:visibility="gone"
-    tools:visibility="gone"
+    tools:visibility="visible"
     tools:showIn="@layout/f_recent_chat_list">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/padding_medium"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -48,10 +49,10 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="@dimen/margin_medium"
+        android:paddingHorizontal="@dimen/padding_small"
         tools:listitem="@layout/r_conversation_item"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
 
     <com.rapidops.salesmatechatsdk.app.view.AppTextView
         android:id="@+id/txtStartNewChatList"

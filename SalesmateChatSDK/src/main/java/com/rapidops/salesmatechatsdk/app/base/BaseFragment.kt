@@ -203,4 +203,8 @@ internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPres
         childFragmentManager.popBackStackImmediate(removeFragmentUptoFragmentId, flag)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.unsubscribe()
+    }
 }

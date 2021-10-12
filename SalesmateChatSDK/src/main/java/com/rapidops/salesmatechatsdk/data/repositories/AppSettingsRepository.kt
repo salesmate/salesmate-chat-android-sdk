@@ -59,6 +59,10 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
             _pingRes = value
         }
 
+    override val linkName: String
+        get() = _pingRes.linkname
+
+
     override var channel: Channel
         get() = _channel
         set(value) {

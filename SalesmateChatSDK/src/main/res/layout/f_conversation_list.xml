@@ -48,9 +48,8 @@
                 android:id="@+id/rvConversation"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingHorizontal="@dimen/padding_medium"
+                android:paddingHorizontal="@dimen/padding_small"
                 android:paddingBottom="90dp"
-                android:clipToPadding="false"
                 tools:listitem="@layout/r_conversation_item" />
 
             <com.rapidops.salesmatechatsdk.app.view.AppTextView

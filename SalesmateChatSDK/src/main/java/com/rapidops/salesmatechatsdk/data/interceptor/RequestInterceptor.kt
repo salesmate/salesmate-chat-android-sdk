@@ -26,8 +26,8 @@ internal class RequestInterceptor(
     private fun addRequiredHeader(request: Request, requestBuilder: Request.Builder) {
         requestBuilder.addHeader("x-contact-id", "")
 //        requestBuilder.addHeader("x-unique-id", appSettingsDataSource.androidUniqueId)
-//        requestBuilder.addHeader("x-unique-id", "a44dc310-f254-4cbd-9d95-42392d0f2a08")
-        requestBuilder.addHeader("x-unique-id", "e0072076-5b7e-4e8b-ba1e-6edcc73194e6")
+        requestBuilder.addHeader("x-unique-id", "a44dc310-f254-4cbd-9d95-42392d0f2a08")
+//        requestBuilder.addHeader("x-unique-id", "e0072076-5b7e-4e8b-ba1e-6edcc73194e6")
         requestBuilder.addHeader("x-linkname", appSettingsDataSource.salesMateChatSetting.tenantId)
         requestBuilder.addHeader(
             "x-workspace-id",
