@@ -3,11 +3,12 @@ package com.rapidops.salesmatechatsdk.data.utils
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.rapidops.salesmatechatsdk.data.ds.*
-import com.rapidops.salesmatechatsdk.data.resmodels.ConversationDetailRes
-import com.rapidops.salesmatechatsdk.data.resmodels.ConversationRes
-import com.rapidops.salesmatechatsdk.data.resmodels.GenerateTokenRes
-import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
+import com.rapidops.salesmatechatsdk.data.resmodels.*
 import com.rapidops.salesmatechatsdk.domain.models.*
+import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
+import com.rapidops.salesmatechatsdk.domain.models.message.FileAttachmentData
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
+import com.rapidops.salesmatechatsdk.domain.models.message.SourceMeta
 
 internal object GsonUtils {
 
@@ -45,7 +46,15 @@ internal object GsonUtils {
         gsonBuilder.registerTypeAdapter(Owner::class.java, OwnerDs())
         gsonBuilder.registerTypeAdapter(UserAvailability::class.java, UserAvailabilityDs())
         gsonBuilder.registerTypeAdapter(ChatNewMessage::class.java, ChatNewMessageDs())
-        gsonBuilder.registerTypeAdapter(ConversationDetailRes::class.java, ConversationDetailResDs())
+        gsonBuilder.registerTypeAdapter(
+            ConversationDetailRes::class.java,
+            ConversationDetailResDs()
+        )
 
+        gsonBuilder.registerTypeAdapter(MessageListRes::class.java, MessageListResDs())
+        gsonBuilder.registerTypeAdapter(SourceMeta::class.java, SourceMetaDs())
+        gsonBuilder.registerTypeAdapter(MessageItem::class.java, MessageItemDs())
+        gsonBuilder.registerTypeAdapter(BlockDataItem::class.java, BlockDataItemDs())
+        gsonBuilder.registerTypeAdapter(FileAttachmentData::class.java, FileAttachmentDataDs())
     }
 }

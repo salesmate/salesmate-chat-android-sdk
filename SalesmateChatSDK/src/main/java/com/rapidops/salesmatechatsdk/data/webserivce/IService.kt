@@ -1,10 +1,7 @@
 package com.rapidops.salesmatechatsdk.data.webserivce
 
 import com.google.gson.JsonElement
-import com.rapidops.salesmatechatsdk.data.resmodels.ConversationDetailRes
-import com.rapidops.salesmatechatsdk.data.resmodels.ConversationRes
-import com.rapidops.salesmatechatsdk.data.resmodels.GenerateTokenRes
-import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
+import com.rapidops.salesmatechatsdk.data.resmodels.*
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -37,6 +34,6 @@ internal interface IService {
         @Path("conversationId") conversationId: String,
         @Query("rows") rows: Int,
         @Query("offset") offset: Int
-    ): Response<JsonElement>
+    ): Response<MessageListRes>
 
 }

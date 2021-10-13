@@ -8,8 +8,9 @@ import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
 import com.rapidops.salesmatechatsdk.databinding.ROutgoingPlainMessageBinding
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 
-class OutgoingPlainMessageDelegate(activity: Activity) :
+internal class OutgoingPlainMessageDelegate(activity: Activity) :
     BaseMessageAdapterDelegate(activity) {
     override fun onCreateMessageHolder(parent: ViewGroup): MessageViewHolder {
         val view = ROutgoingPlainMessageBinding.inflate(inflater, parent, false).root
@@ -17,20 +18,19 @@ class OutgoingPlainMessageDelegate(activity: Activity) :
     }
 
     override fun onBindMessageViewHolder(
-        items: List<String>,
+        items: List<MessageItem>,
         position: Int,
         holder: MessageViewHolder
     ) {
+        val messageItem = items[position]
         val bind = ROutgoingPlainMessageBinding.bind(holder.itemView)
         bind.flBackground.updateActionTint()
         bind.incPlainTextView.txtPlainMessage.setTextColor(ColorUtil.actionColor.foregroundColor())
-        bind.incPlainTextView.txtPlainMessage.text =
-            String.format("Position :- %s", position)
-        bind.incDateTextView.txtDateTime.text = "Jul 23, 7:00 AM"
+        bind.incPlainTextView.txtPlainMessage.text = messageItem.messageSummary
     }
 
-    override fun isForViewType(items: List<String>, position: Int): Boolean {
-        return position % 2 == 0
+    override fun isForViewType(item: MessageItem, position: Int): Boolean {
+        return item.userId.isEmpty()
     }
 
     internal class OutgoingPlainMessageViewHolder(itemView: View) : MessageViewHolder(itemView)

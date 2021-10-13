@@ -3,13 +3,14 @@ package com.rapidops.salesmatechatsdk.domain.usecases
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.datasources.IConversationDataSource
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
-import com.rapidops.salesmatechatsdk.domain.models.User
 import javax.inject.Inject
 
 
 internal class GetConversationListUseCase @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
-    private val conversationDataSource: IConversationDataSource
+    private val conversationDataSource: IConversationDataSource,
+    private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase
+
 ) :
     UseCase<GetConversationListUseCase.Param, List<ConversationDetailItem>>() {
 
@@ -21,14 +22,8 @@ internal class GetConversationListUseCase @Inject constructor(
             conversationParam.offSet
         )
         val conversationDetailItemList = arrayListOf<ConversationDetailItem>()
-        val workspaceData = appSettingsDataSource.pingRes.workspaceData
         conversationsRes.conversationList.forEach { conversations ->
-            val user = if (conversations.lastParticipatingUserId.isEmpty()) {
-                User(id = null, firstName = workspaceData?.name ?: "")
-            } else {
-                appSettingsDataSource.pingRes.users.find { it.id == conversations.lastParticipatingUserId }
-            }
-
+            val user = getUserFromUserIdUseCase.execute(conversations.lastParticipatingUserId)
             conversationDetailItemList.add(ConversationDetailItem(conversations, user))
         }
         return conversationDetailItemList

@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit
 
 internal enum class DateFormatType(val value: String) {
     yyyy_MM_dd_T_HH_mm_ss_SSS_Z("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+    MMM_dd_yyyy_hh_mm_a("MMM dd, yyyy, hh:mm a"),
+    MMM_dd_hh_mm_a("MMM dd, hh:mm a");
 }
 
 internal fun DateTime?.getMessageDate(): CharSequence? {
@@ -111,4 +113,32 @@ internal fun DateTime.getPeriod(): String {
             "Just now"
         }
     }
+}
+
+internal fun String.getMessageTime(): String {
+    val dateTime = parseFromISOFormat()
+    val now = DateTime.now()
+    val difference = now.minus(dateTime.millis).millis
+    val toDays = TimeUnit.MILLISECONDS.toDays(difference)
+    val toHours = TimeUnit.MILLISECONDS.toHours(difference)
+    val toMinutes = TimeUnit.MILLISECONDS.toMinutes(difference)
+    return when {
+        toDays != 0L -> {
+            if (dateTime.year == now.year) {
+                dateTime.parseDate(DateFormatType.MMM_dd_hh_mm_a)
+            } else {
+                dateTime.parseDate(DateFormatType.MMM_dd_yyyy_hh_mm_a)
+            }
+        }
+        toHours != 0L -> {
+            toHours.toString() + "h ago"
+        }
+        toMinutes != 0L -> {
+            toMinutes.toString() + "m ago"
+        }
+        else -> {
+            "Just now"
+        }
+    }
+
 }
