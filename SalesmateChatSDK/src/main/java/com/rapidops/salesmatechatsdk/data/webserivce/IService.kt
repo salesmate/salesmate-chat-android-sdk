@@ -32,4 +32,11 @@ internal interface IService {
         @Query("messages") messages: Boolean
     ): Response<ConversationDetailRes>
 
+    @GET("v1/widget/conversations/{conversationId}/messages")
+    suspend fun getMessages(
+        @Path("conversationId") conversationId: String,
+        @Query("rows") rows: Int,
+        @Query("offset") offset: Int
+    ): Response<JsonElement>
+
 }

@@ -12,7 +12,7 @@ import com.rapidops.salesmatechatsdk.app.extension.loadCircleProfileImage
 import com.rapidops.salesmatechatsdk.app.extension.loadImage
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ChatTopBarUserAdapter
-import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageAdapter
+import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageV1Adapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ToolbarUserAdapter
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setSendButtonColorStateList
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
@@ -70,15 +70,8 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
         binding.rvMessage.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
-        val messageAdapter = MessageAdapter()
-        messageAdapter.setItems(
-            mutableListOf(
-                "hello",
-                "hello",
-                "hello",
-                "hello"
-            )
-        )
+        val messageAdapter = MessageV1Adapter(requireActivity())
+
         binding.rvMessage.adapter = messageAdapter
 
 
