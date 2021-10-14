@@ -7,27 +7,28 @@ import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseRecyclerViewAdapter
 import com.rapidops.salesmatechatsdk.app.extension.loadCircleProfileImage
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
-import com.rapidops.salesmatechatsdk.databinding.RUserItemBinding
+import com.rapidops.salesmatechatsdk.databinding.RLetsChatUserItemBinding
 import com.rapidops.salesmatechatsdk.domain.models.User
-import java.lang.Math.abs
+import kotlin.math.abs
 
-internal class UserAdapter(private val availableUserCount: Int) : BaseRecyclerViewAdapter<User>() {
+internal class LetsChatUserAdapter(private val availableUserCount: Int) :
+    BaseRecyclerViewAdapter<User>() {
     override fun getRowLayoutId(viewType: Int): Int {
-        return R.layout.r_user_item
+        return R.layout.r_lets_chat_user_item
     }
 
     override fun bind(viewHolder: RecyclerView.ViewHolder, position: Int, item: User) {
-        val userViewHolder = viewHolder as UserViewHolder
+        val userViewHolder = viewHolder as LetsChatUserViewHolder
         userViewHolder.bindViewHolder(item)
     }
 
     override fun getViewHolder(view: View, viewType: Int): RecyclerView.ViewHolder {
-        return UserViewHolder(view)
+        return LetsChatUserViewHolder(view)
     }
 
-    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class LetsChatUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val bind = RUserItemBinding.bind(itemView)
+        private val bind = RLetsChatUserItemBinding.bind(itemView)
         fun bindViewHolder(item: User) {
             if (adapterPosition == itemCount - 1) {
                 (bind.root.layoutParams as RecyclerView.LayoutParams).setMargins(

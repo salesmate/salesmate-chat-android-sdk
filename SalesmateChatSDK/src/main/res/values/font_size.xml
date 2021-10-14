@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="font_size_micro1">10sp</dimen>
+    <dimen name="font_size_micro">10sp</dimen>
+    <dimen name="font_size_micro1">11sp</dimen>
     <dimen name="font_size_micro2">12sp</dimen>
     <dimen name="font_size_micro3">13sp</dimen>
     <dimen name="font_size_small">14sp</dimen>

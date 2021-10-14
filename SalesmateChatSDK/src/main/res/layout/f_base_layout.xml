@@ -2,12 +2,30 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:id="@+id/flBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/default_background_color">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgPattern"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:scaleType="centerCrop"
+            android:alpha="0.08"
+            android:adjustViewBounds="true"
+            app:srcCompat="@drawable/pattern_7" />
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/f_base_layout_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 
     <LinearLayout
         android:id="@+id/f_content_load_progress"

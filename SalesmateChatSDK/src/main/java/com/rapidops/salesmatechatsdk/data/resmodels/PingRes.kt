@@ -33,4 +33,9 @@ internal data class PingRes(
     var welcomeMessages: List<WelcomeMessage> = listOf(),
     @SerializedName("workspaceData")
     var workspaceData: WorkspaceData? = null
-) : BaseRes()
+) : BaseRes(){
+
+    fun getAvailableUserList(): List<User> {
+        return users.filter { it.status == "available" }
+    }
+}

@@ -6,6 +6,7 @@ import com.rapidops.salesmatechatsdk.app.activity.main.MainViewModel
 import com.rapidops.salesmatechatsdk.app.di.ApplicationScope
 import com.rapidops.salesmatechatsdk.app.di.ViewModelFactory
 import com.rapidops.salesmatechatsdk.app.di.ViewModelKey
+import com.rapidops.salesmatechatsdk.app.fragment.chat.ChatViewModel
 import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.ConversationListViewModel
 import com.rapidops.salesmatechatsdk.app.fragment.recent_list.RecentChatViewModel
 import dagger.Module
@@ -41,6 +42,14 @@ internal class ViewModelModule {
     @ViewModelKey(ConversationListViewModel::class)
     internal fun conversationListViewModel(conversationListViewModel: ConversationListViewModel): ViewModel {
         return conversationListViewModel
+    }
+
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(ChatViewModel::class)
+    internal fun chatViewModel(chatViewModel: ChatViewModel): ViewModel {
+        return chatViewModel
     }
 
     /*@Binds

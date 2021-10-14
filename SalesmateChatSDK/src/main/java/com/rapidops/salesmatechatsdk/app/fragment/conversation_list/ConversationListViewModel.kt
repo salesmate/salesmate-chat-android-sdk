@@ -10,14 +10,14 @@ import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
-import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationUseCase
+import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationListUseCase
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class ConversationListViewModel @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
     private val coroutineContextProvider: ICoroutineContextProvider,
-    private val getConversationUseCase: GetConversationUseCase,
+    private val getConversationUseCase: GetConversationListUseCase,
 ) : BaseViewModel(coroutineContextProvider) {
 
     val showConversationList = SingleLiveEvent<List<ConversationDetailItem>>()
@@ -43,7 +43,7 @@ internal class ConversationListViewModel @Inject constructor(
         showLoadMore.value = offSet != 0
         withoutProgress({
             val conversationList =
-                getConversationUseCase.execute(GetConversationUseCase.Param(PAGE_SIZE, offSet))
+                getConversationUseCase.execute(GetConversationListUseCase.Param(PAGE_SIZE, offSet))
             withContext(coroutineContextProvider.ui) {
                 showConversationList.value = conversationList
                 showLoadMore.value = false

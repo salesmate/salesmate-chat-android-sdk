@@ -11,7 +11,7 @@
         <item name="colorSecondaryVariant">@color/default_action_color</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <!--<item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>-->
+        <!--<item name="android:statusBarColor" tools:targetApi="lollipop">?attr/colorPrimaryVariant</item>-->
 
         <item name="android:windowTranslucentStatus">true</item>
         <!--<item name="android:windowTranslucentNavigation">true</item>-->

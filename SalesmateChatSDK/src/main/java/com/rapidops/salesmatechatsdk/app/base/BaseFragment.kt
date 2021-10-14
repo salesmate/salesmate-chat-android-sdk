@@ -1,5 +1,6 @@
 package com.rapidops.salesmatechatsdk.app.base
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.rapidops.salesmatechatsdk.R
+import com.rapidops.salesmatechatsdk.app.extension.loadPattern
+import com.rapidops.salesmatechatsdk.app.fragment.chat.ChatFragment
 import com.rapidops.salesmatechatsdk.app.interfaces.IBackPress
+import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.databinding.FBaseLayoutBinding
 import com.rapidops.salesmatechatsdk.domain.exception.SalesmateChatException
 
@@ -65,8 +69,12 @@ internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPres
     ): View? {
         fBaseBinding = FBaseLayoutBinding.inflate(layoutInflater, container, false)
         val layoutView = getLayoutView(inflater)
-        fBaseBinding?.fBaseLayoutContent?.addView(layoutView)
 
+        fBaseBinding?.fBaseLayoutContent?.addView(layoutView)
+        setFitsSystemWindows()
+
+        fBaseBinding?.flBackground?.setBackgroundColor(ColorUtil.backGroundColor)
+        fBaseBinding?.imgPattern?.loadPattern(ColorUtil.messengerBackground)
         observeBaseViewModel()
 
         return fBaseBinding?.root
@@ -203,8 +211,26 @@ internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPres
         childFragmentManager.popBackStackImmediate(removeFragmentUptoFragmentId, flag)
     }
 
+    private fun getStatusBarHeight(): Int {
+        var result = 0
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         viewModel.unsubscribe()
+    }
+
+    private fun setFitsSystemWindows() {
+        if (this is ChatFragment || Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            fBaseBinding?.fBaseLayoutContent?.fitsSystemWindows = true
+        } else {
+            fBaseBinding?.fBaseLayoutContent?.setPadding(0, getStatusBarHeight(), 0, 0)
+        }
+
     }
 }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:visibility="gone"
+    tools:visibility="visible"
+    tools:showIn="@layout/f_chat"
+    android:baselineAligned="false">
+
+    <FrameLayout
+        android:layout_width="32dp"
+        android:layout_height="32dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgUser"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            tools:tint="@color/default_background_color"
+            tools:src="@drawable/drw_circle_background" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:srcCompat="@drawable/drw_circle_ring" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgStatus"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="0.2dp"
+            android:background="@drawable/drw_circle_background"
+            android:padding="1dp"
+            app:srcCompat="@drawable/drw_light_green_circle" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/margin_small2"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.rapidops.salesmatechatsdk.app.view.AppTextView
+            android:id="@+id/txtUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_medium"
+            app:textColorStyle="backgroundForegroundColor"
+            tools:text="Samual Elkinson"
+            style="@style/TextMedium"
+            tools:textColor="@color/white" />
+
+        <com.rapidops.salesmatechatsdk.app.view.AppTextView
+            android:id="@+id/txtStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_small"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:textColorStyle="backgroundSecondaryForegroundColor"
+            tools:text="Available"
+            tools:textColor="@color/white" />
+
+    </LinearLayout>
+</LinearLayout>

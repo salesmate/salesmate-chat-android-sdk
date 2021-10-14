@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.rapidops.salesmatechatsdk.app.view.AppTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/txtDateTime"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/font_size_micro1"
+    tools:text="Jul 23, 7:00 AM"
+    android:textColor="@color/hint_color" />

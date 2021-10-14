@@ -7,6 +7,7 @@ import com.rapidops.salesmatechatsdk.domain.models.Channel
 internal interface IAppSettingsDataSource {
 
     var salesMateChatSetting: SalesmateChatSettings
+    var verifiedId: String
 
     var androidUniqueId: String
 

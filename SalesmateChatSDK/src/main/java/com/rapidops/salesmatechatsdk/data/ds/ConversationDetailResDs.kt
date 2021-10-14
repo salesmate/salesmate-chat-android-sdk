@@ -4,7 +4,6 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.rapidops.salesmatechatsdk.data.resmodels.ConversationDetailRes
-import com.rapidops.salesmatechatsdk.data.resmodels.ConversationRes
 import com.rapidops.salesmatechatsdk.data.utils.GsonUtils
 import com.rapidops.salesmatechatsdk.data.utils.getJsonArray
 import com.rapidops.salesmatechatsdk.data.utils.getJsonObject

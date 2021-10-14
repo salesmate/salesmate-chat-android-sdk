@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/txtPlainMessage"
+    android:layout_width="match_parent"
+    android:textColor="@color/text_black"
+    android:layout_height="match_parent"
+    tools:text="Sample text message"
+    android:textSize="@dimen/font_size_small" />

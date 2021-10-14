@@ -51,6 +51,9 @@ internal class ConversationAdapter : LoadMoreBaseRecyclerViewAdapter<Conversatio
             bind.txtTime.text =
                 item.conversations?.lastMessageDate?.getPeriod()
 
+            bind.root.setOnClickListener {
+                clickListener?.onItemClick(adapterPosition, item)
+            }
         }
     }
 

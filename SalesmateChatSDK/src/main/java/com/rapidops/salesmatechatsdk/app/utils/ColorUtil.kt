@@ -1,10 +1,13 @@
 package com.rapidops.salesmatechatsdk.app.utils
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
-import androidx.core.graphics.drawable.DrawableCompat
+import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.core.SalesmateChat
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.LookAndFeel
@@ -103,18 +106,32 @@ internal object ColorUtil {
     }
 
     fun View.updateActionTint() {
-        val wrappedDrawable = DrawableCompat.wrap(background)
-        DrawableCompat.setTint(wrappedDrawable, actionColor)
+        backgroundTintList = ColorStateList.valueOf(actionColor)
     }
 
     fun Drawable.setTintFromBackground() {
-        DrawableCompat.setTint(this, backGroundColor.foregroundColor())
+        setTint(backGroundColor.foregroundColor())
     }
 
-    fun Drawable.getDrawableForBackground(): Drawable? {
-        val wrappedDrawable = DrawableCompat.wrap(this)
-        DrawableCompat.setTint(wrappedDrawable, backGroundColor.foregroundColor())
-        return wrappedDrawable
+    fun Drawable.setTintBackground() {
+        setTint(backGroundColor)
+    }
+
+    val messengerBackground: String by lazy {
+        lookAndFeel.messengerBackground
+    }
+
+    fun TextView.setSendButtonColorStateList() {
+        val states = arrayOf(
+            intArrayOf(android.R.attr.state_enabled),
+            intArrayOf(-android.R.attr.state_enabled),
+        )
+
+        val colors = intArrayOf(
+            actionColor,
+            ContextCompat.getColor(context, R.color.hint_color),
+        )
+        setTextColor(ColorStateList(states, colors))
     }
 
 }

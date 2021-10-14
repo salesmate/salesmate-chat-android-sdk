@@ -8,7 +8,7 @@ import com.rapidops.salesmatechatsdk.domain.exception.APIResponseMapper
 
 internal class ConversationRepository(private val service: IService) : IConversationDataSource {
 
-    override suspend fun getConversations(rows: Int, offSet: Int): ConversationRes {
+    override suspend fun getConversationList(rows: Int, offSet: Int): ConversationRes {
         return APIResponseMapper.getResponse {
             service.getConversations(rows, offSet)
         }

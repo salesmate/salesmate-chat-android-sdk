@@ -47,5 +47,15 @@ internal data class Conversations(
 	var email: String = "",
 
 	@field:SerializedName("status")
-	var status: String = ""
+	var status: String = "",
+
+	@field:SerializedName("closedDate")
+	var closedDate: String = "",
+
+	@field:SerializedName("rating")
+	var rating: String = "",
+
+	@field:SerializedName("remark")
+	var remark: String = ""
+
 ) : BaseModel()

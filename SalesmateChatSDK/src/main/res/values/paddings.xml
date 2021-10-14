@@ -7,6 +7,7 @@
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_small2">10dp</dimen>
     <dimen name="padding_small3">14dp</dimen>
+    <dimen name="padding_small4">15dp</dimen>
     <dimen name="padding_medium">16dp</dimen>
     <dimen name="padding_large">20dp</dimen>
     <dimen name="padding_xlarge">25dp</dimen>

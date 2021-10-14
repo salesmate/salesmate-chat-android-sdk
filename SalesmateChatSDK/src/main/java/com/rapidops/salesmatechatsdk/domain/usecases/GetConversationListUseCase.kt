@@ -7,16 +7,16 @@ import com.rapidops.salesmatechatsdk.domain.models.User
 import javax.inject.Inject
 
 
-internal class GetConversationUseCase @Inject constructor(
+internal class GetConversationListUseCase @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
     private val conversationDataSource: IConversationDataSource
 ) :
-    UseCase<GetConversationUseCase.Param, List<ConversationDetailItem>>() {
+    UseCase<GetConversationListUseCase.Param, List<ConversationDetailItem>>() {
 
 
     override suspend fun execute(params: Param?): List<ConversationDetailItem> {
         val conversationParam = params!!
-        val conversationsRes = conversationDataSource.getConversations(
+        val conversationsRes = conversationDataSource.getConversationList(
             conversationParam.rows,
             conversationParam.offSet
         )
@@ -24,7 +24,7 @@ internal class GetConversationUseCase @Inject constructor(
         val workspaceData = appSettingsDataSource.pingRes.workspaceData
         conversationsRes.conversationList.forEach { conversations ->
             val user = if (conversations.lastParticipatingUserId.isEmpty()) {
-                User(id = workspaceData?.id ?: "", firstName = workspaceData?.name ?: "")
+                User(id = null, firstName = workspaceData?.name ?: "")
             } else {
                 appSettingsDataSource.pingRes.users.find { it.id == conversations.lastParticipatingUserId }
             }

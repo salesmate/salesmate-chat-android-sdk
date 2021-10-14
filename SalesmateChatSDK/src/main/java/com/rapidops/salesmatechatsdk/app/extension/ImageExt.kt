@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.utils.ColorGenerator
 import com.rapidops.salesmatechatsdk.app.view.TextDrawable
 import com.rapidops.salesmatechatsdk.app.view.TextDrawable.Companion.builder
@@ -50,14 +51,18 @@ private fun getTextDrawableFromName(
 
 
 fun ImageView.loadPattern(messengerBackground: String) {
+    var identifier = resources.getIdentifier(
+        messengerBackground.replace("-", "_"),
+        "drawable",
+        context.packageName
+    )
+    if (identifier == 0) {
+        identifier = R.drawable.pattern_1
+    }
     setImageDrawable(
         ContextCompat.getDrawable(
             context,
-            resources.getIdentifier(
-                messengerBackground.replace("-", "_"),
-                "drawable",
-                context.packageName
-            )
+            identifier
         )
     )
 }

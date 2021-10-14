@@ -21,6 +21,7 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
     private var mContext: Context = context
     private var _salesMateChatSettings: SalesmateChatSettings = SalesmateChatSettings("", "", "")
 
+    private var _verifiedId: String = ""
     private var _pingRes: PingRes = PingRes()
     private var _channel: Channel = Channel()
 
@@ -32,6 +33,12 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
         get() = _salesMateChatSettings
         set(value) {
             _salesMateChatSettings = value
+        }
+
+    override var verifiedId: String
+        get() = _verifiedId
+        set(value) {
+            _verifiedId = value
         }
 
 

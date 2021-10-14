@@ -33,6 +33,6 @@ internal class RequestInterceptor(
             "x-workspace-id",
             appSettingsDataSource.salesMateChatSetting.workspaceId
         )
-        requestBuilder.addHeader("x-verified-id", "")
+        requestBuilder.addHeader("x-verified-id", appSettingsDataSource.verifiedId)
     }
 }

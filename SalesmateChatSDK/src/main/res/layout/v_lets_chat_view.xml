@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        tools:listitem="@layout/r_user_item"
+        tools:listitem="@layout/r_lets_chat_user_item"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 

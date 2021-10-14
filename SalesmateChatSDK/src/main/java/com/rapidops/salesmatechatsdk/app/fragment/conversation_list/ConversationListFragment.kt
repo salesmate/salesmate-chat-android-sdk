@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseFragment
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
+import com.rapidops.salesmatechatsdk.app.fragment.chat.ChatFragment
 import com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter.ConversationAdapter
 import com.rapidops.salesmatechatsdk.app.interfaces.EndlessScrollListener
+import com.rapidops.salesmatechatsdk.app.interfaces.IItemListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
-import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.getDrawableForBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
 import com.rapidops.salesmatechatsdk.databinding.FConversationListBinding
@@ -47,11 +48,11 @@ internal class ConversationListFragment : BaseFragment<ConversationListViewModel
         getBaseActivity().supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.navigationIcon =
             ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back)
-                ?.getDrawableForBackground()
+        binding.toolbar.navigationIcon?.setTintFromBackground()
+
         binding.toolbar.setNavigationOnClickListener {
             getBaseActivity().popBackStack()
         }
-        binding.root.setBackgroundColor(ColorUtil.backGroundColor)
 
         val layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -77,7 +78,19 @@ internal class ConversationListFragment : BaseFragment<ConversationListViewModel
         }
 
         observeViewModel()
+        attachListener()
         viewModel.subscribe()
+    }
+
+    private fun attachListener() {
+        conversationAdapter.clickListener = object : IItemListener<ConversationDetailItem> {
+            override fun onItemClick(position: Int, item: ConversationDetailItem) {
+                getBaseActivity().addFragment(ChatFragment.newInstance(item))
+            }
+        }
+        binding.txtStartNewChat.setOnClickListener {
+            getBaseActivity().addFragment(ChatFragment.newInstance())
+        }
     }
 
     private fun observeViewModel() {
@@ -99,6 +112,7 @@ internal class ConversationListFragment : BaseFragment<ConversationListViewModel
                 list.indexOfFirst { it.conversations?.id == conversationDetailItem.conversations?.id }
             if (indexOfFirst != -1) {
                 list[indexOfFirst] = conversationDetailItem
+                conversationAdapter.notifyItemChanged(indexOfFirst)
                 Collections.swap(list, indexOfFirst, 0)
                 conversationAdapter.notifyItemMoved(indexOfFirst, 0)
             } else {

@@ -8,8 +8,7 @@ import com.rapidops.salesmatechatsdk.app.utils.SingleLiveEvent
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
-import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationDetailUseCase
-import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationUseCase
+import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationListUseCase
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.withContext
@@ -19,8 +18,7 @@ import javax.inject.Inject
 internal class RecentChatViewModel @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
     private val coroutineContextProvider: ICoroutineContextProvider,
-    private val getConversationUseCase: GetConversationUseCase,
-    private val getConversationDetailUseCase: GetConversationDetailUseCase,
+    private val getConversationUseCase: GetConversationListUseCase
 ) : BaseViewModel(coroutineContextProvider) {
 
     val recentViewProgress = SingleLiveEvent<Boolean>()
@@ -32,7 +30,7 @@ internal class RecentChatViewModel @Inject constructor(
         }
         withoutProgress({
             val conversationList =
-                getConversationUseCase.execute(GetConversationUseCase.Param(3, 0))
+                getConversationUseCase.execute(GetConversationListUseCase.Param(3, 0))
             withContext(coroutineContextProvider.ui) {
                 showConversationList.value = conversationList
                 if (showProgress) {

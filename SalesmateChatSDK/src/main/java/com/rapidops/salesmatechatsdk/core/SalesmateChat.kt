@@ -65,9 +65,14 @@ internal class SalesmateChat(
         context.startActivity(intent)
     }
 
-    private fun initDebuggers(){
+    private fun initDebuggers() {
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(application)
         }
+    }
+
+    override fun setVerifiedId(verifiedId: String) {
+        val appSettingsDataSource = daggerDataComponent.getAppSettingsDataSource()
+        appSettingsDataSource.verifiedId = verifiedId
     }
 }

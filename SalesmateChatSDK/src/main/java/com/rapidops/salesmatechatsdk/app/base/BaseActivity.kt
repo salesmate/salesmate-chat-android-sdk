@@ -111,7 +111,7 @@ internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
 
     fun replaceFragment(
         fragment: Fragment,
-        addToBackStack: Boolean = false,
+        addToBackStack: Boolean = true,
         isAnimate: Boolean = false
     ) {
         val tag = fragment.javaClass.name

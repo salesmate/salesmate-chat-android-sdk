@@ -7,9 +7,11 @@ import com.rapidops.salesmatechatsdk.app.base.BaseFragment
 import com.rapidops.salesmatechatsdk.app.extension.loadImage
 import com.rapidops.salesmatechatsdk.app.extension.loadPattern
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
+import com.rapidops.salesmatechatsdk.app.fragment.chat.ChatFragment
 import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.ConversationListFragment
 import com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter.ConversationAdapter
-import com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter.UserAdapter
+import com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter.LetsChatUserAdapter
+import com.rapidops.salesmatechatsdk.app.interfaces.IItemListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
@@ -24,7 +26,6 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
 
     private lateinit var binding: FRecentChatListBinding
     private val conversationAdapter = ConversationAdapter()
-
     companion object {
         fun newInstance(): RecentChatFragment {
             return RecentChatFragment()
@@ -43,10 +44,8 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
     override fun setUpUI() {
         setHasOptionsMenu(true)
         getBaseActivity().setSupportActionBar(binding.toolbar)
-        binding.root.setBackgroundColor(ColorUtil.backGroundColor)
 
         viewModel.pingRes.apply {
-            binding.imgPattern.loadPattern(lookAndFeel.messengerBackground)
             if (lookAndFeel.logoUrl.isNotEmpty()) {
                 binding.imgLogo.loadImage(lookAndFeel.logoUrl)
             } else {
@@ -59,7 +58,23 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
         }
 
         observeViewModel()
+        attachListener()
         viewModel.subscribe()
+    }
+
+    private fun attachListener() {
+        conversationAdapter.clickListener = object : IItemListener<ConversationDetailItem> {
+            override fun onItemClick(position: Int, item: ConversationDetailItem) {
+                getBaseActivity().addFragment(ChatFragment.newInstance(item))
+            }
+        }
+
+        binding.incLetsChat.txtStartNewChat.setOnClickListener { startNewChat() }
+        binding.incRecentChat.txtStartNewChatList.setOnClickListener { startNewChat() }
+    }
+
+    private fun startNewChat() {
+        getBaseActivity().addFragment(ChatFragment.newInstance())
     }
 
     private fun observeViewModel() {
@@ -92,9 +107,8 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
 
                 rvUser.addItemDecoration(OverlapDecoration())
 
-                val availableUseList =
-                    users.filter { it.status == AvailabilityStatus.AVAILABLE.value }
-                val userAdapter = UserAdapter(availableUseList.size)
+                val availableUseList = getAvailableUserList()
+                val userAdapter = LetsChatUserAdapter(availableUseList.size)
                 userAdapter.setItems(availableUseList.take(4).toMutableList())
                 rvUser.adapter = userAdapter
 
@@ -115,7 +129,6 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
                     it?.setTint(ColorUtil.actionColor.foregroundColor())
                 }
                 txtStartNewChatList.isVisible = canVisitorOrContactStartNewConversation
-
 
                 conversationAdapter.setItems(list.take(2).toMutableList())
                 rvRecentConversation.adapter = conversationAdapter

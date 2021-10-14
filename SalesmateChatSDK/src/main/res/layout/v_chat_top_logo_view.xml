@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="@dimen/margin_small3"
+    android:layout_marginBottom="@dimen/margin_xlarge"
+    tools:showIn="@layout/f_chat"
+    android:visibility="gone"
+    tools:visibility="gone">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:maxHeight="40dp"
+        tools:layout_width="160dp"
+        android:layout_marginHorizontal="@dimen/margin_xxxxlarge"
+        tools:layout_height="40dp"
+        tools:src="@drawable/ic_logo" />
+
+    <com.rapidops.salesmatechatsdk.app.view.AppTextView
+        android:id="@+id/txtTeamIntro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_xxxxlarge"
+        android:textSize="@dimen/font_size_small"
+        android:layout_marginTop="@dimen/margin_small2"
+        app:textColorStyle="backgroundSecondaryForegroundColor"
+        tools:text="Hello There"
+        tools:textColor="@color/white" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        tools:listitem="@layout/r_chat_top_bar_user_item"
+        tools:itemCount="4"
+        android:layout_marginTop="@dimen/margin_xxlarge"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="horizontal" />
+
+    <com.rapidops.salesmatechatsdk.app.view.AppTextView
+        android:id="@+id/txtReplyTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="@dimen/margin_xxxxlarge"
+        android:textSize="@dimen/font_size_small"
+        app:textColorStyle="backgroundSecondaryForegroundColor"
+        tools:text="We reply in a few minutes"
+        tools:textColor="@color/white" />
+
+</LinearLayout>
