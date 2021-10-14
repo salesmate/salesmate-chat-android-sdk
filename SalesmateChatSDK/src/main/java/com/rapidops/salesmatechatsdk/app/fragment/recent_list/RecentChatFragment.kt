@@ -5,7 +5,6 @@ import androidx.core.view.isVisible
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseFragment
 import com.rapidops.salesmatechatsdk.app.extension.loadImage
-import com.rapidops.salesmatechatsdk.app.extension.loadPattern
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
 import com.rapidops.salesmatechatsdk.app.fragment.chat.ChatFragment
 import com.rapidops.salesmatechatsdk.app.fragment.conversation_list.ConversationListFragment
@@ -18,7 +17,6 @@ import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.databinding.FRecentChatListBinding
-import com.rapidops.salesmatechatsdk.domain.models.AvailabilityStatus
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 
 

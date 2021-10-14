@@ -10,10 +10,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.rapidops.salesmatechatsdk.R
-import com.rapidops.salesmatechatsdk.app.extension.loadPattern
 import com.rapidops.salesmatechatsdk.app.fragment.chat.ChatFragment
 import com.rapidops.salesmatechatsdk.app.interfaces.IBackPress
-import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
+import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateBackgroundPattern
 import com.rapidops.salesmatechatsdk.databinding.FBaseLayoutBinding
 import com.rapidops.salesmatechatsdk.domain.exception.SalesmateChatException
 
@@ -73,8 +72,9 @@ internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPres
         fBaseBinding?.fBaseLayoutContent?.addView(layoutView)
         setFitsSystemWindows()
 
-        fBaseBinding?.flBackground?.setBackgroundColor(ColorUtil.backGroundColor)
-        fBaseBinding?.imgPattern?.loadPattern(ColorUtil.messengerBackground)
+        fBaseBinding?.flBackground?.updateBackgroundPattern()
+
+
         observeBaseViewModel()
 
         return fBaseBinding?.root
