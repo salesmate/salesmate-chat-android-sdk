@@ -55,7 +55,7 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
         val messageItem = items[position]
         val txtDateTime = holder.itemView.findViewById<AppCompatTextView>(R.id.incDateTextView)
         txtDateTime?.apply {
-            if (isFromSameTimeSlot(items, position)) {
+            if (hideDateTimeView(items, position)) {
                 text = ""
                 isVisible = false
             } else {
@@ -65,13 +65,19 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
         }
     }
 
-    private fun isFromSameTimeSlot(items: MutableList<MessageItem>, position: Int): Boolean {
+    private fun hideDateTimeView(items: MutableList<MessageItem>, position: Int): Boolean {
         val isNotLast = position != items.lastIndex
         val isFirst = 0 == position
         if (!isNotLast || isFirst) return false
-        val previousMessageDate = items[position - 1].createdDate.getMessageTime()
-        val currentMessageDate = items[position].createdDate.getMessageTime()
-        return previousMessageDate == currentMessageDate
+        val previousMessage = items[position - 1]
+        val currentMessage = items[position]
+        if (previousMessage.userId == currentMessage.userId) {
+            val previousMessageDate = previousMessage.createdDate.getMessageTime()
+            val currentMessageDate = currentMessage.createdDate.getMessageTime()
+            return previousMessageDate == currentMessageDate
+        } else {
+            return false
+        }
     }
 
 }
