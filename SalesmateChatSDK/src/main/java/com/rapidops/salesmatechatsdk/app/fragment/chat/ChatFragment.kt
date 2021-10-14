@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseFragment
 import com.rapidops.salesmatechatsdk.app.extension.loadCircleProfileImage
@@ -14,6 +15,7 @@ import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ChatTopBarUserAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ToolbarUserAdapter
+import com.rapidops.salesmatechatsdk.app.interfaces.EndlessScrollListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setSendButtonColorStateList
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
@@ -27,6 +29,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var binding: FChatBinding
+    private lateinit var endlessScrollListener: EndlessScrollListener
 
 
     companion object {
@@ -70,8 +73,18 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         binding.txtSend.setSendButtonColorStateList()
 
 
-        binding.rvMessage.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
+        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
+        endlessScrollListener = object : EndlessScrollListener(layoutManager, 1) {
+            override fun onLoadMore(
+                page: Int,
+                totalItemsCount: Int,
+                view: RecyclerView?
+            ) {
+                viewModel.loadMoreMessageList(totalItemsCount)
+            }
+        }
+        binding.rvMessage.addOnScrollListener(endlessScrollListener)
+        binding.rvMessage.layoutManager =layoutManager
 
         messageAdapter = MessageAdapter(requireActivity())
         binding.rvMessage.adapter = messageAdapter

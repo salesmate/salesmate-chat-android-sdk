@@ -30,15 +30,17 @@ internal class ChatViewModel @Inject constructor(
     val showConversationDetail = SingleLiveEvent<ConversationDetailItem>()
     val showMessageList = SingleLiveEvent<List<MessageItem>>()
 
+    var conversationId: String? = null
+
     fun subscribe(conversationId: String?) {
         conversationId?.let {
+            this.conversationId = conversationId
             withProgress({
                 val params = GetConversationDetailUseCase.Param(conversationId)
                 val conversationDetailRes = getConversationDetailUseCase.execute(params)
                 withContext(coroutineContextProvider.ui) {
                     showConversationDetail.value = conversationDetailRes
                 }
-
                 loadMessageList(it)
             })
         }
@@ -50,6 +52,16 @@ internal class ChatViewModel @Inject constructor(
         val response = getMessageListUseCase.execute(params)
         withContext(coroutineContextProvider.ui) {
             showMessageList.value = response
+        }
+    }
+
+    fun loadMoreMessageList(offSet: Int) {
+        conversationId?.let {
+            withoutProgress({
+                loadMessageList(it, offSet)
+            }, {
+
+            })
         }
     }
 
