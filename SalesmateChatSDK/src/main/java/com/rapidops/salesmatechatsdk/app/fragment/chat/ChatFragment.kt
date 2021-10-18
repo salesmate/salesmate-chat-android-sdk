@@ -27,6 +27,7 @@ import com.rapidops.salesmatechatsdk.domain.models.User
 
 internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
+    private lateinit var layoutManager: LinearLayoutManager
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var binding: FChatBinding
     private lateinit var endlessScrollListener: EndlessScrollListener
@@ -73,7 +74,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         binding.txtSend.setSendButtonColorStateList()
 
 
-        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
+        layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
         endlessScrollListener = object : EndlessScrollListener(layoutManager, 1) {
             override fun onLoadMore(
                 page: Int,
@@ -107,6 +108,14 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
                 messageAdapter.addItems(it.toMutableList())
             }
         })
+
+        viewModel.showNewMessage.observe(this, {
+            if (messageAdapter.items.isNullOrEmpty()) {
+                messageAdapter.setItemList(it.toMutableList())
+            } else {
+                messageAdapter.addNewItems(it.toMutableList())
+            }
+        })
     }
 
     private fun attachListener() {
@@ -121,6 +130,15 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         binding.imgAttachment.setOnClickListener {
 
         }
+
+        messageAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                if (positionStart == 0) {
+                    binding.rvMessage.scrollToPosition(0)
+                }
+            }
+        })
     }
 
     private fun getTypedMessage(): String {

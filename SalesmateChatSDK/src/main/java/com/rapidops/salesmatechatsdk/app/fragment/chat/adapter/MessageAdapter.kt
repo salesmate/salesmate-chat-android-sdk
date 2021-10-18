@@ -55,4 +55,9 @@ internal open class MessageAdapter(activity: Activity) :
         notifyItemRangeInserted(0, items.size)
     }
 
+    fun addNewItems(items: MutableList<MessageItem>) {
+        this.items.addAll(0, items)
+        notifyItemRangeInserted(0, items.size)
+    }
+
 }

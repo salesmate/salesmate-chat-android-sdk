@@ -33,7 +33,8 @@ internal interface IService {
     suspend fun getMessages(
         @Path("conversationId") conversationId: String,
         @Query("rows") rows: Int,
-        @Query("offset") offset: Int
+        @Query("offset") offset: Int,
+        @Query("lastMessageDate") lastMessageDate: String?
     ): Response<MessageListRes>
 
 }

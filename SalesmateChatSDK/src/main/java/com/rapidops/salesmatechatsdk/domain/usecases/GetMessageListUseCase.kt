@@ -19,7 +19,8 @@ internal class GetMessageListUseCase @Inject constructor(
         val messageListRes = conversationDataSource.getMessageList(
             messageListParam.conversationId,
             messageListParam.rows,
-            messageListParam.offSet
+            messageListParam.offSet,
+            messageListParam.lastMessageDate
         )
 
         messageListRes.messageList.forEach {
@@ -29,7 +30,12 @@ internal class GetMessageListUseCase @Inject constructor(
         return messageListRes.messageList.reversed()
     }
 
-    data class Param(val conversationId: String, val rows: Int, val offSet: Int)
+    data class Param(
+        val conversationId: String,
+        val rows: Int,
+        val offSet: Int,
+        val lastMessageDate: String? = null
+    )
 
 }
 

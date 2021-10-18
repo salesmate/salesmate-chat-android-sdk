@@ -25,10 +25,11 @@ internal class ConversationRepository(private val service: IService) : IConversa
     override suspend fun getMessageList(
         conversationId: String,
         rows: Int,
-        offSet: Int
+        offSet: Int,
+        lastMessageDate: String?
     ): MessageListRes {
         return APIResponseMapper.getResponse {
-            service.getMessages(conversationId, rows, offSet)
+            service.getMessages(conversationId, rows, offSet,lastMessageDate)
         }
     }
 }

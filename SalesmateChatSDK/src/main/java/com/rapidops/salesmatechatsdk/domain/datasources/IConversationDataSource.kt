@@ -8,5 +8,10 @@ internal interface IConversationDataSource {
 
     suspend fun getConversationList(rows: Int, offSet: Int): ConversationRes
     suspend fun getConversationsDetail(conversationId: String): ConversationDetailRes
-    suspend fun getMessageList(conversationId: String, rows: Int, offSet: Int): MessageListRes
+    suspend fun getMessageList(
+        conversationId: String,
+        rows: Int,
+        offSet: Int,
+        lastMessageDate: String?
+    ): MessageListRes
 }
