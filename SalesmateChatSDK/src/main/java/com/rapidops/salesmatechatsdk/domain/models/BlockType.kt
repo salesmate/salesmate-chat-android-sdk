@@ -1,7 +1,6 @@
 package com.rapidops.salesmatechatsdk.domain.models
 
 enum class BlockType(val value: String) {
-    NONE("NONE"),
     TEXT("text"),
     HTML("html"),
     ORDERED_LIST("orderedList"),
@@ -12,7 +11,7 @@ enum class BlockType(val value: String) {
     companion object {
         fun findEnumFromValue(lookupValue: String): BlockType {
             val value = values().find { it.value.equals(lookupValue, true) }
-            return value ?: NONE
+            return value ?: TEXT
         }
     }
 }

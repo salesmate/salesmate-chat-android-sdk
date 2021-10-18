@@ -2,8 +2,9 @@ package com.rapidops.salesmatechatsdk.domain.models.message
 
 import com.google.gson.annotations.SerializedName
 import com.rapidops.salesmatechatsdk.domain.models.BaseModel
+import com.rapidops.salesmatechatsdk.domain.models.BlockType
 
-internal data class BlockDataItem(
+internal open class BlockDataItem(
 
 	@SerializedName("canned_response_id")
 	var cannedResponseId: Any? = null,
@@ -12,10 +13,7 @@ internal data class BlockDataItem(
 	var orderedNo: Int = 0,
 
 	@SerializedName("block_type")
-	var blockType: String = "",
-
-	@SerializedName("fileAttachmentData")
-	var fileAttachmentData: FileAttachmentData? = null,
+	var blockType: BlockType = BlockType.TEXT,
 
 	@SerializedName("is_draft")
 	var isDraft: Boolean = false,
@@ -29,12 +27,11 @@ internal data class BlockDataItem(
 	@SerializedName("id")
 	var id: String = "",
 
-	@SerializedName("text")
-	var text: String = "",
-
 	@SerializedName("body")
 	var body: Any? = null,
 
 	@SerializedName("linkName")
 	var linkName: String = ""
-) : BaseModel()
+) : BaseModel() {
+	var isSelfMessage: Boolean = false
+}

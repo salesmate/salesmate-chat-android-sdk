@@ -37,13 +37,13 @@ internal data class MessageItem(
 	var isInternalMessage: Boolean = false,
 
 	@SerializedName("referenced_teams")
-	var referencedTeams: List<Any>? = null,
+	var referencedTeams: List<ReferenceTeam>? = null,
 
 	@SerializedName("user_id")
 	var userId: String = "",
 
 	@SerializedName("referenced_users")
-	var referencedUsers: List<Any>? = null,
+	var referencedUsers: List<ReferenceUser>? = null,
 
 	@SerializedName("source_meta")
 	var sourceMeta: SourceMeta? = null,

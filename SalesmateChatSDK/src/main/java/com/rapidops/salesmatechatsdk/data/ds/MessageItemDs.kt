@@ -5,12 +5,8 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import com.rapidops.salesmatechatsdk.data.utils.*
-import com.rapidops.salesmatechatsdk.data.utils.GsonUtils
-import com.rapidops.salesmatechatsdk.data.utils.getString
-import com.rapidops.salesmatechatsdk.domain.models.User
-import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
-import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
-import com.rapidops.salesmatechatsdk.domain.models.message.SourceMeta
+import com.rapidops.salesmatechatsdk.domain.models.BlockType
+import com.rapidops.salesmatechatsdk.domain.models.message.*
 import java.lang.reflect.Type
 
 internal class MessageItemDs : JsonDeserializer<MessageItem> {
@@ -32,18 +28,13 @@ internal class MessageItemDs : JsonDeserializer<MessageItem> {
         messageItem.verifiedId = jsonObject.getString("verified_id") ?: ""
         messageItem.messageSummary = jsonObject.getString("message_summary") ?: ""
 
-        jsonObject.getJsonArray("blockData")?.let {
-            val listType = object : TypeToken<List<BlockDataItem>>() {}.type
-            messageItem.blockData =gson.fromJson(it, listType)
-        }
-
         messageItem.contactEmail = jsonObject.getString("contact_email") ?: ""
         messageItem.deletedDate = jsonObject.getString("deleted_date") ?: ""
 
         messageItem.isInternalMessage = jsonObject.getBoolean("is_internal_message")
 
         jsonObject.getJsonArray("referenced_teams")?.let {
-            val listType = object : TypeToken<List<Any>>() {}.type
+            val listType = object : TypeToken<List<ReferenceTeam>>() {}.type
             messageItem.referencedTeams =gson.fromJson(it, listType)
         }
 
@@ -51,7 +42,7 @@ internal class MessageItemDs : JsonDeserializer<MessageItem> {
 
 
         jsonObject.getJsonArray("referenced_users")?.let {
-            val listType = object : TypeToken<List<Any>>() {}.type
+            val listType = object : TypeToken<List<ReferenceUser>>() {}.type
             messageItem.referencedUsers =gson.fromJson(it, listType)
         }
 
@@ -64,6 +55,35 @@ internal class MessageItemDs : JsonDeserializer<MessageItem> {
         messageItem.linkname = jsonObject.getString("linkname") ?: ""
 
         messageItem.isBot = jsonObject.getBoolean("is_bot")
+
+
+        jsonObject.getJsonArray("blockData")?.let {
+            /*val listType = object : TypeToken<List<BlockDataItem>>() {}.type
+            messageItem.blockData =gson.fromJson(it, listType)*/
+
+            val blockDataList = arrayListOf<BlockDataItem>()
+            it.forEach { jsonElement ->
+                val blockDataJson = jsonElement.asJsonObject
+                if (blockDataJson.hasProperty("block_type")) {
+                    val blockTypeStr = blockDataJson.getString("block_type") ?: ""
+                    val blockType = BlockType.findEnumFromValue(blockTypeStr)
+                    var blockDataItem = BlockDataItem()
+                    if (blockType == BlockType.TEXT) {
+                        blockDataItem = gson.fromJson(jsonElement, TextBlockDataItem::class.java)
+                    } else if (blockType == BlockType.IMAGE) {
+                        blockDataItem = gson.fromJson(jsonElement, ImageBlockDataItem::class.java)
+                    } else if (blockType == BlockType.FILE) {
+                        blockDataItem = gson.fromJson(jsonElement, FileBlockDataItem::class.java)
+                    } else if (blockType == BlockType.HTML || blockType == BlockType.ORDERED_LIST || blockType == BlockType.UNORDERED_LIST) {
+                        blockDataItem = gson.fromJson(jsonElement, HtmlBlockDataItem::class.java)
+                    }
+                    blockDataItem.blockType = blockType
+                    blockDataItem.isSelfMessage = messageItem.userId.isEmpty()
+                    blockDataList.add(blockDataItem)
+                }
+            }
+            messageItem.blockData = blockDataList
+        }
 
         return messageItem
     }

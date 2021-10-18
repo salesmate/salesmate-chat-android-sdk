@@ -1,8 +1,8 @@
 package com.rapidops.salesmatechatsdk.app.fragment.chat.adapter
 
 import android.app.Activity
-import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.IncomingPlainMessageDelegate
-import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.OutgoingPlainMessageDelegate
+import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.IncomingMessageDelegate
+import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.OutgoingMessageDelegate
 import com.rapidops.salesmatechatsdk.app.recyclerview.adapterdelegates.ListDelegationAdapter
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 
@@ -10,35 +10,8 @@ internal open class MessageAdapter(activity: Activity) :
     ListDelegationAdapter<MutableList<MessageItem>>() {
     init {
         // Delegates
-        delegatesManager.addDelegate(IncomingPlainMessageDelegate(activity))
-        delegatesManager.addDelegate(OutgoingPlainMessageDelegate(activity))
-
-        /*items = mutableListOf(
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello",
-            "hello"
-        )*/
+        delegatesManager.addDelegate(IncomingMessageDelegate(activity))
+        delegatesManager.addDelegate(OutgoingMessageDelegate(activity))
     }
 
     fun addItems(items: MutableList<MessageItem>) {

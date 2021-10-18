@@ -1,5 +1,6 @@
 package com.rapidops.salesmatechatsdk.app.fragment.chat.adapter
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 abstract class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+    val context: Context = itemView.context
     //Getter Methods for Resources
     fun getString(holder: RecyclerView.ViewHolder, id: Int): String {
         return holder.itemView.context.getString(id)

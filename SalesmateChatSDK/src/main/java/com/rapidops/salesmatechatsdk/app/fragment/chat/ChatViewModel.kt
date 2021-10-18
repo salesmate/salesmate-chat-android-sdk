@@ -66,6 +66,15 @@ internal class ChatViewModel @Inject constructor(
             })
         }
 
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.UpdateConversationDetailEvent>()
+                .collectLatest { updateConversationDetail ->
+                    if (updateConversationDetail.data.conversations?.id == conversationId) {
+                        val conversationDetailItem = updateConversationDetail.data
+                        showConversationDetail.value = conversationDetailItem
+                    }
+                }
+        }
     }
 
     private suspend fun loadMessageList(conversationId: String, offSet: Int = 0) {

@@ -41,8 +41,8 @@ internal class MainViewModel @Inject constructor(
 
 
         subscribeEvent {
-            EventBus.events.filterIsInstance<AppEvent.NewMessageEvent>().collectLatest { event ->
-                loadConversationDetail(event.data.conversationId)
+            EventBus.events.filterIsInstance<AppEvent.UpdateConversationListEvent>().collectLatest { event ->
+                loadConversationDetail(event.conversationId)
             }
         }
     }

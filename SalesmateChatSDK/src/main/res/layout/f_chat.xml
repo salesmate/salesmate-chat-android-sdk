@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/llMessage"
-            tools:listitem="@layout/r_outgoing_plain_message" />
+            tools:listitem="@layout/r_outgoing_message" />
 
         <LinearLayout
             android:id="@+id/llMessage"

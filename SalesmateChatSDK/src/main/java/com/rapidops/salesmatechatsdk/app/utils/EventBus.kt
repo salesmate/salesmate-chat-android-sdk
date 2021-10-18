@@ -35,6 +35,8 @@ internal sealed class AppEvent {
 
     data class UserAvailabilityEvent(val data: UserAvailability) : AppEvent()
     data class NewMessageEvent(val data: ChatNewMessage) : AppEvent()
+    data class UpdateConversationListEvent(val conversationId: String) : AppEvent()
+
     data class UpdateConversationDetailEvent(val data: ConversationDetailItem) : AppEvent()
 
 }

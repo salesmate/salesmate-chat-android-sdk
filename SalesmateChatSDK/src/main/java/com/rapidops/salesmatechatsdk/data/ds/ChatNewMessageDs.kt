@@ -26,11 +26,6 @@ internal class ChatNewMessageDs : JsonDeserializer<ChatNewMessage> {
 
         val jsonObject = json.asJsonObject
 
-
-        jsonObject.getJsonArray("blocks")?.let {
-            val listType = object : TypeToken<List<String>>() {}.type
-            chatNewMessage.blocks = gson.fromJson(it, listType)
-        }
         chatNewMessage.conversationId = jsonObject.getString("conversationId") ?: ""
         chatNewMessage.createdDate = jsonObject.getString("createdDate") ?: ""
         chatNewMessage.messageId = jsonObject.getString("messageId") ?: ""

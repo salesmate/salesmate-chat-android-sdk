@@ -119,6 +119,16 @@ internal class SocketController @Inject constructor(
                                 gson.fromJson(it, ChatNewMessage::class.java)
                             eventBus.fireEvent(AppEvent.NewMessageEvent(chatNewMessage))
                         }
+                    } else if (publishType == PublishType.UPDATE_CONVERSATIONS_LIST) {
+                        /*{"type":"UPDATE_CONVERSATIONS_LIST","data":{"conversationId":"31f588e5-5495-4c08-930c-6829e405eb80","isInbound":true}}*/
+                        jsonObject.getJsonObject("data")?.let {
+                            it.getString("conversationId")?.let { conversationId ->
+                                eventBus.fireEvent(
+                                    AppEvent.UpdateConversationListEvent(conversationId)
+                                )
+                            }
+
+                        }
                     }
                 }
             }
