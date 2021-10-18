@@ -2,6 +2,7 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat.adapter
 
 import android.app.Activity
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.FileBlockDelegate
+import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.HtmlBlockDelegate
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.ImageBlockDelegate
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.TextBlockDelegate
 import com.rapidops.salesmatechatsdk.app.recyclerview.adapterdelegates.ListDelegationAdapter
@@ -14,6 +15,7 @@ internal class BlockAdapter(activity: Activity, list: MutableList<BlockDataItem>
         delegatesManager.addDelegate(TextBlockDelegate(activity))
         delegatesManager.addDelegate(ImageBlockDelegate(activity))
         delegatesManager.addDelegate(FileBlockDelegate(activity))
+        delegatesManager.addDelegate(HtmlBlockDelegate(activity))
         setItems(list)
     }
 

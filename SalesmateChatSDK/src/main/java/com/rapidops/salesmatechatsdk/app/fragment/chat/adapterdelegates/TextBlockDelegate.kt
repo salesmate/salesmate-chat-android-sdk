@@ -9,7 +9,6 @@ import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
 import com.rapidops.salesmatechatsdk.databinding.RTextBlockBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
-import com.rapidops.salesmatechatsdk.domain.models.message.HtmlBlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.TextBlockDataItem
 
 internal class TextBlockDelegate(activity: Activity) :
@@ -24,22 +23,18 @@ internal class TextBlockDelegate(activity: Activity) :
         position: Int,
         holder: MessageViewHolder
     ) {
-        val blockItem = items[position]
+        val blockItem = items[position] as TextBlockDataItem
         val bind = RTextBlockBinding.bind(holder.itemView)
 
-        if (blockItem is TextBlockDataItem) {
-            bind.txtPlainMessage.text = blockItem.text.fromNormalHtml()
-        } else if (blockItem is HtmlBlockDataItem) {
-            bind.txtPlainMessage.text = blockItem.text.fromNormalHtml()
-        }
+        bind.txtPlainMessage.text = blockItem.text.fromNormalHtml()
 
-        if(blockItem.isSelfMessage){
+        if (blockItem.isSelfMessage) {
             bind.txtPlainMessage.setTextColor(ColorUtil.actionColor.foregroundColor())
         }
     }
 
     override fun isForViewType(item: BlockDataItem, position: Int): Boolean {
-        return item is TextBlockDataItem || item is HtmlBlockDataItem
+        return item is TextBlockDataItem
     }
 
     internal class TextBlockViewHolder(itemView: View) : MessageViewHolder(itemView)
