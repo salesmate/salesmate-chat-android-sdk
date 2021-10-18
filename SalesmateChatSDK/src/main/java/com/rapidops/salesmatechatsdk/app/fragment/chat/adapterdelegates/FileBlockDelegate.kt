@@ -3,9 +3,11 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
+import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
+import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintAction
 import com.rapidops.salesmatechatsdk.databinding.RFileBlockBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.FileBlockDataItem
@@ -27,9 +29,13 @@ internal class FileBlockDelegate(activity: Activity) :
 
         bind.txtFileName.text = fileBlockDataItem.fileAttachmentData?.name
 
-        if(fileBlockDataItem.isSelfMessage){
+        if (fileBlockDataItem.isSelfMessage) {
             bind.txtFileName.setTextColor(ColorUtil.actionColor.foregroundColor())
         }
+
+        val drawable = holder.getDrawable(R.drawable.ic_attachment)
+        drawable?.setTintAction()
+        bind.txtFileName.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null)
 
     }
 

@@ -5,5 +5,8 @@
     android:layout_width="wrap_content"
     android:textColor="@color/text_black"
     android:layout_height="wrap_content"
+    android:drawableStart="@drawable/ic_attachment"
+    android:drawablePadding="@dimen/margin_micro5"
+    android:gravity="center"
     tools:text="File Name"
     android:textSize="@dimen/font_size_small" />

@@ -122,7 +122,11 @@ internal object ColorUtil {
         setTint(backGroundColor)
     }
 
-    val messengerBackground: String by lazy {
+    fun Drawable.setTintAction() {
+        setTint(actionColor)
+    }
+
+    private val messengerBackground: String by lazy {
         lookAndFeel.messengerBackground
     }
 
