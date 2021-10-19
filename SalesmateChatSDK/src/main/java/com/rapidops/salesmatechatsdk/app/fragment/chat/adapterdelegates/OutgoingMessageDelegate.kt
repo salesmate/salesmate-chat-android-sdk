@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.BlockAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
+import com.rapidops.salesmatechatsdk.app.view.SpacesItemDecoration
 import com.rapidops.salesmatechatsdk.databinding.ROutgoingMessageBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 
@@ -28,6 +29,9 @@ internal class OutgoingMessageDelegate(private val activity: Activity) :
 
         val blockAdapter = BlockAdapter(activity, messageItem.blockData)
         val layoutManager = LinearLayoutManager(holder.context, LinearLayoutManager.VERTICAL, false)
+
+        bind.rvBlockList.addItemDecoration(SpacesItemDecoration(10))
+
         bind.rvBlockList.layoutManager = layoutManager
         bind.rvBlockList.adapter = blockAdapter
 
