@@ -6,8 +6,7 @@ import android.view.ViewGroup
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
-import com.rapidops.salesmatechatsdk.app.view.htmltextview.GlideImageGetter
-import com.rapidops.salesmatechatsdk.app.view.htmltextview.GlideImageGetterr
+import com.rapidops.salesmatechatsdk.app.view.htmltextview.GlideImageGetterK
 import com.rapidops.salesmatechatsdk.databinding.RTextBlockBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.TextBlockDataItem
@@ -29,7 +28,7 @@ internal class TextBlockDelegate(activity: Activity) :
 
         bind.txtPlainMessage.setHtml(
             blockItem.text,
-            GlideImageGetter(
+            GlideImageGetterK(
                 bind.txtPlainMessage
             )
         )
