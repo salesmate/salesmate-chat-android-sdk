@@ -4,7 +4,6 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.utils.ColorGenerator
 import com.rapidops.salesmatechatsdk.app.view.TextDrawable
@@ -13,21 +12,18 @@ import com.rapidops.salesmatechatsdk.app.view.TextDrawable.Companion.builder
 
 fun ImageView.loadImage(url: String?) {
     Glide.with(context)
-        .applyDefaultRequestOptions(
-            RequestOptions
-                .diskCacheStrategyOf(DiskCacheStrategy.DATA)
-        )
-        .load(url).into(this)
+        .load(url)
+        .diskCacheStrategy(DiskCacheStrategy.DATA)
+        .into(this)
 }
 
 fun ImageView.loadImageWithRoundedTransformation(url: String?) {
     val dimension = context.resources.getDimension(R.dimen.img_rounded_corner)
     Glide.with(context)
-        .applyDefaultRequestOptions(
-            RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA)
-                .transform(RoundedCorners(dimension.toInt()))
-        )
-        .load(url).into(this)
+        .load(url)
+        .diskCacheStrategy(DiskCacheStrategy.DATA)
+        .transform(RoundedCorners(dimension.toInt()))
+        .into(this)
 }
 
 
@@ -36,12 +32,9 @@ fun ImageView.loadCircleProfileImage(url: String?, name: String? = "") {
         setImageDrawable(getTextDrawableFromName(name, layoutParams.height))
     } else {
         Glide.with(context)
-            .applyDefaultRequestOptions(
-                RequestOptions
-                    .diskCacheStrategyOf(DiskCacheStrategy.DATA)
-                    .circleCrop()
-            )
-            .load(url).into(this)
+            .load(url)
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+            .circleCrop().into(this)
     }
 
 }

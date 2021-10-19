@@ -10,13 +10,14 @@ import android.graphics.drawable.Drawable
 import android.text.Html.ImageGetter
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import java.lang.ref.WeakReference
 
-class GlideImageGetterK(
+class GlideImageGetter(
     textView: TextView,
     private val matchParentWidth: Boolean = false,
     densityAware: Boolean = false,
@@ -44,6 +45,7 @@ class GlideImageGetterK(
                 Glide.with(context)
                     .asBitmap()
                     .load(source)
+                    .diskCacheStrategy(DiskCacheStrategy.DATA)
                     .into(drawable)
             }
         }
