@@ -3,10 +3,10 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
-import com.rapidops.salesmatechatsdk.app.extension.fromNormalHtml
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
+import com.rapidops.salesmatechatsdk.app.view.htmltextview.HtmlHttpImageGetter
 import com.rapidops.salesmatechatsdk.databinding.RTextBlockBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.TextBlockDataItem
@@ -26,7 +26,10 @@ internal class TextBlockDelegate(activity: Activity) :
         val blockItem = items[position] as TextBlockDataItem
         val bind = RTextBlockBinding.bind(holder.itemView)
 
-        bind.txtPlainMessage.text = blockItem.text.fromNormalHtml()
+        bind.txtPlainMessage.setHtml(
+            blockItem.text,
+            HtmlHttpImageGetter(bind.txtPlainMessage)
+        )
 
         if (blockItem.isSelfMessage) {
             bind.txtPlainMessage.setTextColor(ColorUtil.actionColor.foregroundColor())
