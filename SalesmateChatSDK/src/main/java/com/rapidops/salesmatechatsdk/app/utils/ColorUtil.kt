@@ -11,6 +11,8 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import androidx.core.graphics.ColorUtils
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.core.SalesmateChat
@@ -115,15 +117,27 @@ internal object ColorUtil {
     }
 
     fun Drawable.setTintFromBackground() {
-        setTint(backGroundColor.foregroundColor())
+        //setTint(backGroundColor.foregroundColor())
+        colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+            backGroundColor.foregroundColor(),
+            BlendModeCompat.SRC_ATOP
+        )
     }
 
     fun Drawable.setTintBackground() {
-        setTint(backGroundColor)
+        //setTint(backGroundColor)
+        colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+            backGroundColor,
+            BlendModeCompat.SRC_ATOP
+        )
     }
 
     fun Drawable.setTintAction() {
-        setTint(actionColor)
+        //setTint(actionColor)
+        colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+            actionColor,
+            BlendModeCompat.SRC_ATOP
+        )
     }
 
     private val messengerBackground: String by lazy {
