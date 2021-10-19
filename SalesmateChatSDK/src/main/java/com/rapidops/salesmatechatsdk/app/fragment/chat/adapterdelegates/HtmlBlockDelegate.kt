@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
-import com.rapidops.salesmatechatsdk.app.view.htmltextview.HtmlHttpImageGetter
+import com.rapidops.salesmatechatsdk.app.view.htmltextview.GlideImageGetter
+import com.rapidops.salesmatechatsdk.app.view.htmltextview.GlideImageGetterr
 import com.rapidops.salesmatechatsdk.databinding.RHtmlBlockBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.HtmlBlockDataItem
-import com.rapidops.salesmatechatsdk.domain.models.message.TextBlockDataItem
 
 internal class HtmlBlockDelegate(activity: Activity) :
     BaseBlockAdapterDelegate(activity) {
@@ -29,7 +29,9 @@ internal class HtmlBlockDelegate(activity: Activity) :
 
         bind.txtHtmlMessage.setHtml(
             htmlBlockDataItem.text,
-            HtmlHttpImageGetter(bind.txtHtmlMessage)
+            GlideImageGetter(
+                bind.txtHtmlMessage
+            )
         )
 
         if (htmlBlockDataItem.isSelfMessage) {
