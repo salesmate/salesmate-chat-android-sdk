@@ -3,10 +3,12 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseFragment
 import com.rapidops.salesmatechatsdk.app.extension.loadCircleProfileImage
@@ -24,6 +26,7 @@ import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.databinding.FChatBinding
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.User
+import kotlin.math.abs
 
 internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
@@ -84,9 +87,9 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
                 viewModel.loadMoreMessageList(totalItemsCount)
             }
         }
+        layoutManager.stackFromEnd = true
         binding.rvMessage.addOnScrollListener(endlessScrollListener)
-        binding.rvMessage.layoutManager =layoutManager
-
+        binding.rvMessage.layoutManager = layoutManager
         messageAdapter = MessageAdapter(requireActivity())
         binding.rvMessage.adapter = messageAdapter
 
@@ -131,6 +134,12 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
         }
 
+        binding.edtMessage.setOnFocusChangeListener { view, isFocus ->
+            if (isFocus) {
+                binding.appBar.setExpanded(false, true)
+            }
+        }
+
         messageAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
@@ -149,27 +158,32 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         conversationDetailItem?.user?.id?.let {
             showToolbarWithUserDetail(conversationDetailItem.user)
         } ?: run {
-            showToolbarWithoutConversationDetail()
+            showToolbarWithoutUserDetail()
+            if (conversationDetailItem == null) {
+                binding.appBar.setExpanded(true)
+            }
         }
-
     }
 
-    private fun showToolbarWithoutConversationDetail() {
+    private fun showToolbarWithoutUserDetail() {
         viewModel.pingRes.apply {
-            if (lookAndFeel.logoUrl.isNotEmpty()) {
-                bindToolbarWithLogo(this)
+            bindToolbarWithLogo(this)
+            bindToolbarWithoutLogo(this)
+
+            if (lookAndFeel.logoUrl.isEmpty()) {
+                binding.incChatTopLogoView.root.isVisible = false
+                binding.incChatToolbarView.root.isVisible = true
             } else {
-                bindToolbarWithoutLogo(this)
+                binding.incChatTopLogoView.root.isInvisible = true
             }
         }
     }
 
     private fun bindToolbarWithLogo(pingRes: PingRes) {
         pingRes.apply {
-            binding.incChatToolbarView.root.isVisible = false
+            binding.appBar.addOnOffsetChangedListener(appBarOnOffsetChangedListener)
             binding.incChatUserToolbarView.root.isVisible = false
             binding.incChatTopLogoView.apply {
-                root.isVisible = true
                 imgLogo.loadImage(lookAndFeel.logoUrl)
                 txtTeamIntro.text = welcomeMessages.first().teamIntro
                 txtReplyTime.text =
@@ -185,10 +199,8 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
     private fun bindToolbarWithoutLogo(pingRes: PingRes) {
         pingRes.apply {
-            binding.incChatTopLogoView.root.isVisible = false
             binding.incChatUserToolbarView.root.isVisible = false
             binding.incChatToolbarView.apply {
-                root.isVisible = true
                 txtReplyTime.text = getString(R.string.lbl_we_reply, availability?.replyTime)
                 txtWorkspaceName.text = workspaceData?.name
                 val availableUserList = getAvailableUserList()
@@ -201,6 +213,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
     private fun showToolbarWithUserDetail(user: User?) {
         user?.let {
+            binding.appBar.removeOnOffsetChangedListener(appBarOnOffsetChangedListener)
             binding.incChatTopLogoView.root.isVisible = false
             binding.incChatToolbarView.root.isVisible = false
             binding.incChatUserToolbarView.apply {
@@ -215,6 +228,26 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             }
         }
     }
+
+    private val appBarOnOffsetChangedListener =
+        AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val percentage =
+                abs(verticalOffset).toFloat() / appBarLayout!!.totalScrollRange
+            if (abs(verticalOffset) == appBarLayout.totalScrollRange) {
+                //  Collapsed
+                binding.incChatTopLogoView.root.animate().alpha(0f)
+                binding.incChatToolbarView.root.isVisible = true
+            } else if (verticalOffset == 0) {
+                //Expanded
+                binding.incChatToolbarView.root.animate().alpha(0f)
+                binding.incChatTopLogoView.root.isVisible = true
+            } else {
+                //In Between
+                binding.incChatToolbarView.root.animate().alpha(percentage)
+                binding.incChatTopLogoView.root.animate().alpha(1 - percentage)
+            }
+
+        }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)

@@ -2,113 +2,131 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:background="@color/default_background_color"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:background="@color/default_background_color">
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar"
             android:layout_width="match_parent"
-            tools:layout_height="56dp"
-            app:contentInsetStartWithNavigation="0dp"
-            android:layout_height="?attr/actionBarSize">
+            android:background="@android:color/transparent"
+            app:elevation="0dp"
+            app:expanded="false"
+            android:layout_height="wrap_content">
 
-            <include
-                android:id="@+id/incChatToolbarView"
-                layout="@layout/v_chat_toolbar_view" />
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+                app:toolbarId="@+id/toolbar">
 
-            <include
-                android:id="@+id/incChatUserToolbarView"
-                layout="@layout/v_chat_user_toolbar_view" />
+                <include
+                    android:id="@+id/incChatTopLogoView"
+                    layout="@layout/v_chat_top_logo_view" />
 
-        </androidx.appcompat.widget.Toolbar>
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    tools:layout_height="56dp"
+                    app:layout_collapseMode="pin"
+                    app:contentInsetStartWithNavigation="0dp"
+                    android:layout_height="?attr/actionBarSize">
 
-        <include
-            android:id="@+id/incChatTopLogoView"
-            layout="@layout/v_chat_top_logo_view" />
+                    <include
+                        android:id="@+id/incChatToolbarView"
+                        layout="@layout/v_chat_toolbar_view" />
 
-    </FrameLayout>
+                    <include
+                        android:id="@+id/incChatUserToolbarView"
+                        layout="@layout/v_chat_user_toolbar_view" />
+
+                </androidx.appcompat.widget.Toolbar>
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/drw_corner_top_background_white">
+        </com.google.android.material.appbar.AppBarLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvMessage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/llMessage"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:background="@drawable/drw_corner_top_background_white"
             tools:listitem="@layout/r_outgoing_message" />
 
-        <LinearLayout
-            android:id="@+id/llMessage"
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:id="@+id/llMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_gray" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_alignParentBottom="true">
+            android:paddingHorizontal="@dimen/padding_large"
+            android:paddingVertical="@dimen/padding_small2"
+            android:hint="@string/lbl_start_typing"
+            android:background="@null"
+            android:inputType="text|textCapSentences|textMultiLine"
+            android:maxLines="2"
+            android:textSize="@dimen/font_size_small"
+            android:textColor="@color/text_black"
+            android:textColorHint="@color/hint_color" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/light_gray" />
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/edtMessage"
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/padding_small2">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgAttachment"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/padding_large"
-                android:paddingVertical="@dimen/padding_small2"
-                android:hint="@string/lbl_start_typing"
-                android:background="@null"
-                android:inputType="text|textCapSentences|textMultiLine"
-                android:maxLines="2"
-                android:textSize="@dimen/font_size_small"
-                android:textColor="@color/text_black"
-                android:textColorHint="@color/hint_color" />
+                app:srcCompat="@drawable/ic_attachment"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/padding_small2" />
 
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/padding_small2">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imgAttachment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_attachment"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="@dimen/padding_small2" />
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content" />
-
-                <com.rapidops.salesmatechatsdk.app.view.AppTextView
-                    android:id="@+id/txtSend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:padding="@dimen/padding_small2"
-                    style="@style/TextMedium"
-                    android:layout_gravity="center"
-                    android:textColor="@color/color_send"
-                    android:enabled="false"
-                    android:gravity="center"
-                    android:background="?attr/selectableItemBackground"
-                    android:text="@string/lbl_send" />
-            </LinearLayout>
-
+            <com.rapidops.salesmatechatsdk.app.view.AppTextView
+                android:id="@+id/txtSend"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="@dimen/padding_small2"
+                style="@style/TextMedium"
+                android:layout_gravity="center"
+                android:textColor="@color/color_send"
+                android:enabled="false"
+                android:gravity="center"
+                android:background="?attr/selectableItemBackground"
+                android:text="@string/lbl_send" />
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>
