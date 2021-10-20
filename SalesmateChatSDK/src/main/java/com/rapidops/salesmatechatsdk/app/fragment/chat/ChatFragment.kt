@@ -87,7 +87,6 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
                 viewModel.loadMoreMessageList(totalItemsCount)
             }
         }
-        layoutManager.stackFromEnd = true
         binding.rvMessage.addOnScrollListener(endlessScrollListener)
         binding.rvMessage.layoutManager = layoutManager
         messageAdapter = MessageAdapter(requireActivity())
@@ -122,8 +121,8 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             viewModel.updateAdapterList(messageAdapter.items)
         })
 
-        viewModel.deleteMessage.observe(this, {
-            messageAdapter.deleteMessage(it)
+        viewModel.updateMessage.observe(this, {
+            messageAdapter.updateMessage(it)
             viewModel.updateAdapterList(messageAdapter.items)
         })
     }
@@ -134,7 +133,8 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         }
 
         binding.txtSend.setOnClickListener {
-
+            viewModel.sendTextMessage(getTypedMessage())
+            clearTypedMessage()
         }
 
         binding.imgAttachment.setOnClickListener {
@@ -159,6 +159,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
     private fun getTypedMessage(): String {
         return binding.edtMessage.text.toString().trim()
+    }
+
+    private fun clearTypedMessage() {
+        binding.edtMessage.text?.clear()
     }
 
     private fun setUpTopBar(conversationDetailItem: ConversationDetailItem?) {

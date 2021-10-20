@@ -1,8 +1,10 @@
 package com.rapidops.salesmatechatsdk.data.repositories
 
+import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.data.resmodels.ConversationDetailRes
 import com.rapidops.salesmatechatsdk.data.resmodels.ConversationRes
 import com.rapidops.salesmatechatsdk.data.resmodels.MessageListRes
+import com.rapidops.salesmatechatsdk.data.resmodels.SendMessageRes
 import com.rapidops.salesmatechatsdk.data.webserivce.IService
 import com.rapidops.salesmatechatsdk.domain.datasources.IConversationDataSource
 import com.rapidops.salesmatechatsdk.domain.exception.APIResponseMapper
@@ -29,7 +31,16 @@ internal class ConversationRepository(private val service: IService) : IConversa
         lastMessageDate: String?
     ): MessageListRes {
         return APIResponseMapper.getResponse {
-            service.getMessages(conversationId, rows, offSet,lastMessageDate)
+            service.getMessages(conversationId, rows, offSet, lastMessageDate)
+        }
+    }
+
+    override suspend fun sendMessages(
+        conversationId: String,
+        sendMessageReq: SendMessageReq
+    ): SendMessageRes {
+        return APIResponseMapper.getResponse {
+            service.sendMessage(conversationId, sendMessageReq)
         }
     }
 }

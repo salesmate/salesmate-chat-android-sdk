@@ -3,6 +3,7 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.BlockAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
@@ -10,6 +11,7 @@ import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
 import com.rapidops.salesmatechatsdk.app.view.SpacesItemDecoration
 import com.rapidops.salesmatechatsdk.databinding.ROutgoingMessageBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
+import com.rapidops.salesmatechatsdk.domain.models.message.SendStatus
 
 internal class OutgoingMessageDelegate(private val activity: Activity) :
     BaseMessageAdapterDelegate(activity) {
@@ -27,6 +29,11 @@ internal class OutgoingMessageDelegate(private val activity: Activity) :
         val messageItem = items[position]
 
         viewHolder.blockAdapter.setItemList(messageItem.blockData)
+
+        viewHolder.bind.incDateTextView.txtStatus.apply {
+            text = if (messageItem.sendStatus == SendStatus.SENDING) "Sending..." else ""
+            isVisible = messageItem.sendStatus == SendStatus.SENDING
+        }
     }
 
     override fun isForViewType(item: MessageItem, position: Int): Boolean {

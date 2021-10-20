@@ -90,6 +90,7 @@ internal fun String.getRelativeTimeStringFromPostTime(): String {
     return DateUtils.getRelativeTimeSpanString(parse.millis).toString()
 }
 
+
 internal fun String.getPeriod(): String {
     return parseFromISOFormat().getPeriod()
 }
@@ -139,6 +140,18 @@ internal fun String.getMessageTime(): String {
         else -> {
             "Just now"
         }
+    }
+
+}
+
+internal object DateUtil {
+
+    fun getCurrentISOFormatDateTime(): String {
+        return DateTime.now().getISOFormatDate()
+    }
+
+    private fun DateTime.getISOFormatDate(): String {
+        return withZone(DateTimeZone.UTC).parseDate(DateFormatType.yyyy_MM_dd_T_HH_mm_ss_SSS_Z)
     }
 
 }

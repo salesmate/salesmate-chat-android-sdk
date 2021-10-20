@@ -2,20 +2,29 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat
 
 import com.rapidops.salesmatechatsdk.app.base.BaseViewModel
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
+import com.rapidops.salesmatechatsdk.app.extension.DateUtil
 import com.rapidops.salesmatechatsdk.app.utils.AppEvent
 import com.rapidops.salesmatechatsdk.app.utils.EventBus
 import com.rapidops.salesmatechatsdk.app.utils.SingleLiveEvent
+import com.rapidops.salesmatechatsdk.data.reqmodels.Blocks
+import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
+import com.rapidops.salesmatechatsdk.data.reqmodels.convertToMessageItem
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
+import com.rapidops.salesmatechatsdk.domain.models.BlockType
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageType
+import com.rapidops.salesmatechatsdk.domain.models.message.SendStatus
 import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationDetailUseCase
 import com.rapidops.salesmatechatsdk.domain.usecases.GetMessageListUseCase
 import com.rapidops.salesmatechatsdk.domain.usecases.GetUserFromUserIdUseCase
+import com.rapidops.salesmatechatsdk.domain.usecases.SendMessageUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.withContext
+import java.util.*
 import javax.inject.Inject
 
 internal class ChatViewModel @Inject constructor(
@@ -23,7 +32,8 @@ internal class ChatViewModel @Inject constructor(
     private val coroutineContextProvider: ICoroutineContextProvider,
     private val getConversationDetailUseCase: GetConversationDetailUseCase,
     private val getMessageListUseCase: GetMessageListUseCase,
-    private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase
+    private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase,
+    private val sendMessageUseCase: SendMessageUseCase,
 ) : BaseViewModel(coroutineContextProvider) {
 
     var adapterMessageList: List<MessageItem> = listOf()
@@ -39,9 +49,9 @@ internal class ChatViewModel @Inject constructor(
     val showConversationDetail = SingleLiveEvent<ConversationDetailItem>()
     val showMessageList = SingleLiveEvent<List<MessageItem>>()
     val showNewMessage = SingleLiveEvent<List<MessageItem>>()
-    val deleteMessage = SingleLiveEvent<MessageItem>()
+    val updateMessage = SingleLiveEvent<MessageItem>()
 
-    var conversationId: String? = null
+    private var conversationId: String? = null
 
 
     fun subscribe(conversationId: String?) {
@@ -54,19 +64,6 @@ internal class ChatViewModel @Inject constructor(
                     showConversationDetail.value = conversationDetailRes
                 }
                 loadMessageList(it)
-
-                subscribeEvent {
-                    EventBus.events.filterIsInstance<AppEvent.NewMessageEvent>()
-                        .collectLatest { event ->
-                            adapterMessageList.firstOrNull()?.let {
-                                loadMessageListByLastMessageDate(
-                                    conversationId,
-                                    it.createdDate
-                                )
-                            }
-
-                        }
-                }
             })
         }
 
@@ -116,6 +113,21 @@ internal class ChatViewModel @Inject constructor(
 
 
     private fun subscribeEvents() {
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.NewMessageEvent>()
+                .collectLatest { event ->
+                    if (event.data.conversationId == conversationId) {
+                        conversationId?.let { conversationId ->
+                            adapterMessageList.firstOrNull()?.let { messageItem ->
+                                loadMessageListByLastMessageDate(
+                                    conversationId,
+                                    messageItem.createdDate
+                                )
+                            }
+                        }
+                    }
+                }
+        }
 
         subscribeEvent {
             EventBus.events.filterIsInstance<AppEvent.UpdateConversationDetailEvent>()
@@ -133,7 +145,7 @@ internal class ChatViewModel @Inject constructor(
                     deleteMessageDetail.data.user =
                         getUserFromUserIdUseCase.execute(deleteMessageDetail.data.userId)
                     if (deleteMessageDetail.data.conversationId == conversationId) {
-                        deleteMessage.value = deleteMessageDetail.data
+                        updateMessage.value = deleteMessageDetail.data
                     }
                 }
         }
@@ -142,6 +154,49 @@ internal class ChatViewModel @Inject constructor(
 
     fun updateAdapterList(items: MutableList<MessageItem>?) {
         adapterMessageList = items ?: listOf()
+    }
+
+    fun sendTextMessage(typedMessage: String) {
+        if (conversationId == null) {
+            conversationId = UUID.randomUUID().toString()
+        }
+        val uniqueMessageId = UUID.randomUUID().toString()
+        val sendMessageReq = SendMessageReq()
+        sendMessageReq.apply {
+            this.blockData.apply {
+                add(Blocks().apply {
+                    this.text = typedMessage
+                    this.type = BlockType.TEXT.value
+                })
+            }
+            this.messageType = MessageType.COMMENT.value
+            this.messageId = uniqueMessageId
+            this.isBot = false
+            this.isInbound = true
+            this.conversationName = appSettingsDataSource.pseudoName
+        }
+        val messageItem = sendMessageReq.convertToMessageItem()
+        messageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
+        withoutProgress({
+            messageItem.sendStatus = SendStatus.SENDING
+            withContext(coroutineContextProvider.ui) {
+                showNewMessage.value = listOf(messageItem)
+            }
+            val response = sendMessageUseCase.execute(
+                SendMessageUseCase.Param(
+                    conversationId!!,
+                    sendMessageReq
+                )
+            )
+            withContext(coroutineContextProvider.ui) {
+                messageItem.sendStatus =
+                    if (response.isSuccess) SendStatus.SUCCESS else SendStatus.FAIL
+                updateMessage.value = messageItem
+            }
+        }, {
+            messageItem.sendStatus = SendStatus.FAIL
+            updateMessage.value = messageItem
+        })
     }
 
 }

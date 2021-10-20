@@ -65,5 +65,7 @@ internal data class MessageItem(
 	var user: User? = null
 
 	var conversationId: String = ""
+
+	var sendStatus = SendStatus.NONE
 }
 

@@ -11,6 +11,7 @@ import com.rapidops.salesmatechatsdk.app.extension.getMessageTime
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.recyclerview.adapterdelegates.AdapterDelegate
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
+import com.rapidops.salesmatechatsdk.domain.models.message.SendStatus
 
 internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
     AdapterDelegate<MutableList<MessageItem>>() {
@@ -62,9 +63,9 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
         position: Int,
     ) {
         val messageItem = items[position]
-        val txtDateTime = holder.itemView.findViewById<AppCompatTextView>(R.id.incDateTextView)
+        val txtDateTime = holder.itemView.findViewById<AppCompatTextView>(R.id.txtDateTime)
         txtDateTime?.apply {
-            if (hideDateTimeView(items, position)) {
+            if (messageItem.sendStatus == SendStatus.SENDING || hideDateTimeView(items, position)) {
                 text = ""
                 isVisible = false
             } else {

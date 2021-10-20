@@ -1,6 +1,7 @@
 package com.rapidops.salesmatechatsdk.data.webserivce
 
 import com.google.gson.JsonElement
+import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.data.resmodels.*
 import retrofit2.Response
 import retrofit2.http.*
@@ -36,5 +37,12 @@ internal interface IService {
         @Query("offset") offset: Int,
         @Query("lastMessageDate") lastMessageDate: String?
     ): Response<MessageListRes>
+
+
+    @POST("v1/conversations/{conversationId}/message")
+    suspend fun sendMessage(
+        @Path("conversationId") conversationId: String?,
+        @Body sendMessageReq: SendMessageReq
+    ): Response<SendMessageRes>
 
 }

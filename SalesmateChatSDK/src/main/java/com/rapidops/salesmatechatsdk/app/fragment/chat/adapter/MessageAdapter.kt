@@ -34,7 +34,7 @@ internal open class MessageAdapter(activity: Activity) :
     }
 
 
-    fun deleteMessage(item: MessageItem) {
+    fun updateMessage(item: MessageItem) {
         val indexOfFirst = items.indexOfFirst { item.id == it.id }
         if (indexOfFirst != -1) {
             items[indexOfFirst] = item

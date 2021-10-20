@@ -7,7 +7,7 @@ import com.rapidops.salesmatechatsdk.domain.models.BlockType
 internal open class BlockDataItem(
 
 	@SerializedName("canned_response_id")
-	var cannedResponseId: Any? = null,
+	var cannedResponseId: String? = null,
 
 	@SerializedName("ordered_no")
 	var orderedNo: Int = 0,
@@ -19,7 +19,7 @@ internal open class BlockDataItem(
 	var isDraft: Boolean = false,
 
 	@SerializedName("file_id")
-	var fileId: Any? = null,
+	var fileId: String? = null,
 
 	@SerializedName("message_id")
 	var messageId: String = "",
