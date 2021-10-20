@@ -110,6 +110,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             } else {
                 messageAdapter.addItems(it.toMutableList())
             }
+            viewModel.updateAdapterList(messageAdapter.items)
         })
 
         viewModel.showNewMessage.observe(this, {
@@ -118,10 +119,12 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             } else {
                 messageAdapter.addNewItems(it.toMutableList())
             }
+            viewModel.updateAdapterList(messageAdapter.items)
         })
 
         viewModel.deleteMessage.observe(this, {
             messageAdapter.deleteMessage(it)
+            viewModel.updateAdapterList(messageAdapter.items)
         })
     }
 

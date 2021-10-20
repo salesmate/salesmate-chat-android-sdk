@@ -26,6 +26,8 @@ internal class ChatViewModel @Inject constructor(
     private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase
 ) : BaseViewModel(coroutineContextProvider) {
 
+    var adapterMessageList: List<MessageItem> = listOf()
+
     val pingRes: PingRes by lazy {
         appSettingsDataSource.pingRes
     }
@@ -41,7 +43,6 @@ internal class ChatViewModel @Inject constructor(
 
     var conversationId: String? = null
 
-    private val messageItemList = arrayListOf<MessageItem>()
 
     fun subscribe(conversationId: String?) {
         conversationId?.let {
@@ -57,7 +58,7 @@ internal class ChatViewModel @Inject constructor(
                 subscribeEvent {
                     EventBus.events.filterIsInstance<AppEvent.NewMessageEvent>()
                         .collectLatest { event ->
-                            messageItemList.firstOrNull()?.let {
+                            adapterMessageList.firstOrNull()?.let {
                                 loadMessageListByLastMessageDate(
                                     conversationId,
                                     it.createdDate
@@ -89,7 +90,7 @@ internal class ChatViewModel @Inject constructor(
         cancelableJobWithoutProgress({
             val params = GetMessageListUseCase.Param(conversationId, 10, 0, lastMessageDate)
             val response = getMessageListUseCase.execute(params).toMutableList()
-            val filteredMessages = getFilteredMessages(response, true)
+            val filteredMessages = getFilteredMessages(response)
             withContext(coroutineContextProvider.ui) {
                 showNewMessage.value = filteredMessages
             }
@@ -99,19 +100,8 @@ internal class ChatViewModel @Inject constructor(
 
     }
 
-    private fun getFilteredMessages(
-        messageItem: List<MessageItem>,
-        isNewMessage: Boolean = false
-    ): List<MessageItem> {
-        val filteredList =
-            messageItem.filter { item -> messageItemList.any { item.id == it.id }.not() }
-        if (isNewMessage) {
-            messageItemList.addAll(0, filteredList)
-        } else {
-            messageItemList.addAll(filteredList)
-        }
-
-        return filteredList
+    private fun getFilteredMessages(messageItem: List<MessageItem>): List<MessageItem> {
+        return messageItem.filter { item -> adapterMessageList.any { item.id == it.id }.not() }
     }
 
     fun loadMoreMessageList(offSet: Int) {
@@ -148,6 +138,10 @@ internal class ChatViewModel @Inject constructor(
                 }
         }
 
+    }
+
+    fun updateAdapterList(items: MutableList<MessageItem>?) {
+        adapterMessageList = items ?: listOf()
     }
 
 }
