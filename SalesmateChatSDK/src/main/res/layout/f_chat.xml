@@ -73,10 +73,6 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical">
-        <com.rapidops.salesmatechatsdk.app.view.htmltextview.HtmlTextView
-            android:id="@+id/txtHtml"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
         <View
             android:layout_width="match_parent"

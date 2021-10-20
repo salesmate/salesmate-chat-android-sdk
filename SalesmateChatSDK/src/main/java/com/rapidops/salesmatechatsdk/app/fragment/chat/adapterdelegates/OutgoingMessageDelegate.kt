@@ -23,24 +23,27 @@ internal class OutgoingMessageDelegate(private val activity: Activity) :
         position: Int,
         holder: MessageViewHolder
     ) {
+        val viewHolder = holder as OutgoingMessageViewHolder
         val messageItem = items[position]
-        val bind = ROutgoingMessageBinding.bind(holder.itemView)
-        bind.flBackground.updateActionTint()
 
-        val blockAdapter = BlockAdapter(activity, messageItem.blockData)
-        val layoutManager = LinearLayoutManager(holder.context, LinearLayoutManager.VERTICAL, false)
-
-        bind.rvBlockList.addItemDecoration(SpacesItemDecoration(10))
-
-        bind.rvBlockList.layoutManager = layoutManager
-        bind.rvBlockList.adapter = blockAdapter
-
+        viewHolder.blockAdapter.setItemList(messageItem.blockData)
     }
 
     override fun isForViewType(item: MessageItem, position: Int): Boolean {
         return item.userId.isEmpty()
     }
 
-    internal class OutgoingMessageViewHolder(itemView: View) : MessageViewHolder(itemView)
+    internal inner class OutgoingMessageViewHolder(itemView: View) : MessageViewHolder(itemView) {
+        val blockAdapter = BlockAdapter(activity)
+        val bind = ROutgoingMessageBinding.bind(itemView)
+        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+        init {
+            bind.rvBlockList.addItemDecoration(SpacesItemDecoration(8))
+            bind.rvBlockList.layoutManager = layoutManager
+            bind.rvBlockList.updateActionTint()
+            bind.rvBlockList.adapter = blockAdapter
+        }
+    }
 
 }

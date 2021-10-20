@@ -1,5 +1,6 @@
 package com.rapidops.salesmatechatsdk.app.di.component
 
+import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.di.ApplicationScope
@@ -18,6 +19,7 @@ internal interface DataComponent {
     fun getViewModelFactory(): ViewModelProvider.Factory
     fun getCoroutineContextProvider(): ICoroutineContextProvider
     fun getAppSettingsDataSource(): IAppSettingsDataSource
+    fun getContext(): Context
     fun getSocketController(): SocketController
 
 }

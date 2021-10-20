@@ -24,27 +24,31 @@ internal class IncomingMessageDelegate(private val activity: Activity) :
         position: Int,
         holder: MessageViewHolder
     ) {
+        val viewHolder = holder as IncomingMessageViewHolder
         val messageItem = items[position]
-        val bind = RIncomingMessageBinding.bind(holder.itemView)
-        bind.imgUser.loadCircleProfileImage(
+        viewHolder.bind.imgUser.loadCircleProfileImage(
             messageItem.user?.profileUrl,
             messageItem.user?.firstName
         )
-
-        val blockAdapter = BlockAdapter(activity, messageItem.blockData)
-        val layoutManager =
-            LinearLayoutManager(holder.context, LinearLayoutManager.VERTICAL, false)
-
-        bind.rvBlockList.addItemDecoration(SpacesItemDecoration(10))
-
-        bind.rvBlockList.layoutManager = layoutManager
-        bind.rvBlockList.adapter = blockAdapter
+        viewHolder.blockAdapter.setItemList(messageItem.blockData)
     }
 
     override fun isForViewType(item: MessageItem, position: Int): Boolean {
         return item.userId.isNotEmpty()
     }
 
-    internal class IncomingMessageViewHolder(itemView: View) : MessageViewHolder(itemView)
+    internal inner class IncomingMessageViewHolder(itemView: View) : MessageViewHolder(itemView) {
+        val blockAdapter = BlockAdapter(activity)
+        val bind = RIncomingMessageBinding.bind(itemView)
+        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+        init {
+            bind.rvBlockList.addItemDecoration(SpacesItemDecoration(8))
+            bind.rvBlockList.setHasFixedSize(true)
+            bind.rvBlockList.layoutManager = layoutManager
+            bind.rvBlockList.adapter = blockAdapter
+
+        }
+    }
 
 }

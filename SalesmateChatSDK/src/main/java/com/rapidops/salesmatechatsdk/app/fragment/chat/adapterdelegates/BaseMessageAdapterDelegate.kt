@@ -27,6 +27,7 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
         holder: RecyclerView.ViewHolder,
         payloads: MutableList<Any>
     ) {
+        holder.setIsRecyclable(false)
 
         bindDateTimeView(holder, items, position)
 

@@ -124,6 +124,14 @@ internal object ColorUtil {
         )
     }
 
+    fun Drawable.setTintFromAction() {
+        //setTint(backGroundColor.foregroundColor())
+        colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+            actionColor.foregroundColor(),
+            BlendModeCompat.SRC_ATOP
+        )
+    }
+
     fun Drawable.setTintBackground() {
         //setTint(backGroundColor)
         colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(

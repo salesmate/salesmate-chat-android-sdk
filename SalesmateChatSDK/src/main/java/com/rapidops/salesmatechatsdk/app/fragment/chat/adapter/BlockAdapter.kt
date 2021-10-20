@@ -7,8 +7,9 @@ import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.ImageBlo
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.TextBlockDelegate
 import com.rapidops.salesmatechatsdk.app.recyclerview.adapterdelegates.ListDelegationAdapter
 import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 
-internal class BlockAdapter(activity: Activity, list: MutableList<BlockDataItem>) :
+internal class BlockAdapter(activity: Activity) :
     ListDelegationAdapter<MutableList<BlockDataItem>>() {
     init {
         // Delegates
@@ -16,7 +17,13 @@ internal class BlockAdapter(activity: Activity, list: MutableList<BlockDataItem>
         delegatesManager.addDelegate(ImageBlockDelegate(activity))
         delegatesManager.addDelegate(FileBlockDelegate(activity))
         delegatesManager.addDelegate(HtmlBlockDelegate(activity))
-        setItems(list)
+
+    }
+
+
+    fun setItemList(items: MutableList<BlockDataItem>) {
+        this.items = items
+        notifyItemRangeInserted(0, items.size)
     }
 
 }

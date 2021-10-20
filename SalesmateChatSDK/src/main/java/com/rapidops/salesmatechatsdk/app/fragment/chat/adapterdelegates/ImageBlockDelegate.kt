@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import com.rapidops.salesmatechatsdk.app.extension.loadImageWithRoundedTransformation
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.databinding.RImageBlockBinding
+import com.rapidops.salesmatechatsdk.databinding.ROutgoingMessageBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.ImageBlockDataItem
 
@@ -22,9 +23,8 @@ internal class ImageBlockDelegate(activity: Activity) :
         holder: MessageViewHolder
     ) {
         val imageBlock = items[position] as ImageBlockDataItem
-        val bind = RImageBlockBinding.bind(holder.itemView)
-
-        bind.imgBlockImage.loadImageWithRoundedTransformation(imageBlock.fileAttachmentData?.url)
+        val viewHolder = holder as ImageBlockViewHolder
+        viewHolder.bind.imgBlockImage.loadImageWithRoundedTransformation(imageBlock.fileAttachmentData?.url)
 
     }
 
@@ -32,6 +32,9 @@ internal class ImageBlockDelegate(activity: Activity) :
         return item is ImageBlockDataItem
     }
 
-    internal class ImageBlockViewHolder(itemView: View) : MessageViewHolder(itemView)
+    internal class ImageBlockViewHolder(itemView: View) : MessageViewHolder(itemView){
+        val bind = RImageBlockBinding.bind(itemView)
+
+    }
 
 }

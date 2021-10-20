@@ -23,20 +23,23 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <FrameLayout
+        <!--<FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_small4"
             android:layout_marginEnd="@dimen/margin_xxxlarge"
-            android:background="@drawable/drw_incoming_background">
+            android:background="@drawable/drw_incoming_background">-->
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvBlockList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drw_incoming_background"
+                android:padding="@dimen/padding_small4"
+                android:layout_marginEnd="@dimen/margin_xxxlarge"
                 tools:listitem="@layout/r_text_block" />
 
-        </FrameLayout>
+        <!--</FrameLayout>-->
 
         <include
             android:id="@+id/incDateTextView"

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
-import com.rapidops.salesmatechatsdk.app.view.htmltextview.GlideImageGetter
+import com.rapidops.salesmatechatsdk.app.view.htmltextview.PicassoImageGetter
 import com.rapidops.salesmatechatsdk.databinding.RHtmlBlockBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.HtmlBlockDataItem
@@ -23,16 +23,16 @@ internal class HtmlBlockDelegate(activity: Activity) :
         position: Int,
         holder: MessageViewHolder
     ) {
+        val viewHolder = holder as HtmlBlockViewHolder
         val htmlBlockDataItem = items[position] as HtmlBlockDataItem
-        val bind = RHtmlBlockBinding.bind(holder.itemView)
 
-        bind.txtHtmlMessage.setHtml(
+        viewHolder.bind.txtHtmlMessage.setHtml(
             htmlBlockDataItem.text,
-            GlideImageGetter(bind.txtHtmlMessage)
+            PicassoImageGetter(viewHolder.bind.txtHtmlMessage)
         )
 
         if (htmlBlockDataItem.isSelfMessage) {
-            bind.txtHtmlMessage.setTextColor(ColorUtil.actionColor.foregroundColor())
+            viewHolder.bind.txtHtmlMessage.setTextColor(ColorUtil.actionColor.foregroundColor())
         }
     }
 
@@ -40,6 +40,9 @@ internal class HtmlBlockDelegate(activity: Activity) :
         return item is HtmlBlockDataItem
     }
 
-    internal class HtmlBlockViewHolder(itemView: View) : MessageViewHolder(itemView)
+    internal inner class HtmlBlockViewHolder(itemView: View) : MessageViewHolder(itemView) {
+        val bind = RHtmlBlockBinding.bind(itemView)
+
+    }
 
 }
