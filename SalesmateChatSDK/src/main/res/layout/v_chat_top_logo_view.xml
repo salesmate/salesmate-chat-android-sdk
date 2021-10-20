@@ -9,13 +9,14 @@
     android:layout_marginBottom="@dimen/margin_xlarge"
     tools:showIn="@layout/f_chat"
     android:visibility="gone"
-    tools:visibility="gone">
+    tools:visibility="visible">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgLogo"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:maxHeight="40dp"
+        android:scaleType="fitStart"
         tools:layout_width="160dp"
         android:layout_marginHorizontal="@dimen/margin_xxxxlarge"
         tools:layout_height="40dp"
@@ -39,7 +40,7 @@
         android:layout_gravity="center"
         tools:listitem="@layout/r_chat_top_bar_user_item"
         tools:itemCount="4"
-        android:layout_marginTop="@dimen/margin_xxlarge"
+        android:layout_marginTop="@dimen/margin_medium"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="horizontal" />
 
@@ -47,7 +48,7 @@
         android:id="@+id/txtReplyTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_small2"
         android:layout_gravity="center"
         android:layout_marginHorizontal="@dimen/margin_xxxxlarge"
         android:textSize="@dimen/font_size_small"

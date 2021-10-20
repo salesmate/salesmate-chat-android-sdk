@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/back_color"
+        android:drawable="@color/default_background_color" />
+
+    <item android:id="@+id/back_pattern">
+        <bitmap
+            android:alpha="0.08"
+            android:tileMode="repeat"
+            android:src="@drawable/pattern_7" />
+    </item>
+</layer-list>

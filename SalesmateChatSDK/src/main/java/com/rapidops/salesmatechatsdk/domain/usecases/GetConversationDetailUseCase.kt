@@ -3,13 +3,13 @@ package com.rapidops.salesmatechatsdk.domain.usecases
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.datasources.IConversationDataSource
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
-import com.rapidops.salesmatechatsdk.domain.models.User
 import javax.inject.Inject
 
 
 internal class GetConversationDetailUseCase @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
-    private val conversationDataSource: IConversationDataSource
+    private val conversationDataSource: IConversationDataSource,
+    private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase
 ) :
     UseCase<GetConversationDetailUseCase.Param, ConversationDetailItem>() {
 
@@ -19,16 +19,10 @@ internal class GetConversationDetailUseCase @Inject constructor(
         val conversationsDetailRes =
             conversationDataSource.getConversationsDetail(conversationParam.conversationId)
         val conversationDetailItem = ConversationDetailItem()
-        val workspaceData = appSettingsDataSource.pingRes.workspaceData
-        val user = conversationsDetailRes.conversations?.let { conversations ->
-            if (conversations.lastParticipatingUserId.isEmpty()) {
-                User(id = null, firstName = workspaceData?.name ?: "")
-            } else {
-                appSettingsDataSource.pingRes.users.find { it.id == conversations.lastParticipatingUserId }
-            }
-        } ?: run {
-            User(id = null, firstName = workspaceData?.name ?: "")
-        }
+
+        val user =
+            getUserFromUserIdUseCase.execute(conversationsDetailRes.conversations?.lastParticipatingUserId)
+
         conversationDetailItem.conversations = conversationsDetailRes.conversations
         conversationDetailItem.user = user
 

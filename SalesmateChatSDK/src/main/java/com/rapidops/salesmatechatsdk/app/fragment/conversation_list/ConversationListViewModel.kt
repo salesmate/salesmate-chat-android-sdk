@@ -8,9 +8,11 @@ import com.rapidops.salesmatechatsdk.app.utils.SingleLiveEvent
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
+import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationListUseCase
+import com.rapidops.salesmatechatsdk.domain.usecases.GetUserFromUserIdUseCase
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
-import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationListUseCase
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -18,10 +20,12 @@ internal class ConversationListViewModel @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
     private val coroutineContextProvider: ICoroutineContextProvider,
     private val getConversationUseCase: GetConversationListUseCase,
+    private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase
 ) : BaseViewModel(coroutineContextProvider) {
 
     val showConversationList = SingleLiveEvent<List<ConversationDetailItem>>()
     val updateConversationItem = SingleLiveEvent<ConversationDetailItem>()
+    val updateConversationItemMessage = SingleLiveEvent<MessageItem>()
     val showLoadMore = SingleLiveEvent<Boolean>()
 
     companion object {
@@ -62,6 +66,12 @@ internal class ConversationListViewModel @Inject constructor(
                 .collectLatest { updateConversationDetail ->
                     val conversationDetailItem = updateConversationDetail.data
                     updateConversationItem.value = conversationDetailItem
+                }
+        }
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.DeleteMessageEvent>()
+                .collectLatest { deleteMessageEventDetail ->
+                    updateConversationItemMessage.value = deleteMessageEventDetail.data
                 }
         }
     }

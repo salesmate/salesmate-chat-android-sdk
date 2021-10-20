@@ -24,7 +24,10 @@ internal object APIResponseMapper {
             when (e) {
                 is IOException -> throw SalesmateChatException(SalesmateChatException.Kind.NETWORK)
                 is SalesmateChatException -> throw e
-                else -> throw SalesmateChatException(SalesmateChatException.Kind.UNEXPECTED)
+                else -> {
+                    e.printStackTrace()
+                    throw SalesmateChatException(SalesmateChatException.Kind.UNEXPECTED)
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationListUseCase
+import com.rapidops.salesmatechatsdk.domain.usecases.GetUserFromUserIdUseCase
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.withContext
@@ -18,7 +19,8 @@ import javax.inject.Inject
 internal class RecentChatViewModel @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
     private val coroutineContextProvider: ICoroutineContextProvider,
-    private val getConversationUseCase: GetConversationListUseCase
+    private val getConversationUseCase: GetConversationListUseCase,
+    private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase
 ) : BaseViewModel(coroutineContextProvider) {
 
     val recentViewProgress = SingleLiveEvent<Boolean>()
@@ -62,6 +64,26 @@ internal class RecentChatViewModel @Inject constructor(
                         list.add(0, conversationDetailItem)
                     }
                     showConversationList.value = list
+                }
+        }
+
+
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.DeleteMessageEvent>()
+                .collectLatest { deleteMessageEventDetail ->
+                    val deleteMessageItem = deleteMessageEventDetail.data
+                    val list = showConversationList.value?.toMutableList() ?: mutableListOf()
+                    val indexOfFirst =
+                        list.indexOfFirst { it.conversations?.id == deleteMessageItem.conversationId }
+                    if (indexOfFirst != 1) {
+                        val conversationDetailItem = list[indexOfFirst]
+                        conversationDetailItem.user =
+                            getUserFromUserIdUseCase.execute(deleteMessageItem.userId)
+                        conversationDetailItem.conversations?.lastMessageData?.messageSummary =
+                            deleteMessageItem.messageSummary
+                        showConversationList.value = list
+                    }
+
                 }
         }
     }

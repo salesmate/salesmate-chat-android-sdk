@@ -9,6 +9,8 @@ import com.rapidops.salesmatechatsdk.app.extension.getPeriod
 import com.rapidops.salesmatechatsdk.app.extension.loadCircleProfileImage
 import com.rapidops.salesmatechatsdk.databinding.RConversationItemBinding
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
+import java.util.*
 
 internal class ConversationAdapter : LoadMoreBaseRecyclerViewAdapter<ConversationDetailItem>() {
     override fun getRowLayoutId(viewType: Int): Int {
@@ -54,6 +56,33 @@ internal class ConversationAdapter : LoadMoreBaseRecyclerViewAdapter<Conversatio
             bind.root.setOnClickListener {
                 clickListener?.onItemClick(adapterPosition, item)
             }
+        }
+    }
+
+    fun updateConversationMessage(messageItem: MessageItem) {
+        val list = getItems()
+        val indexOfFirst =
+            list.indexOfFirst { it.conversations?.id == messageItem.conversationId }
+        if (indexOfFirst != 1) {
+            val conversationDetailItem = list[indexOfFirst]
+            conversationDetailItem.conversations?.lastMessageData?.messageSummary =
+                messageItem.messageSummary
+            notifyItemChanged(indexOfFirst)
+        }
+    }
+
+    fun updateConversation(conversationDetailItem: ConversationDetailItem) {
+        val list = getItems()
+        val indexOfFirst =
+            list.indexOfFirst { it.conversations?.id == conversationDetailItem.conversations?.id }
+        if (indexOfFirst != -1) {
+            list[indexOfFirst] = conversationDetailItem
+            notifyItemChanged(indexOfFirst)
+            Collections.swap(list, indexOfFirst, 0)
+            notifyItemMoved(indexOfFirst, 0)
+        } else {
+            list.add(0, conversationDetailItem)
+            notifyItemInserted(0)
         }
     }
 

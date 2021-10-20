@@ -85,6 +85,24 @@ internal open class BaseViewModel(private val dispatcher: ICoroutineContextProvi
         }
     }
 
+    fun cancelableJobWithoutProgress(
+        async: suspend () -> Unit,
+        errorLogic: (throwable: Exception) -> Unit = {
+            defaultErrorHandler(it)
+        }
+    ) {
+        cancellableScope = CoroutineScope(Job() + Dispatchers.Main)
+        cancellableScope.launch(dispatcher.io) {
+            try {
+                async()
+            } catch (ex: Exception) {
+                withContext(dispatcher.ui) {
+                    errorLogic(ex)
+                }
+            }
+        }
+    }
+
     private var eventScope = CoroutineScope(Job() + Dispatchers.Main)
     fun subscribeEvent(event: suspend () -> Unit) {
         eventScope.launch {
