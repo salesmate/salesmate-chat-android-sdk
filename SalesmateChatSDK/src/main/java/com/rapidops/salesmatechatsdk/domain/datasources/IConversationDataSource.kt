@@ -18,4 +18,5 @@ internal interface IConversationDataSource {
     ): MessageListRes
 
     suspend fun sendMessages(conversationId: String, sendMessageReq: SendMessageReq): SendMessageRes
+    suspend fun readConversationForVisitor(conversationId: String): ConversationDetailRes
 }

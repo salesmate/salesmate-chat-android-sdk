@@ -45,4 +45,9 @@ internal interface IService {
         @Body sendMessageReq: SendMessageReq
     ): Response<SendMessageRes>
 
+    @POST("v1/widget/read-conversation-for-visitor")
+    suspend fun readConversationForVisitor(
+        @Body body: Map<String,String>
+    ): Response<ConversationDetailRes>
+
 }

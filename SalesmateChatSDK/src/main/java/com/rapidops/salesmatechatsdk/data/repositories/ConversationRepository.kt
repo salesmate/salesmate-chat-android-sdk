@@ -43,4 +43,12 @@ internal class ConversationRepository(private val service: IService) : IConversa
             service.sendMessage(conversationId, sendMessageReq)
         }
     }
+
+    override suspend fun readConversationForVisitor(conversationId: String): ConversationDetailRes {
+        val body = hashMapOf<String, String>()
+        body["conversation_id"] = conversationId
+        return APIResponseMapper.getResponse {
+            service.readConversationForVisitor(body)
+        }
+    }
 }

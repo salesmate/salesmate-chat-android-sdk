@@ -95,7 +95,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
         observeViewModel()
         attachListener()
-        viewModel.subscribe(conversationDetailItem?.conversations?.id)
+        viewModel.subscribe(
+            conversationDetailItem?.conversations?.id,
+            conversationDetailItem?.conversations?.contactHasRead ?: true
+        )
     }
 
     private fun observeViewModel() {

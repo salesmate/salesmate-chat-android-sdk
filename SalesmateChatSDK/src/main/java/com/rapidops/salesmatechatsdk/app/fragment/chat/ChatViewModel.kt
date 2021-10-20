@@ -16,10 +16,7 @@ import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageType
 import com.rapidops.salesmatechatsdk.domain.models.message.SendStatus
-import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationDetailUseCase
-import com.rapidops.salesmatechatsdk.domain.usecases.GetMessageListUseCase
-import com.rapidops.salesmatechatsdk.domain.usecases.GetUserFromUserIdUseCase
-import com.rapidops.salesmatechatsdk.domain.usecases.SendMessageUseCase
+import com.rapidops.salesmatechatsdk.domain.usecases.*
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
@@ -34,6 +31,7 @@ internal class ChatViewModel @Inject constructor(
     private val getMessageListUseCase: GetMessageListUseCase,
     private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
+    private val readConversationForVisitorUseCase: ReadConversationForVisitorUseCase,
 ) : BaseViewModel(coroutineContextProvider) {
 
     var adapterMessageList: List<MessageItem> = listOf()
@@ -54,7 +52,7 @@ internal class ChatViewModel @Inject constructor(
     private var conversationId: String? = null
 
 
-    fun subscribe(conversationId: String?) {
+    fun subscribe(conversationId: String?, isLastMessageRead: Boolean = false) {
         conversationId?.let {
             this.conversationId = conversationId
             withProgress({
@@ -65,6 +63,10 @@ internal class ChatViewModel @Inject constructor(
                 }
                 loadMessageList(it)
             })
+
+            if (isLastMessageRead.not()) {
+                loadReadConversationForVisitor()
+            }
         }
 
         subscribeEvents()
@@ -199,4 +201,17 @@ internal class ChatViewModel @Inject constructor(
         })
     }
 
+    private fun loadReadConversationForVisitor() {
+        conversationId?.let { conversationId ->
+            withoutProgress({
+                readConversationForVisitorUseCase.execute(
+                    ReadConversationForVisitorUseCase.Param(
+                        conversationId
+                    )
+                )
+            }, {
+
+            })
+        }
+    }
 }
