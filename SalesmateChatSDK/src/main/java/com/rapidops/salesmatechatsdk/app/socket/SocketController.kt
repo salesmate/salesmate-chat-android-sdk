@@ -13,9 +13,10 @@ import com.rapidops.salesmatechatsdk.data.utils.getJsonObject
 import com.rapidops.salesmatechatsdk.data.utils.getString
 import com.rapidops.salesmatechatsdk.data.utils.hasProperty
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
-import com.rapidops.salesmatechatsdk.domain.models.ChatNewMessage
 import com.rapidops.salesmatechatsdk.domain.models.PublishType
 import com.rapidops.salesmatechatsdk.domain.models.UserAvailability
+import com.rapidops.salesmatechatsdk.domain.models.events.ChatNewMessage
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import io.github.sac.BasicListener
 import io.github.sac.ReconnectStrategy
 import io.github.sac.Socket
@@ -128,6 +129,13 @@ internal class SocketController @Inject constructor(
                                 )
                             }
 
+                        }
+                    } else if (publishType == PublishType.MESSAGE_DELETED) {
+                        /*{"type":"MESSAGE_DELETED","data":{"messageData":{"id":"a3c0f489-5389-4d06-86a0-0286b1265e93","conversation_id":"92e67f42-adb7-4811-aef8-2b2e5ce73418","user_id":"10","message_summary":"This message was deleted.","is_internal_message":false,"deleted_by":"10","deleted_date":"2021-10-20T09:43:49.686Z","unique_id":null,"verified_id":null,"created_date":"2021-10-20T09:38:51.591Z"}}}*/
+                        jsonObject.getJsonObject("data")?.getJsonObject("messageData")?.let {
+                            val chatNewMessage: MessageItem =
+                                gson.fromJson(it, MessageItem::class.java)
+                            eventBus.fireEvent(AppEvent.DeleteMessageEvent(chatNewMessage))
                         }
                     }
                 }

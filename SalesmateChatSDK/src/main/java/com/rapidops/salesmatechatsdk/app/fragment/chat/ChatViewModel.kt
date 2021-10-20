@@ -11,6 +11,7 @@ import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationDetailUseCase
 import com.rapidops.salesmatechatsdk.domain.usecases.GetMessageListUseCase
+import com.rapidops.salesmatechatsdk.domain.usecases.GetUserFromUserIdUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
@@ -22,6 +23,7 @@ internal class ChatViewModel @Inject constructor(
     private val coroutineContextProvider: ICoroutineContextProvider,
     private val getConversationDetailUseCase: GetConversationDetailUseCase,
     private val getMessageListUseCase: GetMessageListUseCase,
+    private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase
 ) : BaseViewModel(coroutineContextProvider) {
 
     val pingRes: PingRes by lazy {
@@ -35,6 +37,7 @@ internal class ChatViewModel @Inject constructor(
     val showConversationDetail = SingleLiveEvent<ConversationDetailItem>()
     val showMessageList = SingleLiveEvent<List<MessageItem>>()
     val showNewMessage = SingleLiveEvent<List<MessageItem>>()
+    val deleteMessage = SingleLiveEvent<MessageItem>()
 
     var conversationId: String? = null
 
@@ -54,7 +57,7 @@ internal class ChatViewModel @Inject constructor(
                 subscribeEvent {
                     EventBus.events.filterIsInstance<AppEvent.NewMessageEvent>()
                         .collectLatest { event ->
-                            messageItemList.lastOrNull()?.let {
+                            messageItemList.firstOrNull()?.let {
                                 loadMessageListByLastMessageDate(
                                     conversationId,
                                     it.createdDate
@@ -66,15 +69,7 @@ internal class ChatViewModel @Inject constructor(
             })
         }
 
-        subscribeEvent {
-            EventBus.events.filterIsInstance<AppEvent.UpdateConversationDetailEvent>()
-                .collectLatest { updateConversationDetail ->
-                    if (updateConversationDetail.data.conversations?.id == conversationId) {
-                        val conversationDetailItem = updateConversationDetail.data
-                        showConversationDetail.value = conversationDetailItem
-                    }
-                }
-        }
+        subscribeEvents()
     }
 
     private suspend fun loadMessageList(conversationId: String, offSet: Int = 0) {
@@ -94,7 +89,7 @@ internal class ChatViewModel @Inject constructor(
         cancelableJobWithoutProgress({
             val params = GetMessageListUseCase.Param(conversationId, 10, 0, lastMessageDate)
             val response = getMessageListUseCase.execute(params).toMutableList()
-            val filteredMessages = getFilteredMessages(response)
+            val filteredMessages = getFilteredMessages(response, true)
             withContext(coroutineContextProvider.ui) {
                 showNewMessage.value = filteredMessages
             }
@@ -104,10 +99,18 @@ internal class ChatViewModel @Inject constructor(
 
     }
 
-    private fun getFilteredMessages(messageItem: List<MessageItem>): List<MessageItem> {
+    private fun getFilteredMessages(
+        messageItem: List<MessageItem>,
+        isNewMessage: Boolean = false
+    ): List<MessageItem> {
         val filteredList =
             messageItem.filter { item -> messageItemList.any { item.id == it.id }.not() }
-        messageItemList.addAll(filteredList)
+        if (isNewMessage) {
+            messageItemList.addAll(0, filteredList)
+        } else {
+            messageItemList.addAll(filteredList)
+        }
+
         return filteredList
     }
 
@@ -119,6 +122,32 @@ internal class ChatViewModel @Inject constructor(
 
             })
         }
+    }
+
+
+    private fun subscribeEvents() {
+
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.UpdateConversationDetailEvent>()
+                .collectLatest { updateConversationDetail ->
+                    if (updateConversationDetail.data.conversations?.id == conversationId) {
+                        val conversationDetailItem = updateConversationDetail.data
+                        showConversationDetail.value = conversationDetailItem
+                    }
+                }
+        }
+
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.DeleteMessageEvent>()
+                .collectLatest { deleteMessageDetail ->
+                    deleteMessageDetail.data.user =
+                        getUserFromUserIdUseCase.execute(deleteMessageDetail.data.userId)
+                    if (deleteMessageDetail.data.conversationId == conversationId) {
+                        deleteMessage.value = deleteMessageDetail.data
+                    }
+                }
+        }
+
     }
 
 }

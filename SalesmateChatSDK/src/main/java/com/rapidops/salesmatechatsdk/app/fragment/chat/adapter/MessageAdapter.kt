@@ -33,4 +33,13 @@ internal open class MessageAdapter(activity: Activity) :
         notifyItemRangeInserted(0, items.size)
     }
 
+
+    fun deleteMessage(item: MessageItem) {
+        val indexOfFirst = items.indexOfFirst { item.id == it.id }
+        if (indexOfFirst != -1) {
+            items[indexOfFirst] = item
+            notifyItemChanged(indexOfFirst)
+        }
+    }
+
 }

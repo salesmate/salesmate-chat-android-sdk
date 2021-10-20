@@ -1,8 +1,9 @@
 package com.rapidops.salesmatechatsdk.app.utils
 
-import com.rapidops.salesmatechatsdk.domain.models.ChatNewMessage
+import com.rapidops.salesmatechatsdk.domain.models.events.ChatNewMessage
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.UserAvailability
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -36,6 +37,7 @@ internal sealed class AppEvent {
     data class UserAvailabilityEvent(val data: UserAvailability) : AppEvent()
     data class NewMessageEvent(val data: ChatNewMessage) : AppEvent()
     data class UpdateConversationListEvent(val conversationId: String) : AppEvent()
+    data class DeleteMessageEvent(val data: MessageItem) : AppEvent()
 
     data class UpdateConversationDetailEvent(val data: ConversationDetailItem) : AppEvent()
 

@@ -27,9 +27,17 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
         holder: RecyclerView.ViewHolder,
         payloads: MutableList<Any>
     ) {
-        holder.setIsRecyclable(false)
+        //holder.setIsRecyclable(false)
 
         bindDateTimeView(holder, items, position)
+
+        holder.itemView.findViewById<RecyclerView>(R.id.rvBlockList)?.let {
+            if (items[position].deletedDate.isNotEmpty()) {
+                it.alpha = 0.5f
+            } else {
+                it.alpha = 1f
+            }
+        }
 
         onBindMessageViewHolder(items, position, holder as MessageViewHolder)
     }

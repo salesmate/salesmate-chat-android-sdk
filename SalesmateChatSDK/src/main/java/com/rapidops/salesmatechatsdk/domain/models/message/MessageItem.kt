@@ -31,7 +31,7 @@ internal data class MessageItem(
 	var contactEmail: String = "",
 
 	@SerializedName("deleted_date")
-	var deletedDate: Any? = null,
+	var deletedDate: String = "",
 
 	@SerializedName("is_internal_message")
 	var isInternalMessage: Boolean = false,
@@ -60,6 +60,10 @@ internal data class MessageItem(
 	@SerializedName("is_bot")
 	var isBot: Boolean = false,
 
+	) : BaseModel() {
+
 	var user: User? = null
-) : BaseModel()
+
+	var conversationId: String = ""
+}
 

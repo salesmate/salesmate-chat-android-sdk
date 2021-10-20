@@ -23,7 +23,7 @@ internal abstract class BaseBlockAdapterDelegate(activity: Activity) :
         holder: RecyclerView.ViewHolder,
         payloads: MutableList<Any>
     ) {
-        holder.setIsRecyclable(false)
+        //holder.setIsRecyclable(false)
         bindDateTimeView(holder, items, position)
 
         onBindMessageViewHolder(items, position, holder as MessageViewHolder)

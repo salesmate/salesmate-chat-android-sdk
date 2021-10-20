@@ -56,12 +56,20 @@ internal class MessageItemDs : JsonDeserializer<MessageItem> {
 
         messageItem.isBot = jsonObject.getBoolean("is_bot")
 
+        messageItem.conversationId = jsonObject.getString("conversation_id") ?: ""
+
+        val blockDataList = arrayListOf<BlockDataItem>()
+        if (messageItem.deletedDate.isNotEmpty()) {
+            val blockDataItem = DeleteBlockDataItem()
+            blockDataItem.text = messageItem.messageSummary
+            blockDataItem.isSelfMessage = messageItem.userId.isEmpty()
+            blockDataList.add(blockDataItem)
+        }
 
         jsonObject.getJsonArray("blockData")?.let {
             /*val listType = object : TypeToken<List<BlockDataItem>>() {}.type
             messageItem.blockData =gson.fromJson(it, listType)*/
 
-            val blockDataList = arrayListOf<BlockDataItem>()
             it.forEach { jsonElement ->
                 val blockDataJson = jsonElement.asJsonObject
                 if (blockDataJson.hasProperty("block_type")) {
@@ -69,21 +77,25 @@ internal class MessageItemDs : JsonDeserializer<MessageItem> {
                     val blockType = BlockType.findEnumFromValue(blockTypeStr)
                     var blockDataItem = BlockDataItem()
                     if (blockType == BlockType.TEXT) {
-                        blockDataItem = gson.fromJson(jsonElement, TextBlockDataItem::class.java)
+                        blockDataItem =
+                            gson.fromJson(jsonElement, TextBlockDataItem::class.java)
                     } else if (blockType == BlockType.IMAGE) {
-                        blockDataItem = gson.fromJson(jsonElement, ImageBlockDataItem::class.java)
+                        blockDataItem =
+                            gson.fromJson(jsonElement, ImageBlockDataItem::class.java)
                     } else if (blockType == BlockType.FILE) {
-                        blockDataItem = gson.fromJson(jsonElement, FileBlockDataItem::class.java)
+                        blockDataItem =
+                            gson.fromJson(jsonElement, FileBlockDataItem::class.java)
                     } else if (blockType == BlockType.HTML || blockType == BlockType.ORDERED_LIST || blockType == BlockType.UNORDERED_LIST) {
-                        blockDataItem = gson.fromJson(jsonElement, HtmlBlockDataItem::class.java)
+                        blockDataItem =
+                            gson.fromJson(jsonElement, HtmlBlockDataItem::class.java)
                     }
                     blockDataItem.blockType = blockType
                     blockDataItem.isSelfMessage = messageItem.userId.isEmpty()
                     blockDataList.add(blockDataItem)
                 }
             }
-            messageItem.blockData = blockDataList
         }
+        messageItem.blockData = blockDataList
 
         return messageItem
     }

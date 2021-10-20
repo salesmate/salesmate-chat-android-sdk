@@ -119,6 +119,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
                 messageAdapter.addNewItems(it.toMutableList())
             }
         })
+
+        viewModel.deleteMessage.observe(this, {
+            messageAdapter.deleteMessage(it)
+        })
     }
 
     private fun attachListener() {

@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import com.rapidops.salesmatechatsdk.data.ds.*
 import com.rapidops.salesmatechatsdk.data.resmodels.*
 import com.rapidops.salesmatechatsdk.domain.models.*
+import com.rapidops.salesmatechatsdk.domain.models.events.ChatNewMessage
 import com.rapidops.salesmatechatsdk.domain.models.message.*
 
 internal object GsonUtils {
@@ -46,7 +47,6 @@ internal object GsonUtils {
         gsonBuilder.registerTypeAdapter(ContactData::class.java, ContactDataDs())
         gsonBuilder.registerTypeAdapter(Owner::class.java, OwnerDs())
         gsonBuilder.registerTypeAdapter(UserAvailability::class.java, UserAvailabilityDs())
-        gsonBuilder.registerTypeAdapter(ChatNewMessage::class.java, ChatNewMessageDs())
         gsonBuilder.registerTypeAdapter(
             ConversationDetailRes::class.java,
             ConversationDetailResDs()
@@ -63,5 +63,9 @@ internal object GsonUtils {
         gsonBuilder.registerTypeAdapter(ImageBlockDataItem::class.java, ImageBlockDataItemDs())
         gsonBuilder.registerTypeAdapter(ReferenceTeam::class.java, ReferenceTeamDs())
         gsonBuilder.registerTypeAdapter(ReferenceUser::class.java, ReferenceUserDs())
+
+
+        //Events
+        gsonBuilder.registerTypeAdapter(ChatNewMessage::class.java, ChatNewMessageDs())
     }
 }
