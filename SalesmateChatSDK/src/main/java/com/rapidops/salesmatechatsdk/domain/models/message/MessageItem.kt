@@ -78,6 +78,7 @@ internal fun MessageItem.convertToSendMessageReq(): SendMessageReq {
 	val messageItem = SendMessageReq().apply {
 		this.messageType = sendMessageReq.messageType
 		this.messageId = id
+		this.isInbound = true
 		this.isBot = sendMessageReq.isBot
 		this.blockData.apply {
 			sendMessageReq.blockData.forEach {

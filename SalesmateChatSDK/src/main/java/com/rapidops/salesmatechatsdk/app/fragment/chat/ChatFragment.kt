@@ -91,6 +91,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         }
         binding.rvMessage.addOnScrollListener(endlessScrollListener)
         binding.rvMessage.layoutManager = layoutManager
+        binding.rvMessage.itemAnimator?.changeDuration = 0
+        binding.rvMessage.itemAnimator?.removeDuration = 0
+        binding.rvMessage.itemAnimator?.addDuration = 0
+        binding.rvMessage.itemAnimator?.moveDuration = 0
         messageAdapter = MessageAdapter(requireActivity(), messageAdapterListener)
         binding.rvMessage.adapter = messageAdapter
 

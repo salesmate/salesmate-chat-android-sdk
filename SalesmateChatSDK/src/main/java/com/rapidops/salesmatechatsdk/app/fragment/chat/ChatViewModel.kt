@@ -19,6 +19,7 @@ import com.rapidops.salesmatechatsdk.domain.models.message.SendStatus
 import com.rapidops.salesmatechatsdk.domain.models.message.convertToSendMessageReq
 import com.rapidops.salesmatechatsdk.domain.usecases.*
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.withContext
@@ -179,6 +180,7 @@ internal class ChatViewModel @Inject constructor(
 
     private fun sendMessage(sendMessageReq: SendMessageReq, messageItem: MessageItem) {
         withoutProgress({
+            delay(100)
             val response = sendMessageUseCase.execute(
                 SendMessageUseCase.Param(
                     conversationId!!,
@@ -214,7 +216,11 @@ internal class ChatViewModel @Inject constructor(
         messageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
         messageItem.sendStatus = SendStatus.SENDING
         updateMessage.value = messageItem
-        sendMessage(messageItem.convertToSendMessageReq(), messageItem)
+        val sendMessageReq = messageItem.convertToSendMessageReq()
+            .apply {
+                conversationName = appSettingsDataSource.contactName
+            }
+        sendMessage(sendMessageReq, messageItem)
     }
 
     private fun getNewSendMessageRes(): SendMessageReq {
@@ -225,7 +231,7 @@ internal class ChatViewModel @Inject constructor(
             this.messageId = uniqueMessageId
             this.isBot = false
             this.isInbound = true
-            this.conversationName = appSettingsDataSource.pseudoName
+            this.conversationName = appSettingsDataSource.contactName
         }
         return sendMessageReq
     }
