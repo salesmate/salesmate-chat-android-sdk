@@ -39,7 +39,7 @@ internal class ConversationAdapter : LoadMoreBaseRecyclerViewAdapter<Conversatio
         private val bind = RConversationItemBinding.bind(itemView)
         fun bindViewHolder(item: ConversationDetailItem) {
 
-            bind.imgStatus.isInvisible = item.conversations?.contactHasRead ?: true
+            bind.imgStatus.isInvisible = item.isConversationRead
 
             bind.imgConversation.loadCircleProfileImage(
                 item.user?.profileUrl,

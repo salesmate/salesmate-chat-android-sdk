@@ -16,6 +16,7 @@ import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageType
 import com.rapidops.salesmatechatsdk.domain.models.message.SendStatus
+import com.rapidops.salesmatechatsdk.domain.models.message.convertToSendMessageReq
 import com.rapidops.salesmatechatsdk.domain.usecases.*
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
@@ -162,28 +163,22 @@ internal class ChatViewModel @Inject constructor(
         if (conversationId == null) {
             conversationId = UUID.randomUUID().toString()
         }
-        val uniqueMessageId = UUID.randomUUID().toString()
-        val sendMessageReq = SendMessageReq()
-        sendMessageReq.apply {
-            this.blockData.apply {
-                add(Blocks().apply {
-                    this.text = typedMessage
-                    this.type = BlockType.TEXT.value
-                })
-            }
-            this.messageType = MessageType.COMMENT.value
-            this.messageId = uniqueMessageId
-            this.isBot = false
-            this.isInbound = true
-            this.conversationName = appSettingsDataSource.pseudoName
+        val sendMessageReq = getNewSendMessageRes()
+        sendMessageReq.blockData.apply {
+            add(Blocks().apply {
+                this.text = typedMessage
+                this.type = BlockType.TEXT.value
+            })
         }
         val messageItem = sendMessageReq.convertToMessageItem()
         messageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
+        messageItem.sendStatus = SendStatus.SENDING
+        showNewMessage.value = listOf(messageItem)
+        sendMessage(sendMessageReq, messageItem)
+    }
+
+    private fun sendMessage(sendMessageReq: SendMessageReq, messageItem: MessageItem) {
         withoutProgress({
-            messageItem.sendStatus = SendStatus.SENDING
-            withContext(coroutineContextProvider.ui) {
-                showNewMessage.value = listOf(messageItem)
-            }
             val response = sendMessageUseCase.execute(
                 SendMessageUseCase.Param(
                     conversationId!!,
@@ -213,5 +208,25 @@ internal class ChatViewModel @Inject constructor(
 
             })
         }
+    }
+
+    fun onRetrySendMessage(messageItem: MessageItem) {
+        messageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
+        messageItem.sendStatus = SendStatus.SENDING
+        updateMessage.value = messageItem
+        sendMessage(messageItem.convertToSendMessageReq(), messageItem)
+    }
+
+    private fun getNewSendMessageRes(): SendMessageReq {
+        val uniqueMessageId = UUID.randomUUID().toString()
+        val sendMessageReq = SendMessageReq()
+        sendMessageReq.apply {
+            this.messageType = MessageType.COMMENT.value
+            this.messageId = uniqueMessageId
+            this.isBot = false
+            this.isInbound = true
+            this.conversationName = appSettingsDataSource.pseudoName
+        }
+        return sendMessageReq
     }
 }

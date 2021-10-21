@@ -225,4 +225,9 @@ internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
             }
         })
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.unsubscribe()
+    }
 }

@@ -18,6 +18,7 @@ import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ChatTopBarUserAda
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ToolbarUserAdapter
 import com.rapidops.salesmatechatsdk.app.interfaces.EndlessScrollListener
+import com.rapidops.salesmatechatsdk.app.interfaces.MessageAdapterListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setSendButtonColorStateList
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
@@ -26,6 +27,7 @@ import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.databinding.FChatBinding
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.User
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import kotlin.math.abs
 
 internal class ChatFragment : BaseFragment<ChatViewModel>() {
@@ -89,7 +91,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         }
         binding.rvMessage.addOnScrollListener(endlessScrollListener)
         binding.rvMessage.layoutManager = layoutManager
-        messageAdapter = MessageAdapter(requireActivity())
+        messageAdapter = MessageAdapter(requireActivity(), messageAdapterListener)
         binding.rvMessage.adapter = messageAdapter
 
 
@@ -97,7 +99,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         attachListener()
         viewModel.subscribe(
             conversationDetailItem?.conversations?.id,
-            conversationDetailItem?.conversations?.contactHasRead ?: true
+            conversationDetailItem?.isConversationRead ?: true
         )
     }
 
@@ -278,4 +280,12 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private val messageAdapterListener = object : MessageAdapterListener {
+        override fun onRetryClick(messageItem: MessageItem) {
+            viewModel.onRetrySendMessage(messageItem)
+        }
+
+    }
+
 }

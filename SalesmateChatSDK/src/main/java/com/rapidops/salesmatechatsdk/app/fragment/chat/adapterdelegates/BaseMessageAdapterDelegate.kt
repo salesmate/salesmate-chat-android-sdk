@@ -30,7 +30,7 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
     ) {
         //holder.setIsRecyclable(false)
 
-        bindDateTimeView(holder, items, position)
+        bindDateTimeStatusView(holder, items, position)
 
         holder.itemView.findViewById<RecyclerView>(R.id.rvBlockList)?.let {
             if (items[position].deletedDate.isNotEmpty()) {
@@ -57,21 +57,29 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
 
     protected abstract fun isForViewType(item: MessageItem, position: Int): Boolean
 
-    private fun bindDateTimeView(
+    private fun bindDateTimeStatusView(
         holder: RecyclerView.ViewHolder,
         items: MutableList<MessageItem>,
         position: Int,
     ) {
         val messageItem = items[position]
-        val txtDateTime = holder.itemView.findViewById<AppCompatTextView>(R.id.txtDateTime)
+        val txtDateTime = holder.itemView.findViewById<AppCompatTextView>(R.id.incDateTextView)
         txtDateTime?.apply {
-            if (messageItem.sendStatus == SendStatus.SENDING || hideDateTimeView(items, position)) {
-                text = ""
-                isVisible = false
-            } else {
+            if (messageItem.sendStatus == SendStatus.SENDING) {
+                text = context.getString(R.string.lbl_sending)
                 isVisible = true
-                text = messageItem.createdDate.getMessageTime()
+            } else {
+                if (messageItem.sendStatus == SendStatus.FAIL ||
+                    hideDateTimeView(items, position)
+                ) {
+                    text = ""
+                    isVisible = false
+                } else {
+                    isVisible = true
+                    text = messageItem.createdDate.getMessageTime()
+                }
             }
+
         }
     }
 

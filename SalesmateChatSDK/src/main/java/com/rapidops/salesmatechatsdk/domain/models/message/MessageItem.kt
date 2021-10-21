@@ -1,7 +1,10 @@
 package com.rapidops.salesmatechatsdk.domain.models.message
 
 import com.google.gson.annotations.SerializedName
+import com.rapidops.salesmatechatsdk.data.reqmodels.Blocks
+import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.domain.models.BaseModel
+import com.rapidops.salesmatechatsdk.domain.models.BlockType
 import com.rapidops.salesmatechatsdk.domain.models.User
 
 internal data class MessageItem(
@@ -69,3 +72,36 @@ internal data class MessageItem(
 	var sendStatus = SendStatus.NONE
 }
 
+
+internal fun MessageItem.convertToSendMessageReq(): SendMessageReq {
+	val sendMessageReq = this
+	val messageItem = SendMessageReq().apply {
+		this.messageType = sendMessageReq.messageType
+		this.messageId = id
+		this.isBot = sendMessageReq.isBot
+		this.blockData.apply {
+			sendMessageReq.blockData.forEach {
+				add(it.convertToBlocks())
+			}
+		}
+	}
+	return messageItem
+}
+
+internal fun BlockDataItem.convertToBlocks(): Blocks {
+	val blockItem = this
+	val blockDataItem = if (blockItem is TextBlockDataItem) {
+		Blocks().apply {
+			this.type = BlockType.TEXT.value
+			this.text = blockItem.text
+		}
+	} else {
+		val textBlockDataItem = blockItem as TextBlockDataItem
+		Blocks().apply {
+			this.type = BlockType.TEXT.value
+			this.text = blockItem.text
+		}
+	}
+
+	return blockDataItem
+}
