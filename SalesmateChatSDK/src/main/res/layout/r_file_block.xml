@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/txtFileName"
     android:layout_width="wrap_content"
-    android:textColor="@color/text_black"
     android:layout_height="wrap_content"
-    android:drawableStart="@drawable/ic_attachment"
-    android:drawablePadding="@dimen/margin_micro5"
     android:gravity="center"
-    tools:text="File Name"
-    android:textSize="@dimen/font_size_small" />
+    android:orientation="horizontal"
+    android:padding="@dimen/padding_small"
+    android:background="@drawable/drw_background_white_corner">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgFile"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        tools:src="@drawable/ic_attachment_jpeg" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txtFileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_black"
+        android:layout_marginStart="@dimen/margin_micro5"
+        tools:text="File Name"
+        android:textSize="@dimen/font_size_micro3" />
+
+</LinearLayout>

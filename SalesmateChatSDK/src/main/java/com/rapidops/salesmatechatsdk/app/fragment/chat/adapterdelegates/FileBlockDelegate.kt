@@ -3,12 +3,10 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
-import com.rapidops.salesmatechatsdk.R
+import com.rapidops.salesmatechatsdk.app.extension.getResourceIdFromFileExtension
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
-import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintAction
-import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromAction
 import com.rapidops.salesmatechatsdk.databinding.RFileBlockBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.FileBlockDataItem
@@ -28,25 +26,14 @@ internal class FileBlockDelegate(activity: Activity) :
         val viewHolder = holder as FileBlockViewHolder
         val fileBlockDataItem = items[position] as FileBlockDataItem
 
-        viewHolder.bind.txtFileName.text = fileBlockDataItem.fileAttachmentData?.name
+        val name = fileBlockDataItem.fileAttachmentData?.name ?: ""
+        viewHolder.bind.txtFileName.text = name
 
         if (fileBlockDataItem.isSelfMessage) {
             viewHolder.bind.txtFileName.setTextColor(ColorUtil.actionColor.foregroundColor())
         }
 
-        val drawable = holder.getDrawable(R.drawable.ic_attachment)
-        if (fileBlockDataItem.isSelfMessage) {
-            drawable?.setTintFromAction()
-        } else {
-            drawable?.setTintAction()
-        }
-
-        viewHolder.bind.txtFileName.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            drawable,
-            null,
-            null,
-            null
-        )
+        viewHolder.bind.imgFile.setImageResource(name.getResourceIdFromFileExtension())
 
     }
 
