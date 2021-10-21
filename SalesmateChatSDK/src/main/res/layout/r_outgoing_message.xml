@@ -10,41 +10,46 @@
     android:layout_marginVertical="@dimen/margin_micro4"
     android:orientation="vertical">
 
-
-    <!--<FrameLayout
-        android:id="@+id/flBackground"
+    <LinearLayout
         android:layout_width="wrap_content"
+        android:gravity="center"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_xxxlarge"
+        android:orientation="horizontal">
 
-        >-->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_micro3"
+            android:layout_marginEnd="@dimen/margin_micro5"
+            app:srcCompat="@drawable/ic_info"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:background="?attr/selectableItemBackgroundBorderless" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvBlockList"
             android:layout_width="wrap_content"
-            android:padding="@dimen/padding_small4"
-            android:layout_marginStart="@dimen/margin_xxxlarge"
             android:layout_height="wrap_content"
+            android:padding="@dimen/padding_small4"
             android:background="@drawable/drw_outgoing_background"
             tools:listitem="@layout/r_text_block" />
 
-    <!--</FrameLayout>-->
+    </LinearLayout>
 
     <include
         android:id="@+id/incDateTextView"
         layout="@layout/v_message_date_text_view" />
 
-    <com.rapidops.salesmatechatsdk.app.view.AppTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txtFailStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/padding_small"
-        android:paddingHorizontal="@dimen/padding_small"
-        android:layout_marginEnd="-8dp"
         android:background="?attr/selectableItemBackground"
         android:textSize="@dimen/font_size_micro1"
-        android:text="@string/lbl_failed_retry"
-        app:textColorStyle="actionColor"
-        android:visibility="gone"
+        android:textColor="@color/error_color"
+        android:text="@string/lbl_failed"
         tools:visibility="visible" />
 
 </LinearLayout>

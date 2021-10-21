@@ -14,5 +14,6 @@
     <color name="light_gray">#DFE1E6</color>
     <color name="hint_color">#858FA6</color>
     <color name="incoming_message_background">#EDF0F7</color>
+    <color name="error_color">#DE350B</color>
 
 </resources>

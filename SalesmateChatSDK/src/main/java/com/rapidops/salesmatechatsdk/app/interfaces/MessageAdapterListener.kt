@@ -3,6 +3,6 @@ package com.rapidops.salesmatechatsdk.app.interfaces
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 
 internal interface MessageAdapterListener {
-    fun onRetryClick(messageItem: MessageItem)
+    fun onInfoClick(messageItem: MessageItem)
 
 }

@@ -37,8 +37,13 @@ internal class OutgoingMessageDelegate(
         viewHolder.bind.txtFailStatus.apply {
             isVisible = messageItem.sendStatus == SendStatus.FAIL
         }
-        viewHolder.bind.txtFailStatus.setOnClickListener {
-            messageAdapterListener.onRetryClick(messageItem)
+        viewHolder.bind.apply {
+            txtFailStatus.isVisible = messageItem.sendStatus == SendStatus.FAIL
+            imgInfo.isVisible = messageItem.sendStatus == SendStatus.FAIL
+        }
+
+        viewHolder.bind.imgInfo.setOnClickListener {
+            messageAdapterListener.onInfoClick(messageItem)
         }
 
     }

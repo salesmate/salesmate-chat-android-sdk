@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -232,5 +234,39 @@ internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPres
             fBaseBinding?.fBaseLayoutContent?.setPadding(0, getStatusBarHeight(), 0, 0)
         }
 
+    }
+
+    protected fun showAlertDialog(
+        title: String,
+        message: String,
+        positiveButton: String,
+        negativeButton: String = getString(R.string.dialog_cancel),
+        positive: () -> Unit,
+        negative: () -> Unit
+    ): AlertDialog.Builder {
+        return AlertDialog
+            .Builder(requireContext())
+            .setCancelable(false)
+            .setTitle(title)
+            .setMessage(message)
+            .setNegativeButton(negativeButton) { _, _ -> negative() }
+            .setPositiveButton(positiveButton) { _, _ -> positive() }
+    }
+
+    protected fun showAlertDialog(
+        @StringRes titleId: Int,
+        @StringRes messageId: Int,
+        @StringRes positiveButtonId: Int,
+        @StringRes negativeButtonId: Int = R.string.dialog_cancel,
+        positive: () -> Unit,
+        negative: () -> Unit,
+    ): AlertDialog.Builder {
+        return showAlertDialog(
+            getString(titleId),
+            getString(messageId),
+            getString(positiveButtonId),
+            getString(negativeButtonId),
+            positive, negative
+        )
     }
 }

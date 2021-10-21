@@ -147,7 +147,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         }
 
         binding.imgAttachment.setOnClickListener {
-
+            showFilePickerWithPermissionCheck()
         }
 
         binding.edtMessage.setOnFocusChangeListener { view, isFocus ->
@@ -286,10 +286,25 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
     }
 
     private val messageAdapterListener = object : MessageAdapterListener {
-        override fun onRetryClick(messageItem: MessageItem) {
-            viewModel.onRetrySendMessage(messageItem)
+        override fun onInfoClick(messageItem: MessageItem) {
+            showFailedInfoDialog(messageItem)
         }
-
     }
 
+    private fun showFailedInfoDialog(messageItem: MessageItem) {
+        showAlertDialog(
+            titleId = R.string.lbl_failed,
+            messageId = R.string.msg_send_failed_message,
+            positiveButtonId = R.string.lbl_try_again,
+            negativeButtonId = R.string.dialog_cancel,
+            positive = {
+                viewModel.onRetrySendMessage(messageItem)
+            },
+            negative = {}
+        ).show()
+    }
+
+    private fun showFilePickerWithPermissionCheck() {
+
+    }
 }
