@@ -10,15 +10,12 @@ import com.rapidops.salesmatechatsdk.app.utils.AppEvent
 import com.rapidops.salesmatechatsdk.app.utils.EventBus
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.getFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isImageFile
-import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isImageType
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isValidFileSize
 import com.rapidops.salesmatechatsdk.app.utils.SingleLiveEvent
-import com.rapidops.salesmatechatsdk.data.reqmodels.Attachment
 import com.rapidops.salesmatechatsdk.data.reqmodels.Blocks
 import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.data.reqmodels.convertToMessageItem
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
-import com.rapidops.salesmatechatsdk.data.resmodels.UploadFileRes
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.BlockType
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
@@ -177,7 +174,7 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun sendTextMessage(typedMessage: String) {
-        val sendMessageReq = getNewSendMessageReq()
+        val sendMessageReq = sendMessageUseCase.getNewSendMessageReq()
         sendMessageReq.blockData.apply {
             add(Blocks().apply {
                 this.text = typedMessage
@@ -240,42 +237,6 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun getNewSendMessageReq(messageId: String? = null): SendMessageReq {
-        val uniqueMessageId = messageId ?: UUID.randomUUID().toString()
-        val sendMessageReq = SendMessageReq()
-        sendMessageReq.apply {
-            this.messageType = MessageType.COMMENT.value
-            this.messageId = uniqueMessageId
-            this.isBot = false
-            this.isInbound = true
-            this.conversationName = appSettingsDataSource.contactName
-        }
-        return sendMessageReq
-    }
-
-    private fun getNewAttachmentSendMessageReq(
-        response: UploadFileRes,
-        messageId: String
-    ): SendMessageReq {
-        val blocks = Blocks()
-        blocks.type = if (response.contentType.isImageType())
-            BlockType.IMAGE.value
-        else
-            BlockType.FILE.value
-
-        val attachment = Attachment()
-        attachment.contentType = response.contentType
-        attachment.gcpFileName = response.path
-        attachment.gcpThumbnailFileName = response.thumbnailPath
-        attachment.name = response.fileName
-        attachment.thumbnail = response.thumbnailUrl
-        blocks.attachment = attachment
-
-        val sendMessageReq = getNewSendMessageReq(messageId)
-        sendMessageReq.blockData.add(blocks)
-        return sendMessageReq
-    }
-
     fun sendAttachment(context: Context, uri: Uri) {
         withoutProgress({
             DocumentFile.fromSingleUri(context, uri)?.let { documentFile ->
@@ -298,8 +259,8 @@ internal class ChatViewModel @Inject constructor(
 
     private suspend fun uploadFile(file: File, messageItem: MessageItem) {
         try {
-            val response = uploadFileUseCase.execute(UploadFileUseCase.Param(file))
-            val sendMessageReq = getNewAttachmentSendMessageReq(response, messageItem.id)
+            val sendMessageReq = uploadFileUseCase.execute(UploadFileUseCase.Param(file, messageItem.id))
+
             val updatedMessageItem = sendMessageReq.convertToMessageItem()
             updatedMessageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
 
