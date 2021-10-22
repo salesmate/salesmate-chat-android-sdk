@@ -4,6 +4,8 @@
 
 
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -16,5 +18,15 @@
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.SalesMatChat" />
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.rapidops.salesmatechatsdk.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:readPermission="com.rapidops.salesmatechatsdk.fileprovider.READ">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 </manifest>

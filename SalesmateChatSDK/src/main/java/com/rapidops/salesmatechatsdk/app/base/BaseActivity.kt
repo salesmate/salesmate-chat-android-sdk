@@ -1,9 +1,12 @@
 package com.rapidops.salesmatechatsdk.app.base
 
+import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -12,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.interfaces.IFragmentSupport
 import com.rapidops.salesmatechatsdk.app.utils.ConnectivityLiveData
+import com.rapidops.salesmatechatsdk.app.utils.EasyPermissions
 import com.rapidops.salesmatechatsdk.databinding.ABaseLayoutBinding
 import com.rapidops.salesmatechatsdk.domain.exception.SalesmateChatException
 
@@ -35,6 +39,11 @@ internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
 
     open fun getToolbar(): Toolbar {
         return Toolbar(this)
+    }
+
+    companion object {
+        const val REQ_CAMERA_PERMISSION = 121
+        const val REQ_STORAGE_PERMISSION = 122
     }
 
     protected open fun getProgressView(): View {
@@ -229,5 +238,119 @@ internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         viewModel.unsubscribe()
+    }
+
+    fun requestForStoragePermission(listener: (isGranted: Boolean) -> Unit) {
+        EasyPermissions.requestPermissions(
+            this,
+            REQ_STORAGE_PERMISSION,
+            object : EasyPermissions.PermissionCallbacks {
+                override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+                    listener(true)
+                }
+
+                override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+                    listener(false)
+                }
+
+                override fun onPermissionsPermanentlyDeclined(
+                    requestCode: Int,
+                    perms: List<String>
+                ) {
+                    showAlertDialog(
+                        R.string.title_permission_denied,
+                        R.string.msg_storage_permission,
+                        R.string.dialog_ok,
+                        R.string.lbl_goto_settings,
+                        {
+
+                        }, {
+                            EasyPermissions.startSetting()
+                        }
+                    ).show()
+                }
+
+            },
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+    }
+
+    fun requestForCameraPermission(listener: (isGranted: Boolean) -> Unit) {
+        EasyPermissions.requestPermissions(
+            this,
+            REQ_CAMERA_PERMISSION,
+            object : EasyPermissions.PermissionCallbacks {
+                override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+                    listener(true)
+                }
+
+                override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+                    listener(false)
+                }
+
+                override fun onPermissionsPermanentlyDeclined(
+                    requestCode: Int,
+                    perms: List<String>
+                ) {
+                    showAlertDialog(
+                        R.string.title_permission_denied,
+                        R.string.msg_camera_permission,
+                        R.string.dialog_ok,
+                        R.string.lbl_goto_settings,
+                        {
+
+                        }, {
+                            EasyPermissions.startSetting()
+                        }
+                    ).show()
+                }
+
+            },
+            Manifest.permission.CAMERA
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+
+    protected fun showAlertDialog(
+        title: String,
+        message: String,
+        positiveButton: String,
+        negativeButton: String = getString(R.string.dialog_cancel),
+        positive: () -> Unit,
+        negative: () -> Unit
+    ): AlertDialog.Builder {
+        return AlertDialog
+            .Builder(this)
+            .setCancelable(false)
+            .setTitle(title)
+            .setMessage(message)
+            .setNegativeButton(negativeButton) { _, _ -> negative() }
+            .setPositiveButton(positiveButton) { _, _ -> positive() }
+    }
+
+    protected fun showAlertDialog(
+        @StringRes titleId: Int,
+        @StringRes messageId: Int,
+        @StringRes positiveButtonId: Int,
+        @StringRes negativeButtonId: Int = R.string.dialog_cancel,
+        positive: () -> Unit,
+        negative: () -> Unit,
+    ): AlertDialog.Builder {
+        return showAlertDialog(
+            getString(titleId),
+            getString(messageId),
+            getString(positiveButtonId),
+            getString(negativeButtonId),
+            positive, negative
+        )
     }
 }

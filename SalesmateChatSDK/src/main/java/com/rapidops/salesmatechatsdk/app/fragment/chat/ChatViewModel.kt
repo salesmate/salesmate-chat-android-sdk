@@ -1,5 +1,6 @@
 package com.rapidops.salesmatechatsdk.app.fragment.chat
 
+import androidx.documentfile.provider.DocumentFile
 import com.rapidops.salesmatechatsdk.app.base.BaseViewModel
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.extension.DateUtil
@@ -234,5 +235,13 @@ internal class ChatViewModel @Inject constructor(
             this.conversationName = appSettingsDataSource.contactName
         }
         return sendMessageReq
+    }
+
+    fun sendAttachment(documentFile: DocumentFile) {
+        withoutProgress({
+
+        }, {
+
+        })
     }
 }

@@ -1,11 +1,14 @@
 package com.rapidops.salesmatechatsdk.app.fragment.chat
 
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
@@ -17,11 +20,16 @@ import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ChatTopBarUserAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ToolbarUserAdapter
+import com.rapidops.salesmatechatsdk.app.fragment.upload_attachment.UploadAttachmentDialogFragment
+import com.rapidops.salesmatechatsdk.app.fragment.upload_attachment.UploadAttachmentDialogFragmentListener
 import com.rapidops.salesmatechatsdk.app.interfaces.EndlessScrollListener
 import com.rapidops.salesmatechatsdk.app.interfaces.MessageAdapterListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setSendButtonColorStateList
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
+import com.rapidops.salesmatechatsdk.app.utils.FilePicker
+import com.rapidops.salesmatechatsdk.app.utils.FilePickerListener
+import com.rapidops.salesmatechatsdk.app.utils.FileUtil.sizeInMb
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.databinding.FChatBinding
@@ -37,8 +45,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
     private lateinit var binding: FChatBinding
     private lateinit var endlessScrollListener: EndlessScrollListener
 
+    private lateinit var filePicker: FilePicker
 
     companion object {
+        private var TAG = ChatFragment::class.java.simpleName
         private const val EXTRA_CONVERSATION_DETAIL = "EXTRA_CONVERSATION_DETAIL"
 
         fun newInstance(conversationDetailItem: ConversationDetailItem? = null): ChatFragment {
@@ -60,6 +70,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
     }
 
     override fun setUpUI() {
+        filePicker = FilePicker(requireContext())
         setHasOptionsMenu(true)
         getBaseActivity().setSupportActionBar(binding.toolbar)
         getBaseActivity().supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -164,6 +175,12 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
                 }
             }
         })
+
+        filePicker.filePickerListener = object : FilePickerListener {
+            override fun onFilePicked(uri: Uri) {
+
+            }
+        }
     }
 
     private fun getTypedMessage(): String {
@@ -305,6 +322,30 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
     }
 
     private fun showFilePickerWithPermissionCheck() {
-
+        getBaseActivity().requestForStoragePermission {
+            if (it) {
+                showAttachmentDialog()
+            }
+        }
     }
+
+    private fun showAttachmentDialog() {
+        val uploadAttachmentDialogFragment = UploadAttachmentDialogFragment()
+        uploadAttachmentDialogFragment.show(
+            childFragmentManager,
+            UploadAttachmentDialogFragment::class.java.name
+        )
+        uploadAttachmentDialogFragment.listener = uploadAttachmentDialogFragmentListener
+    }
+
+    private val uploadAttachmentDialogFragmentListener =
+        object : UploadAttachmentDialogFragmentListener {
+            override fun onFilePicked(uri: Uri) {
+                DocumentFile.fromSingleUri(requireContext(), uri)?.let {
+                    Log.w(TAG, "Name: " + it.name)
+                    Log.w(TAG, "Size in MG: " + it.length().toDouble().sizeInMb)
+                }
+
+            }
+        }
 }
