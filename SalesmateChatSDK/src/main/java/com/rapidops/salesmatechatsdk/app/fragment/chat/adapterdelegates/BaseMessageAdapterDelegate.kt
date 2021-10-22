@@ -69,7 +69,7 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
                 text = context.getString(R.string.lbl_sending)
                 isVisible = true
             } else {
-                if (messageItem.sendStatus == SendStatus.FAIL ||
+                if (messageItem.isStatusFailed ||
                     hideDateTimeView(items, position)
                 ) {
                     text = ""

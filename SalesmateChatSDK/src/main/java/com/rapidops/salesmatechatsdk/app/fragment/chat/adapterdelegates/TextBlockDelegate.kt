@@ -27,7 +27,7 @@ internal class TextBlockDelegate(activity: Activity) :
         val blockItem = items[position] as TextBlockDataItem
 
         viewHolder.bind.txtPlainMessage.setHtml(
-            blockItem.text,
+            blockItem.text ?: "",
             PicassoImageGetter(
                 viewHolder.bind.txtPlainMessage
             )

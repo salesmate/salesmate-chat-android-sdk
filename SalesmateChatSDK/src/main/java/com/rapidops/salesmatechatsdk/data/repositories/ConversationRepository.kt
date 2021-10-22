@@ -1,13 +1,12 @@
 package com.rapidops.salesmatechatsdk.data.repositories
 
 import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
-import com.rapidops.salesmatechatsdk.data.resmodels.ConversationDetailRes
-import com.rapidops.salesmatechatsdk.data.resmodels.ConversationRes
-import com.rapidops.salesmatechatsdk.data.resmodels.MessageListRes
-import com.rapidops.salesmatechatsdk.data.resmodels.SendMessageRes
+import com.rapidops.salesmatechatsdk.data.resmodels.*
 import com.rapidops.salesmatechatsdk.data.webserivce.IService
+import com.rapidops.salesmatechatsdk.data.webserivce.MultipartUtil
 import com.rapidops.salesmatechatsdk.domain.datasources.IConversationDataSource
 import com.rapidops.salesmatechatsdk.domain.exception.APIResponseMapper
+import java.io.File
 
 internal class ConversationRepository(private val service: IService) : IConversationDataSource {
 
@@ -50,5 +49,10 @@ internal class ConversationRepository(private val service: IService) : IConversa
         return APIResponseMapper.getResponse {
             service.readConversationForVisitor(body)
         }
+    }
+
+    override suspend fun uploadFile(file: File): UploadFileRes {
+        val filePart = MultipartUtil.prepareFilePart("file", file)
+        return APIResponseMapper.getResponse { service.uploadFile(true, filePart) }
     }
 }

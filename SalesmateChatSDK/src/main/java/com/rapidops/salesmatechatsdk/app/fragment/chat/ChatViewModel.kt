@@ -1,29 +1,35 @@
 package com.rapidops.salesmatechatsdk.app.fragment.chat
 
+import android.content.Context
+import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.rapidops.salesmatechatsdk.app.base.BaseViewModel
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.extension.DateUtil
 import com.rapidops.salesmatechatsdk.app.utils.AppEvent
 import com.rapidops.salesmatechatsdk.app.utils.EventBus
+import com.rapidops.salesmatechatsdk.app.utils.FileUtil.getFile
+import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isImageFile
+import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isImageType
+import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isValidFileSize
 import com.rapidops.salesmatechatsdk.app.utils.SingleLiveEvent
+import com.rapidops.salesmatechatsdk.data.reqmodels.Attachment
 import com.rapidops.salesmatechatsdk.data.reqmodels.Blocks
 import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.data.reqmodels.convertToMessageItem
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
+import com.rapidops.salesmatechatsdk.data.resmodels.UploadFileRes
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.BlockType
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
-import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
-import com.rapidops.salesmatechatsdk.domain.models.message.MessageType
-import com.rapidops.salesmatechatsdk.domain.models.message.SendStatus
-import com.rapidops.salesmatechatsdk.domain.models.message.convertToSendMessageReq
+import com.rapidops.salesmatechatsdk.domain.models.message.*
 import com.rapidops.salesmatechatsdk.domain.usecases.*
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 
@@ -35,6 +41,7 @@ internal class ChatViewModel @Inject constructor(
     private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
     private val readConversationForVisitorUseCase: ReadConversationForVisitorUseCase,
+    private val uploadFileUseCase: UploadFileUseCase,
 ) : BaseViewModel(coroutineContextProvider) {
 
     var adapterMessageList: List<MessageItem> = listOf()
@@ -51,6 +58,7 @@ internal class ChatViewModel @Inject constructor(
     val showMessageList = SingleLiveEvent<List<MessageItem>>()
     val showNewMessage = SingleLiveEvent<List<MessageItem>>()
     val updateMessage = SingleLiveEvent<MessageItem>()
+    val showOverLimitFileMessageDialog = SingleLiveEvent<Nothing>()
 
     private var conversationId: String? = null
 
@@ -73,6 +81,13 @@ internal class ChatViewModel @Inject constructor(
         }
 
         subscribeEvents()
+    }
+
+    private fun getConversationId(): String {
+        return conversationId ?: run {
+            conversationId = UUID.randomUUID().toString()
+            return conversationId!!
+        }
     }
 
     private suspend fun loadMessageList(conversationId: String, offSet: Int = 0) {
@@ -162,10 +177,7 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun sendTextMessage(typedMessage: String) {
-        if (conversationId == null) {
-            conversationId = UUID.randomUUID().toString()
-        }
-        val sendMessageReq = getNewSendMessageRes()
+        val sendMessageReq = getNewSendMessageReq()
         sendMessageReq.blockData.apply {
             add(Blocks().apply {
                 this.text = typedMessage
@@ -184,7 +196,7 @@ internal class ChatViewModel @Inject constructor(
             delay(100)
             val response = sendMessageUseCase.execute(
                 SendMessageUseCase.Param(
-                    conversationId!!,
+                    getConversationId(),
                     sendMessageReq
                 )
             )
@@ -214,18 +226,22 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun onRetrySendMessage(messageItem: MessageItem) {
-        messageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
-        messageItem.sendStatus = SendStatus.SENDING
-        updateMessage.value = messageItem
-        val sendMessageReq = messageItem.convertToSendMessageReq()
-            .apply {
-                conversationName = appSettingsDataSource.contactName
-            }
-        sendMessage(sendMessageReq, messageItem)
+        if (messageItem.sendStatus == SendStatus.UPLOADING_FAIL) {
+            retryUploadAndSendMessage(messageItem)
+        } else {
+            messageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
+            messageItem.sendStatus = SendStatus.SENDING
+            updateMessage.value = messageItem
+            val sendMessageReq = messageItem.convertToSendMessageReq()
+                .apply {
+                    conversationName = appSettingsDataSource.contactName
+                }
+            sendMessage(sendMessageReq, messageItem)
+        }
     }
 
-    private fun getNewSendMessageRes(): SendMessageReq {
-        val uniqueMessageId = UUID.randomUUID().toString()
+    private fun getNewSendMessageReq(messageId: String? = null): SendMessageReq {
+        val uniqueMessageId = messageId ?: UUID.randomUUID().toString()
         val sendMessageReq = SendMessageReq()
         sendMessageReq.apply {
             this.messageType = MessageType.COMMENT.value
@@ -237,9 +253,135 @@ internal class ChatViewModel @Inject constructor(
         return sendMessageReq
     }
 
-    fun sendAttachment(documentFile: DocumentFile) {
-        withoutProgress({
+    private fun getNewAttachmentSendMessageReq(
+        response: UploadFileRes,
+        messageId: String
+    ): SendMessageReq {
+        val blocks = Blocks()
+        blocks.type = if (response.contentType.isImageType())
+            BlockType.IMAGE.value
+        else
+            BlockType.FILE.value
 
+        val attachment = Attachment()
+        attachment.contentType = response.contentType
+        attachment.gcpFileName = response.path
+        attachment.gcpThumbnailFileName = response.thumbnailPath
+        attachment.name = response.fileName
+        attachment.thumbnail = response.thumbnailUrl
+        blocks.attachment = attachment
+
+        val sendMessageReq = getNewSendMessageReq(messageId)
+        sendMessageReq.blockData.add(blocks)
+        return sendMessageReq
+    }
+
+    fun sendAttachment(context: Context, uri: Uri) {
+        withoutProgress({
+            DocumentFile.fromSingleUri(context, uri)?.let { documentFile ->
+                if (documentFile.length().isValidFileSize()) {
+                    val messageItem = getNewMessageItem(documentFile, context)
+                    messageItem.sendStatus = SendStatus.SENDING
+                    withContext(coroutineContextProvider.ui) {
+                        showNewMessage.value = listOf(messageItem)
+                    }
+                    val file = documentFile.uri.getFile(context)
+                    uploadFile(file, messageItem)
+                } else {
+                    showOverLimitFileMessageDialog.call()
+                }
+            }
+        }, {
+
+        })
+    }
+
+    private suspend fun uploadFile(file: File, messageItem: MessageItem) {
+        try {
+            val response = uploadFileUseCase.execute(UploadFileUseCase.Param(file))
+            val sendMessageReq = getNewAttachmentSendMessageReq(response, messageItem.id)
+            val updatedMessageItem = sendMessageReq.convertToMessageItem()
+            updatedMessageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
+
+            val blockData = updatedMessageItem.blockData.first()
+            if (blockData is ImageBlockDataItem) {
+                blockData.fileAttachmentData?.url = file.path
+            } else if (blockData is FileBlockDataItem) {
+                blockData.fileAttachmentData?.url = file.path
+            }
+            withContext(coroutineContextProvider.ui) {
+                updateMessage.value = updatedMessageItem
+            }
+
+            sendMessage(sendMessageReq, updatedMessageItem)
+        } catch (e: Exception) {
+            delay(100)
+            withContext(coroutineContextProvider.ui) {
+                val blockData = messageItem.blockData.first()
+                if (blockData is ImageBlockDataItem) {
+                    blockData.fileAttachmentData?.url = file.path
+                } else if (blockData is FileBlockDataItem) {
+                    blockData.fileAttachmentData?.url = file.path
+                }
+                messageItem.sendStatus = SendStatus.UPLOADING_FAIL
+                updateMessage.value = messageItem
+            }
+        }
+    }
+
+    private fun getNewMessageItem(
+        documentFile: DocumentFile,
+        context: Context
+    ): MessageItem {
+        val messageItem = MessageItem()
+        messageItem.apply {
+            this.id = UUID.randomUUID().toString()
+            this.messageType = MessageType.COMMENT.value
+            this.createdDate = DateUtil.getCurrentISOFormatDateTime()
+            val blockDataItem =
+                if (documentFile.isImageFile(context)) {
+                    ImageBlockDataItem().apply {
+                        blockType = BlockType.IMAGE
+                        fileAttachmentData = FileAttachmentData().apply {
+                            this.url = documentFile.uri.toString()
+                            this.contentType = documentFile.type ?: ""
+                            this.name = documentFile.name ?: ""
+                        }
+                    }
+                } else {
+                    FileBlockDataItem().apply {
+                        blockType = BlockType.FILE
+                        fileAttachmentData = FileAttachmentData().apply {
+                            this.url = documentFile.uri.toString()
+                            this.contentType = documentFile.type ?: ""
+                            this.name = documentFile.name ?: ""
+                        }
+                    }
+                }
+            blockDataItem.isSelfMessage = true
+            this.blockData.add(blockDataItem)
+        }
+        return messageItem
+    }
+
+    private fun retryUploadAndSendMessage(messageItem: MessageItem) {
+        messageItem.sendStatus = SendStatus.SENDING
+        updateMessage.value = messageItem
+        withoutProgress({
+            val filePath = when (val blockData = messageItem.blockData.first()) {
+                is ImageBlockDataItem -> {
+                    blockData.fileAttachmentData?.url
+                }
+                is FileBlockDataItem -> {
+                    blockData.fileAttachmentData?.url
+                }
+                else -> {
+                    null
+                }
+            }
+            if (!filePath.isNullOrEmpty()) {
+                uploadFile(File(filePath), messageItem)
+            }
         }, {
 
         })

@@ -9,6 +9,7 @@ import com.rapidops.salesmatechatsdk.app.utils.transformations.RoundedTransforma
 import com.rapidops.salesmatechatsdk.app.view.TextDrawable
 import com.rapidops.salesmatechatsdk.app.view.TextDrawable.Companion.builder
 import com.squareup.picasso.Picasso
+import java.io.File
 
 
 fun ImageView.loadImage(url: String?) {
@@ -26,7 +27,18 @@ fun AppCompatImageView.loadImageWithRoundedTransformation(url: String?) {
         .load(url)
         .into(this)*/
 
-    Picasso.get().load(url).transform(RoundedTransformation(dimension)).into(this)
+    url?.let {
+        val file = File(it)
+        if (file.exists()) {
+            Picasso.get().load(file).transform(RoundedTransformation(dimension)).into(this)
+        }else{
+            Picasso.get().load(url).transform(RoundedTransformation(dimension)).into(this)
+        }
+    } ?: run {
+        setImageDrawable(null)
+    }
+
+
 }
 
 

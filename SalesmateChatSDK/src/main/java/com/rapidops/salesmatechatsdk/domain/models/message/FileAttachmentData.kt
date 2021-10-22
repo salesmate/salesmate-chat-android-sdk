@@ -12,7 +12,7 @@ internal data class FileAttachmentData(
 	var gcpFileName: String = "",
 
 	@SerializedName("thumbnail")
-	var thumbnail: String = "",
+	var thumbnail: String? = null,
 
 	@SerializedName("content_type")
 	var contentType: String = "",
@@ -37,4 +37,6 @@ internal data class FileAttachmentData(
 
 	@SerializedName("url")
 	var url: String = ""
-) : BaseModel()
+) : BaseModel() {
+	var gcpThumbnailFileName: String? = null
+}

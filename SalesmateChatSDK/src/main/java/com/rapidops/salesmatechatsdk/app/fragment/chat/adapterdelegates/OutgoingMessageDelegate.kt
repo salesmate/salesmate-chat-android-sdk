@@ -38,8 +38,8 @@ internal class OutgoingMessageDelegate(
             isVisible = messageItem.sendStatus == SendStatus.FAIL
         }
         viewHolder.bind.apply {
-            txtFailStatus.isVisible = messageItem.sendStatus == SendStatus.FAIL
-            imgInfo.isVisible = messageItem.sendStatus == SendStatus.FAIL
+            txtFailStatus.isVisible = messageItem.isStatusFailed
+            imgInfo.isVisible = messageItem.isStatusFailed
         }
 
         viewHolder.bind.imgInfo.setOnClickListener {

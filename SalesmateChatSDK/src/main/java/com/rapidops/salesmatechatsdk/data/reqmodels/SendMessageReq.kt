@@ -2,9 +2,7 @@ package com.rapidops.salesmatechatsdk.data.reqmodels
 
 import com.google.gson.annotations.SerializedName
 import com.rapidops.salesmatechatsdk.domain.models.BlockType
-import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
-import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
-import com.rapidops.salesmatechatsdk.domain.models.message.TextBlockDataItem
+import com.rapidops.salesmatechatsdk.domain.models.message.*
 
 internal class SendMessageReq {
 
@@ -33,7 +31,29 @@ internal class Blocks {
     var type: String = ""
 
     @SerializedName("text")
-    var text: String = ""
+    var text: String? = null
+
+    @SerializedName("attachment")
+    var attachment: Attachment? = null
+
+}
+
+internal class Attachment {
+
+    @SerializedName("content_type")
+    var contentType: String = ""
+
+    @SerializedName("gcp_file_name")
+    var gcpFileName: String = ""
+
+    @SerializedName("gcp_thumbnail_file_name")
+    var gcpThumbnailFileName: String? = null
+
+    @SerializedName("name")
+    var name: String = ""
+
+    @SerializedName("thumbnail")
+    var thumbnail: String? = null
 
 }
 
@@ -60,6 +80,18 @@ internal fun Blocks.convertToBlockDataItem(): BlockDataItem {
             this.text = blockItem.text
             this.isSelfMessage = true
         }
+    } else if (blockItem.type == BlockType.IMAGE.value) {
+        ImageBlockDataItem().apply {
+            this.blockType = BlockType.IMAGE
+            this.fileAttachmentData = blockItem.attachment?.convertToFileAttachment()
+            this.isSelfMessage = true
+        }
+    } else if (blockItem.type == BlockType.FILE.value) {
+        FileBlockDataItem().apply {
+            this.blockType = BlockType.FILE
+            this.fileAttachmentData = blockItem.attachment?.convertToFileAttachment()
+            this.isSelfMessage = true
+        }
     } else {
         TextBlockDataItem().apply {
             this.blockType = BlockType.TEXT
@@ -69,4 +101,16 @@ internal fun Blocks.convertToBlockDataItem(): BlockDataItem {
     }
 
     return blockDataItem
+}
+
+internal fun Attachment.convertToFileAttachment(): FileAttachmentData {
+    val attachment = this
+    val fileAttachmentData = FileAttachmentData().apply {
+        this.contentType = attachment.contentType
+        this.gcpFileName = attachment.gcpFileName
+        this.gcpThumbnailFileName = attachment.gcpThumbnailFileName
+        this.name = attachment.name
+        this.thumbnail = attachment.thumbnail
+    }
+    return fileAttachmentData
 }

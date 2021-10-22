@@ -2,13 +2,11 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
@@ -27,9 +25,6 @@ import com.rapidops.salesmatechatsdk.app.interfaces.MessageAdapterListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setSendButtonColorStateList
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
-import com.rapidops.salesmatechatsdk.app.utils.FilePicker
-import com.rapidops.salesmatechatsdk.app.utils.FilePickerListener
-import com.rapidops.salesmatechatsdk.app.utils.FileUtil.sizeInMb
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.databinding.FChatBinding
@@ -44,8 +39,6 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var binding: FChatBinding
     private lateinit var endlessScrollListener: EndlessScrollListener
-
-    private lateinit var filePicker: FilePicker
 
     companion object {
         private var TAG = ChatFragment::class.java.simpleName
@@ -70,7 +63,6 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
     }
 
     override fun setUpUI() {
-        filePicker = FilePicker(requireContext())
         setHasOptionsMenu(true)
         getBaseActivity().setSupportActionBar(binding.toolbar)
         getBaseActivity().supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -145,6 +137,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             messageAdapter.updateMessage(it)
             viewModel.updateAdapterList(messageAdapter.items)
         })
+
+        viewModel.showOverLimitFileMessageDialog.observe(this, {
+            showOverLimitFileMessageDialog()
+        })
     }
 
     private fun attachListener() {
@@ -175,12 +171,6 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
                 }
             }
         })
-
-        filePicker.filePickerListener = object : FilePickerListener {
-            override fun onFilePicked(uri: Uri) {
-
-            }
-        }
     }
 
     private fun getTypedMessage(): String {
@@ -321,6 +311,14 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         ).show()
     }
 
+    private fun showOverLimitFileMessageDialog() {
+        showAlertDialog(
+            titleId = R.string.lbl_failed,
+            messageId = R.string.msg_support_file_sizes_upto_25mb,
+            positiveButtonId = R.string.dialog_ok,
+        ).show()
+    }
+
     private fun showFilePickerWithPermissionCheck() {
         getBaseActivity().requestForStoragePermission {
             if (it) {
@@ -335,17 +333,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             childFragmentManager,
             UploadAttachmentDialogFragment::class.java.name
         )
-        uploadAttachmentDialogFragment.listener = uploadAttachmentDialogFragmentListener
-    }
-
-    private val uploadAttachmentDialogFragmentListener =
-        object : UploadAttachmentDialogFragmentListener {
+        uploadAttachmentDialogFragment.listener = object : UploadAttachmentDialogFragmentListener {
             override fun onFilePicked(uri: Uri) {
-                DocumentFile.fromSingleUri(requireContext(), uri)?.let {
-                    Log.w(TAG, "Name: " + it.name)
-                    Log.w(TAG, "Size in MG: " + it.length().toDouble().sizeInMb)
-                }
-
+                viewModel.sendAttachment(requireContext(), uri)
             }
         }
+    }
 }

@@ -240,32 +240,35 @@ internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPres
         title: String,
         message: String,
         positiveButton: String,
-        negativeButton: String = getString(R.string.dialog_cancel),
-        positive: () -> Unit,
-        negative: () -> Unit
+        negativeButton: String? = null,
+        positive: () -> Unit = {},
+        negative: () -> Unit = {}
     ): AlertDialog.Builder {
-        return AlertDialog
+        val alertDialog = AlertDialog
             .Builder(requireContext())
             .setCancelable(false)
             .setTitle(title)
             .setMessage(message)
-            .setNegativeButton(negativeButton) { _, _ -> negative() }
             .setPositiveButton(positiveButton) { _, _ -> positive() }
+        if (negativeButton != null) {
+            alertDialog.setNegativeButton(negativeButton) { _, _ -> negative() }
+        }
+        return alertDialog
     }
 
     protected fun showAlertDialog(
         @StringRes titleId: Int,
         @StringRes messageId: Int,
         @StringRes positiveButtonId: Int,
-        @StringRes negativeButtonId: Int = R.string.dialog_cancel,
-        positive: () -> Unit,
-        negative: () -> Unit,
+        @StringRes negativeButtonId: Int? = null,
+        positive: () -> Unit = {},
+        negative: () -> Unit = {},
     ): AlertDialog.Builder {
         return showAlertDialog(
             getString(titleId),
             getString(messageId),
             getString(positiveButtonId),
-            getString(negativeButtonId),
+            if (negativeButtonId != null) getString(negativeButtonId) else null,
             positive, negative
         )
     }

@@ -19,8 +19,8 @@ internal class FileAttachmentDataDs : JsonDeserializer<FileAttachmentData> {
         val jsonObject = json.asJsonObject
 
         fileAttachmentData.workspaceId = jsonObject.getString("workspace_id") ?: ""
-        fileAttachmentData.gcpFileName = jsonObject.getString("gcp_file_name") ?: ""
-        fileAttachmentData.thumbnail = jsonObject.getString("thumbnail") ?: ""
+        fileAttachmentData.gcpFileName = jsonObject.getString("gcp_file_name")?:""
+        fileAttachmentData.thumbnail = jsonObject.getString("thumbnail")
         fileAttachmentData.contentType = jsonObject.getString("content_type") ?: ""
         fileAttachmentData.size = jsonObject.getString("size") ?: ""
         fileAttachmentData.conversationId = jsonObject.getString("conversation_id") ?: ""

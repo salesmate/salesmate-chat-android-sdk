@@ -3,6 +3,7 @@ package com.rapidops.salesmatechatsdk.data.webserivce
 import com.google.gson.JsonElement
 import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.data.resmodels.*
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -47,7 +48,14 @@ internal interface IService {
 
     @POST("v1/widget/read-conversation-for-visitor")
     suspend fun readConversationForVisitor(
-        @Body body: Map<String,String>
+        @Body body: Map<String, String>
     ): Response<ConversationDetailRes>
+
+    @Multipart
+    @POST("v1/upload-file")
+    suspend fun uploadFile(
+        @Query("make_public") makePublic: Boolean,
+        @Part bodyPart: MultipartBody.Part
+    ): Response<UploadFileRes>
 
 }

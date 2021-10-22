@@ -4,5 +4,6 @@ enum class SendStatus {
     NONE,
     SENDING,
     SUCCESS,
-    FAIL;
+    FAIL,
+    UPLOADING_FAIL;
 }
