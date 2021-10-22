@@ -41,16 +41,15 @@ internal class ChatViewModel @Inject constructor(
     private val uploadFileUseCase: UploadFileUseCase,
 ) : BaseViewModel(coroutineContextProvider) {
 
+    companion object {
+        private const val PAGE_SIZE = 50
+    }
+
     var adapterMessageList: List<MessageItem> = listOf()
 
     val pingRes: PingRes by lazy {
         appSettingsDataSource.pingRes
     }
-
-    companion object {
-        private const val PAGE_SIZE = 50
-    }
-
     val showConversationDetail = SingleLiveEvent<ConversationDetailItem>()
     val showMessageList = SingleLiveEvent<List<MessageItem>>()
     val showNewMessage = SingleLiveEvent<List<MessageItem>>()
@@ -58,6 +57,7 @@ internal class ChatViewModel @Inject constructor(
     val showOverLimitFileMessageDialog = SingleLiveEvent<Nothing>()
 
     private var conversationId: String? = null
+    private var lastSendMessageId: String? = null
 
 
     fun subscribe(conversationId: String?, isLastMessageRead: Boolean = false) {
@@ -133,7 +133,8 @@ internal class ChatViewModel @Inject constructor(
         subscribeEvent {
             EventBus.events.filterIsInstance<AppEvent.NewMessageEvent>()
                 .collectLatest { event ->
-                    if (event.data.conversationId == conversationId) {
+                    val eventData = event.data
+                    if (eventData.conversationId == conversationId && lastSendMessageId != eventData.messageId) {
                         conversationId?.let { conversationId ->
                             adapterMessageList.firstOrNull()?.let { messageItem ->
                                 loadMessageListByLastMessageDate(
@@ -197,6 +198,7 @@ internal class ChatViewModel @Inject constructor(
                     sendMessageReq
                 )
             )
+            lastSendMessageId = sendMessageReq.messageId
             withContext(coroutineContextProvider.ui) {
                 messageItem.sendStatus =
                     if (response.isSuccess) SendStatus.SUCCESS else SendStatus.FAIL
