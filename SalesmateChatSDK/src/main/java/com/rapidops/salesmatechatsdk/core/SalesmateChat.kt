@@ -12,7 +12,6 @@ import com.rapidops.salesmatechatsdk.app.di.module.ContextModule
 import com.rapidops.salesmatechatsdk.app.di.module.DataModule
 import com.rapidops.salesmatechatsdk.app.di.module.NetworkModule
 import com.rapidops.salesmatechatsdk.app.di.module.ViewModelModule
-import com.squareup.picasso.Picasso
 import java.util.*
 
 internal class SalesmateChat(
@@ -70,7 +69,6 @@ internal class SalesmateChat(
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(application)
         }
-        Picasso.get().setIndicatorsEnabled(BuildConfig.DEBUG)
     }
 
     override fun setVerifiedId(verifiedId: String) {

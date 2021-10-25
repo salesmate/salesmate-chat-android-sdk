@@ -2,43 +2,30 @@ package com.rapidops.salesmatechatsdk.app.extension
 
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.utils.ColorGenerator
-import com.rapidops.salesmatechatsdk.app.utils.transformations.CircleTransform
-import com.rapidops.salesmatechatsdk.app.utils.transformations.RoundedTransformation
 import com.rapidops.salesmatechatsdk.app.view.TextDrawable
 import com.rapidops.salesmatechatsdk.app.view.TextDrawable.Companion.builder
-import com.squareup.picasso.Picasso
-import java.io.File
 
 
 fun ImageView.loadImage(url: String?) {
-    /*Glide.with(context)
+    Glide.with(context)
         .load(url)
         .diskCacheStrategy(DiskCacheStrategy.DATA)
-        .into(this)*/
-    Picasso.get().load(url).into(this)
+        .into(this)
 
 }
 
 fun AppCompatImageView.loadImageWithRoundedTransformation(url: String?) {
     val dimension = context.resources.getDimension(R.dimen.img_rounded_corner)
-    /*Glide.with(context)
+    Glide.with(context)
         .load(url)
-        .into(this)*/
-
-    url?.let {
-        val file = File(it)
-        if (file.exists()) {
-            Picasso.get().load(file).transform(RoundedTransformation(dimension)).into(this)
-        }else{
-            Picasso.get().load(url).transform(RoundedTransformation(dimension)).into(this)
-        }
-    } ?: run {
-        setImageDrawable(null)
-    }
-
-
+        .transform(RoundedCorners(dimension.toInt()))
+        .diskCacheStrategy(DiskCacheStrategy.DATA)
+        .into(this)
 }
 
 
@@ -46,11 +33,10 @@ fun AppCompatImageView.loadCircleProfileImage(url: String?, name: String? = "") 
     if (url.isNullOrEmpty()) {
         setImageDrawable(getTextDrawableFromName(name, layoutParams.height))
     } else {
-        Picasso.get().load(url).transform(CircleTransform()).into(this)
-        /*Glide.with(context)
+        Glide.with(context)
             .load(url)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
-            .circleCrop().into(this)*/
+            .circleCrop().into(this)
     }
 
 }

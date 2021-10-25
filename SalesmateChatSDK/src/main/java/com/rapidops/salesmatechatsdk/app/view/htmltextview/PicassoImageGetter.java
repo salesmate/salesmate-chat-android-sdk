@@ -1,4 +1,5 @@
 package com.rapidops.salesmatechatsdk.app.view.htmltextview;
+/*
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -105,3 +106,4 @@ public class PicassoImageGetter implements Html.ImageGetter {
 
     }
 }
+*/

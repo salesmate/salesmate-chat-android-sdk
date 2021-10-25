@@ -44,7 +44,6 @@ internal class IncomingMessageDelegate(private val activity: Activity) :
 
         init {
             bind.rvBlockList.addItemDecoration(SpacesItemDecoration(8))
-            bind.rvBlockList.setHasFixedSize(true)
             bind.rvBlockList.layoutManager = layoutManager
             bind.rvBlockList.adapter = blockAdapter
 

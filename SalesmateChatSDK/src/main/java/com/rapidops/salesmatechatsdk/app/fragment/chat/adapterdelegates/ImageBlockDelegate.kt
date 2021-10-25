@@ -23,6 +23,7 @@ internal class ImageBlockDelegate(activity: Activity) :
     ) {
         val imageBlock = items[position] as ImageBlockDataItem
         val viewHolder = holder as ImageBlockViewHolder
+        viewHolder.bind.imgBlockImage.layout(0, 0, 0, 0)
         viewHolder.bind.imgBlockImage.loadImageWithRoundedTransformation(imageBlock.fileAttachmentData?.url)
 
     }
