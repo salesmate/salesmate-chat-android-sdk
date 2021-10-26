@@ -1,7 +1,11 @@
 package com.rapidops.salesmatechatsdk.domain.models.message
 
 import com.google.gson.annotations.SerializedName
+import com.rapidops.salesmatechatsdk.data.reqmodels.Attachment
+import com.rapidops.salesmatechatsdk.data.reqmodels.Blocks
+import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.domain.models.BaseModel
+import com.rapidops.salesmatechatsdk.domain.models.BlockType
 import com.rapidops.salesmatechatsdk.domain.models.User
 
 internal data class MessageItem(
@@ -65,5 +69,71 @@ internal data class MessageItem(
 	var user: User? = null
 
 	var conversationId: String = ""
+
+	var sendStatus = SendStatus.NONE
+
+	val isStatusFailed: Boolean
+		get() {
+			return sendStatus == SendStatus.FAIL || sendStatus == SendStatus.UPLOADING_FAIL
+		}
 }
 
+
+internal fun MessageItem.convertToSendMessageReq(): SendMessageReq {
+	val sendMessageReq = this
+	val messageItem = SendMessageReq().apply {
+		this.messageType = sendMessageReq.messageType
+		this.messageId = id
+		this.isInbound = true
+		this.isBot = sendMessageReq.isBot
+		this.blockData.apply {
+			sendMessageReq.blockData.forEach {
+				add(it.convertToBlocks())
+			}
+		}
+	}
+	return messageItem
+}
+
+internal fun BlockDataItem.convertToBlocks(): Blocks {
+	val blockItem = this
+	val blockDataItem = when (blockItem) {
+		is TextBlockDataItem -> {
+			Blocks().apply {
+				this.type = BlockType.TEXT.value
+				this.text = blockItem.text
+			}
+		}
+		is ImageBlockDataItem -> {
+			Blocks().apply {
+				this.type = BlockType.IMAGE.value
+				this.attachment = blockItem.fileAttachmentData?.convertToAttachment()
+			}
+		}
+		is FileBlockDataItem -> {
+			Blocks().apply {
+				this.type = BlockType.FILE.value
+				this.attachment = blockItem.fileAttachmentData?.convertToAttachment()
+			}
+		}
+		else -> {
+			Blocks().apply {
+				this.type = BlockType.TEXT.value
+			}
+		}
+	}
+
+	return blockDataItem
+}
+
+internal fun FileAttachmentData.convertToAttachment(): Attachment {
+	val fileAttachmentData = this
+	val attachment = Attachment().apply {
+		this.contentType = fileAttachmentData.contentType
+		this.gcpFileName = fileAttachmentData.gcpFileName
+		this.gcpThumbnailFileName = fileAttachmentData.gcpThumbnailFileName
+		this.name = fileAttachmentData.name
+		this.thumbnail = fileAttachmentData.thumbnail
+	}
+	return attachment
+}

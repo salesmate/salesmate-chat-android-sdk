@@ -35,7 +35,7 @@ internal class SocketController @Inject constructor(
             if (_socket != null && _socket?.isconnected()?.not() == true) {
                 _socket?.disconnect()
                 _socket?.connectAsync()
-            } else {
+            } else if (_socket == null) {
                 val socketClusterUrl =
                     "wss://" + appSettingsDataSource.salesMateChatSetting.tenantId + "/socketcluster/"
                 _socket = Socket(socketClusterUrl)

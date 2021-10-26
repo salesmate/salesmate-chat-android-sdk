@@ -3,7 +3,6 @@
  */
 package com.rapidops.salesmatechatsdk.app.view.htmltextview
 
-/*
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
@@ -16,7 +15,6 @@ import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import com.squareup.picasso.Picasso
 import java.lang.ref.WeakReference
 
 class GlideImageGetter(
@@ -119,4 +117,4 @@ class GlideImageGetter(
     interface HtmlImagesHandler {
         fun addImage(uri: String?)
     }
-}*/
+}

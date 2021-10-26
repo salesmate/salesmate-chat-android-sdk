@@ -1,11 +1,14 @@
 package com.rapidops.salesmatechatsdk.app.utils.transformations
 
 import android.graphics.*
+/*
 import com.squareup.picasso.Transformation
 
+*/
 /**
  * Created by julian on 13/6/21.
- */
+ *//*
+
 class CircleTransform : Transformation {
     override fun transform(source: Bitmap): Bitmap {
         val size = Math.min(source.width, source.height)
@@ -32,4 +35,4 @@ class CircleTransform : Transformation {
     override fun key(): String {
         return "circle"
     }
-}
+}*/

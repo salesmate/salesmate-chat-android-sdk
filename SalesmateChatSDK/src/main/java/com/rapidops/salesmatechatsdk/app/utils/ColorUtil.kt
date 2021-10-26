@@ -11,8 +11,6 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.BlendModeColorFilterCompat
-import androidx.core.graphics.BlendModeCompat
 import androidx.core.graphics.ColorUtils
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.core.SalesmateChat
@@ -117,35 +115,23 @@ internal object ColorUtil {
     }
 
     fun Drawable.setTintFromBackground() {
-        //setTint(backGroundColor.foregroundColor())
-        colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-            backGroundColor.foregroundColor(),
-            BlendModeCompat.SRC_ATOP
-        )
+        mutate()
+        setTint(backGroundColor.foregroundColor())
     }
 
     fun Drawable.setTintFromAction() {
-        //setTint(backGroundColor.foregroundColor())
-        colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-            actionColor.foregroundColor(),
-            BlendModeCompat.SRC_ATOP
-        )
+        mutate()
+        setTint(backGroundColor.foregroundColor())
     }
 
     fun Drawable.setTintBackground() {
-        //setTint(backGroundColor)
-        colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-            backGroundColor,
-            BlendModeCompat.SRC_ATOP
-        )
+        mutate()
+        setTint(backGroundColor)
     }
 
     fun Drawable.setTintAction() {
-        //setTint(actionColor)
-        colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-            actionColor,
-            BlendModeCompat.SRC_ATOP
-        )
+        mutate()
+        setTint(actionColor)
     }
 
     private val messengerBackground: String by lazy {

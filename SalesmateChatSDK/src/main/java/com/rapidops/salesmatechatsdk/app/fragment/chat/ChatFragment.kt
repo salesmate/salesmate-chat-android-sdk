@@ -1,5 +1,6 @@
 package com.rapidops.salesmatechatsdk.app.fragment.chat
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
@@ -17,7 +18,10 @@ import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ChatTopBarUserAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ToolbarUserAdapter
+import com.rapidops.salesmatechatsdk.app.fragment.upload_attachment.UploadAttachmentDialogFragment
+import com.rapidops.salesmatechatsdk.app.fragment.upload_attachment.UploadAttachmentDialogFragmentListener
 import com.rapidops.salesmatechatsdk.app.interfaces.EndlessScrollListener
+import com.rapidops.salesmatechatsdk.app.interfaces.MessageAdapterListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setSendButtonColorStateList
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
@@ -26,6 +30,7 @@ import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.databinding.FChatBinding
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.User
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import kotlin.math.abs
 
 internal class ChatFragment : BaseFragment<ChatViewModel>() {
@@ -35,8 +40,8 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
     private lateinit var binding: FChatBinding
     private lateinit var endlessScrollListener: EndlessScrollListener
 
-
     companion object {
+        private var TAG = ChatFragment::class.java.simpleName
         private const val EXTRA_CONVERSATION_DETAIL = "EXTRA_CONVERSATION_DETAIL"
 
         fun newInstance(conversationDetailItem: ConversationDetailItem? = null): ChatFragment {
@@ -87,16 +92,22 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
                 viewModel.loadMoreMessageList(totalItemsCount)
             }
         }
-        layoutManager.stackFromEnd = true
         binding.rvMessage.addOnScrollListener(endlessScrollListener)
         binding.rvMessage.layoutManager = layoutManager
-        messageAdapter = MessageAdapter(requireActivity())
+        binding.rvMessage.itemAnimator?.changeDuration = 0
+        binding.rvMessage.itemAnimator?.removeDuration = 0
+        binding.rvMessage.itemAnimator?.addDuration = 0
+        binding.rvMessage.itemAnimator?.moveDuration = 0
+        messageAdapter = MessageAdapter(requireActivity(), messageAdapterListener)
         binding.rvMessage.adapter = messageAdapter
 
 
         observeViewModel()
         attachListener()
-        viewModel.subscribe(conversationDetailItem?.conversations?.id)
+        viewModel.subscribe(
+            conversationDetailItem?.conversations?.id,
+            conversationDetailItem?.isConversationRead ?: true
+        )
     }
 
     private fun observeViewModel() {
@@ -122,9 +133,13 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             viewModel.updateAdapterList(messageAdapter.items)
         })
 
-        viewModel.deleteMessage.observe(this, {
-            messageAdapter.deleteMessage(it)
+        viewModel.updateMessage.observe(this, {
+            messageAdapter.updateMessage(it)
             viewModel.updateAdapterList(messageAdapter.items)
+        })
+
+        viewModel.showOverLimitFileMessageDialog.observe(this, {
+            showOverLimitFileMessageDialog()
         })
     }
 
@@ -134,11 +149,12 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         }
 
         binding.txtSend.setOnClickListener {
-
+            viewModel.sendTextMessage(getTypedMessage())
+            clearTypedMessage()
         }
 
         binding.imgAttachment.setOnClickListener {
-
+            showFilePickerWithPermissionCheck()
         }
 
         binding.edtMessage.setOnFocusChangeListener { view, isFocus ->
@@ -159,6 +175,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
     private fun getTypedMessage(): String {
         return binding.edtMessage.text.toString().trim()
+    }
+
+    private fun clearTypedMessage() {
+        binding.edtMessage.text?.clear()
     }
 
     private fun setUpTopBar(conversationDetailItem: ConversationDetailItem?) {
@@ -270,5 +290,53 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private val messageAdapterListener = object : MessageAdapterListener {
+        override fun onInfoClick(messageItem: MessageItem) {
+            showFailedInfoDialog(messageItem)
+        }
+    }
+
+    private fun showFailedInfoDialog(messageItem: MessageItem) {
+        showAlertDialog(
+            titleId = R.string.lbl_failed,
+            messageId = R.string.msg_send_failed_message,
+            positiveButtonId = R.string.lbl_try_again,
+            negativeButtonId = R.string.dialog_cancel,
+            positive = {
+                viewModel.onRetrySendMessage(messageItem)
+            },
+            negative = {}
+        ).show()
+    }
+
+    private fun showOverLimitFileMessageDialog() {
+        showAlertDialog(
+            titleId = R.string.lbl_failed,
+            messageId = R.string.msg_support_file_sizes_upto_25mb,
+            positiveButtonId = R.string.dialog_ok,
+        ).show()
+    }
+
+    private fun showFilePickerWithPermissionCheck() {
+        getBaseActivity().requestForStoragePermission {
+            if (it) {
+                showAttachmentDialog()
+            }
+        }
+    }
+
+    private fun showAttachmentDialog() {
+        val uploadAttachmentDialogFragment = UploadAttachmentDialogFragment()
+        uploadAttachmentDialogFragment.show(
+            childFragmentManager,
+            UploadAttachmentDialogFragment::class.java.name
+        )
+        uploadAttachmentDialogFragment.listener = object : UploadAttachmentDialogFragmentListener {
+            override fun onFilePicked(uri: Uri) {
+                viewModel.sendAttachment(requireContext(), uri)
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.rapidops.salesmatechatsdk.domain.datasources
 import com.rapidops.salesmatechatsdk.core.SalesmateChatSettings
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.domain.models.Channel
+import com.rapidops.salesmatechatsdk.domain.models.ContactData
 
 internal interface IAppSettingsDataSource {
 
@@ -18,4 +19,6 @@ internal interface IAppSettingsDataSource {
     var channel: Channel
 
     val linkName: String
+    var contactData: ContactData?
+    val contactName: String
 }

@@ -1,8 +1,8 @@
 package com.rapidops.salesmatechatsdk.domain.datasources
 
-import com.rapidops.salesmatechatsdk.data.resmodels.ConversationDetailRes
-import com.rapidops.salesmatechatsdk.data.resmodels.ConversationRes
-import com.rapidops.salesmatechatsdk.data.resmodels.MessageListRes
+import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
+import com.rapidops.salesmatechatsdk.data.resmodels.*
+import java.io.File
 
 internal interface IConversationDataSource {
 
@@ -14,4 +14,8 @@ internal interface IConversationDataSource {
         offSet: Int,
         lastMessageDate: String?
     ): MessageListRes
+
+    suspend fun sendMessages(conversationId: String, sendMessageReq: SendMessageReq): SendMessageRes
+    suspend fun readConversationForVisitor(conversationId: String): ConversationDetailRes
+    suspend fun uploadFile(file: File): UploadFileRes
 }

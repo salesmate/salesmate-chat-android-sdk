@@ -11,6 +11,7 @@ import com.rapidops.salesmatechatsdk.app.extension.getMessageTime
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.recyclerview.adapterdelegates.AdapterDelegate
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
+import com.rapidops.salesmatechatsdk.domain.models.message.SendStatus
 
 internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
     AdapterDelegate<MutableList<MessageItem>>() {
@@ -29,7 +30,7 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
     ) {
         //holder.setIsRecyclable(false)
 
-        bindDateTimeView(holder, items, position)
+        bindDateTimeStatusView(holder, items, position)
 
         holder.itemView.findViewById<RecyclerView>(R.id.rvBlockList)?.let {
             if (items[position].deletedDate.isNotEmpty()) {
@@ -56,7 +57,7 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
 
     protected abstract fun isForViewType(item: MessageItem, position: Int): Boolean
 
-    private fun bindDateTimeView(
+    private fun bindDateTimeStatusView(
         holder: RecyclerView.ViewHolder,
         items: MutableList<MessageItem>,
         position: Int,
@@ -64,13 +65,21 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
         val messageItem = items[position]
         val txtDateTime = holder.itemView.findViewById<AppCompatTextView>(R.id.incDateTextView)
         txtDateTime?.apply {
-            if (hideDateTimeView(items, position)) {
-                text = ""
-                isVisible = false
-            } else {
+            if (messageItem.sendStatus == SendStatus.SENDING) {
+                text = context.getString(R.string.lbl_sending)
                 isVisible = true
-                text = messageItem.createdDate.getMessageTime()
+            } else {
+                if (messageItem.isStatusFailed ||
+                    hideDateTimeView(items, position)
+                ) {
+                    text = ""
+                    isVisible = false
+                } else {
+                    isVisible = true
+                    text = messageItem.createdDate.getMessageTime()
+                }
             }
+
         }
     }
 

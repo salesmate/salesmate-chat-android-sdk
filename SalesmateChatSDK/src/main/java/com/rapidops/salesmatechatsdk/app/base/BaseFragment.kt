@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -232,5 +234,42 @@ internal abstract class BaseFragment<VM : BaseViewModel> : Fragment(), IBackPres
             fBaseBinding?.fBaseLayoutContent?.setPadding(0, getStatusBarHeight(), 0, 0)
         }
 
+    }
+
+    protected fun showAlertDialog(
+        title: String,
+        message: String,
+        positiveButton: String,
+        negativeButton: String? = null,
+        positive: () -> Unit = {},
+        negative: () -> Unit = {}
+    ): AlertDialog.Builder {
+        val alertDialog = AlertDialog
+            .Builder(requireContext())
+            .setCancelable(false)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(positiveButton) { _, _ -> positive() }
+        if (negativeButton != null) {
+            alertDialog.setNegativeButton(negativeButton) { _, _ -> negative() }
+        }
+        return alertDialog
+    }
+
+    protected fun showAlertDialog(
+        @StringRes titleId: Int,
+        @StringRes messageId: Int,
+        @StringRes positiveButtonId: Int,
+        @StringRes negativeButtonId: Int? = null,
+        positive: () -> Unit = {},
+        negative: () -> Unit = {},
+    ): AlertDialog.Builder {
+        return showAlertDialog(
+            getString(titleId),
+            getString(messageId),
+            getString(positiveButtonId),
+            if (negativeButtonId != null) getString(negativeButtonId) else null,
+            positive, negative
+        )
     }
 }

@@ -2,9 +2,10 @@
 <resources>
 
     <string name="dialog_ok">@android:string/ok</string>
-    <string name="dialog_cancel">No</string>
+    <string name="dialog_no">No</string>
     <string name="error">Error</string>
     <string name="unknown_error_message">The app is unable to connect to the API server. Please retry. If the issue persists, contact the support center.</string>
+    <string name="dialog_cancel">Cancel</string>
     <string name="dialog_close">Close</string>
     <string name="dialog_retry">Retry</string>
     <string name="df_no_network_connection_tv_msg">No network connection\nPlease try again</string>
@@ -22,6 +23,18 @@
 
     <string name="lbl_we_reply">We reply %s</string>
     <string name="lbl_more">More</string>
-    <string name="lbl_start_typing">Start typing...</string>
+    <string name="lbl_start_typing">Start typing…</string>
     <string name="lbl_send">Send</string>
+    <string name="lbl_sending">Sending…</string>
+    <string name="lbl_failed">Failed</string>
+    <string name="lbl_try_again">Try Again</string>
+    <string name="msg_send_failed_message">Your message was not sent. Tap try again to send this message.</string>
+
+    <string name="title_permission_denied">Permission Denied</string>
+    <string name="msg_storage_permission">STORAGE permission is revoked its required to download the file please enable it from settings.</string>
+    <string name="msg_camera_permission">Camera permission is required to take photo</string>
+    <string name="lbl_goto_settings">GO TO SETTINGS</string>
+    <string name="lbl_upload_from_gallery">Upload from gallery</string>
+    <string name="lbl_capture_from_camera">Capture from camera</string>
+    <string name="msg_support_file_sizes_upto_25mb">We support file sizes up to 25MB. If your file is larger than 25MB, we suggest you break it up into multiple files.</string>
 </resources>

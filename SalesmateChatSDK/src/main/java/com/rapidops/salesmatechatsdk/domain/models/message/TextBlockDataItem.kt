@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName
 internal data class TextBlockDataItem(
 
     @SerializedName("text")
-    var text: String = "",
+    var text: String? = null,
 
     ) : BlockDataItem()

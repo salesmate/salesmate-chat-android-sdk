@@ -27,4 +27,4 @@ internal data class LastMessageData(
 
 	@field:SerializedName("message_summary")
 	var messageSummary: String = ""
-)
+) : BaseModel()

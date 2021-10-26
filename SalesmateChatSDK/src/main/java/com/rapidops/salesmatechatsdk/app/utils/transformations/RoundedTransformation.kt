@@ -1,6 +1,7 @@
 package com.rapidops.salesmatechatsdk.app.utils.transformations
 
 import android.graphics.*
+/*
 import com.squareup.picasso.Transformation
 
 class RoundedTransformation(private val radius: Float? = null, private val margin: Float = 0f) :
@@ -23,4 +24,4 @@ class RoundedTransformation(private val radius: Float? = null, private val margi
     override fun key(): String {
         return "rounded(radius=$radius, margin=$margin)"
     }
-}
+}*/

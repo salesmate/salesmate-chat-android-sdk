@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.rapidops.salesmatechatsdk.app.view.AppTextView
+        android:id="@+id/txtUploadFromGallery"
+        android:layout_width="match_parent"
+        android:background="?attr/selectableItemBackground"
+        app:textColorStyle="actionColor"
+        android:padding="@dimen/padding_medium"
+        android:textSize="@dimen/font_size_small"
+        style="@style/TextMedium"
+        android:drawablePadding="@dimen/padding_large"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_upload_gallery"
+        android:text="@string/lbl_upload_from_gallery" />
+
+
+    <com.rapidops.salesmatechatsdk.app.view.AppTextView
+        android:id="@+id/txtUploadFromCamera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        app:textColorStyle="actionColor"
+        android:drawablePadding="@dimen/padding_large"
+        style="@style/TextMedium"
+        android:textSize="@dimen/font_size_small"
+        android:padding="@dimen/padding_medium"
+        android:drawableStart="@drawable/ic_upload_camera"
+        android:text="@string/lbl_capture_from_camera" />
+
+</LinearLayout>

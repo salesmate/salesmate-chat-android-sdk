@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
-import com.rapidops.salesmatechatsdk.app.view.htmltextview.PicassoImageGetter
+import com.rapidops.salesmatechatsdk.app.view.htmltextview.GlideImageGetter
 import com.rapidops.salesmatechatsdk.databinding.RDeleteBlockBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.BlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.DeleteBlockDataItem
@@ -28,7 +28,7 @@ internal class DeleteBlockDelegate(activity: Activity) :
 
         viewHolder.bind.txtDeleteMessage.setHtml(
             blockItem.text,
-            PicassoImageGetter(
+            GlideImageGetter(
                 viewHolder.bind.txtDeleteMessage
             )
         )

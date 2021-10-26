@@ -64,6 +64,9 @@ internal object GsonUtils {
         gsonBuilder.registerTypeAdapter(ReferenceTeam::class.java, ReferenceTeamDs())
         gsonBuilder.registerTypeAdapter(ReferenceUser::class.java, ReferenceUserDs())
 
+        gsonBuilder.registerTypeAdapter(SendMessageRes::class.java, SendMessageResDs())
+        gsonBuilder.registerTypeAdapter(UploadFileRes::class.java, UploadFileResDs())
+
 
         //Events
         gsonBuilder.registerTypeAdapter(ChatNewMessage::class.java, ChatNewMessageDs())

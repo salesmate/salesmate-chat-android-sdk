@@ -2,11 +2,14 @@ package com.rapidops.salesmatechatsdk.data.repositories
 
 import android.content.Context
 import android.content.ContextWrapper
+import com.google.gson.Gson
 import com.rapidops.salesmatechatsdk.core.SalesmateChatSettings
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
+import com.rapidops.salesmatechatsdk.data.utils.GsonUtils
 import com.rapidops.salesmatechatsdk.data.utils.Prefs
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.Channel
+import com.rapidops.salesmatechatsdk.domain.models.ContactData
 
 internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource {
 
@@ -15,6 +18,7 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
 
         private const val PREF_ACCESS_TOKEN = "PREF_ACCESS_TOKEN"
         private const val PREF_PSEUDO_NAME = "PREF_PSEUDO_NAME"
+        private const val PREF_CONTACT_DATA = "PREF_CONTACT_DATA"
         private const val PREF_UNIQUE_ID = "PREF_UNIQUE_ID"
     }
 
@@ -25,6 +29,7 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
     private var _pingRes: PingRes = PingRes()
     private var _channel: Channel = Channel()
 
+    private var gson: Gson = GsonUtils.gson
     init {
         Prefs.initPreferences(this.mContext, PREF_NAME, ContextWrapper.MODE_PRIVATE)
     }
@@ -58,6 +63,22 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
         get() = Prefs.getString(PREF_PSEUDO_NAME, "") ?: ""
         set(value) {
             Prefs.putString(PREF_PSEUDO_NAME, value)
+        }
+
+    override val contactName: String
+        get() = contactData?.name ?: pseudoName
+
+    override var contactData: ContactData?
+        get() {
+            val string = Prefs.getString(PREF_CONTACT_DATA, "")
+            return if (string.isNullOrEmpty().not()) {
+                gson.fromJson(string, ContactData::class.java)
+            } else {
+                null
+            }
+        }
+        set(value) {
+            Prefs.putString(PREF_CONTACT_DATA, gson.toJson(value))
         }
 
     override var pingRes: PingRes
