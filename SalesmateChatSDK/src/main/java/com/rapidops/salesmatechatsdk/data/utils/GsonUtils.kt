@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.rapidops.salesmatechatsdk.data.ds.*
 import com.rapidops.salesmatechatsdk.data.resmodels.*
+import com.rapidops.salesmatechatsdk.domain.exception.Error
 import com.rapidops.salesmatechatsdk.domain.models.*
 import com.rapidops.salesmatechatsdk.domain.models.events.ChatNewMessage
 import com.rapidops.salesmatechatsdk.domain.models.message.*

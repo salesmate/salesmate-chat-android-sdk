@@ -37,4 +37,6 @@
     <string name="lbl_upload_from_gallery">Upload from gallery</string>
     <string name="lbl_capture_from_camera">Capture from camera</string>
     <string name="msg_support_file_sizes_upto_25mb">We support file sizes up to 25MB. If your file is larger than 25MB, we suggest you break it up into multiple files.</string>
+    <string name="lbl_rate_your_conversation">Rate Your Conversation</string>
+    <string name="lbl_share_your_feedback_optional">Share your feedback (optional)</string>
 </resources>

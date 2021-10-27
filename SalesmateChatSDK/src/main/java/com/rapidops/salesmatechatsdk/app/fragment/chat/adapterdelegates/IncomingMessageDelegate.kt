@@ -10,6 +10,7 @@ import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
 import com.rapidops.salesmatechatsdk.app.view.SpacesItemDecoration
 import com.rapidops.salesmatechatsdk.databinding.RIncomingMessageBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
+import com.rapidops.salesmatechatsdk.domain.models.message.MessageType
 
 
 internal class IncomingMessageDelegate(private val activity: Activity) :
@@ -34,7 +35,7 @@ internal class IncomingMessageDelegate(private val activity: Activity) :
     }
 
     override fun isForViewType(item: MessageItem, position: Int): Boolean {
-        return item.userId.isNotEmpty()
+        return item.userId.isNotEmpty() && item.messageType == MessageType.COMMENT.value && !item.isBot
     }
 
     internal inner class IncomingMessageViewHolder(itemView: View) : MessageViewHolder(itemView) {

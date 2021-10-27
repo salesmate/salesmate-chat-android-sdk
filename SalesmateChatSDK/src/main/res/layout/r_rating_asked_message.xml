@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingHorizontal="@dimen/padding_large"
+    android:layout_marginVertical="@dimen/margin_micro4"
+    android:orientation="horizontal">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/margin_small2"
+        app:srcCompat="@drawable/ic_bot_avatar_outlined" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small2"
+        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="@dimen/card_radius"
+        android:layout_marginEnd="@dimen/margin_xxxlarge"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:textColor="@color/dark_blue"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/margin_xxlarge"
+                app:textAllCaps="true"
+                android:textSize="@dimen/font_size_micro2"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_rate_your_conversation" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEmoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_small2" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txtRateLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_black"
+                tools:text="Good"
+                android:visibility="invisible"
+                tools:visibility="visible"
+                android:textSize="@dimen/font_size_micro3"
+                android:layout_marginVertical="@dimen/margin_small" />
+
+            <LinearLayout
+                android:id="@+id/llFeedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_micro4"
+                android:padding="@dimen/padding_small2"
+                android:gravity="center"
+                android:background="@color/rating_back">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtFeedback"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:maxLines="2"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:textColorHint="@color/hint_color"
+                    android:textSize="@dimen/font_size_small"
+                    android:ellipsize="end"
+                    android:hint="@string/lbl_share_your_feedback_optional"
+                    android:layout_marginEnd="@dimen/margin_small2"
+                    android:layout_height="wrap_content" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imgSend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/padding_small3"
+                    android:visibility="gone"
+                    android:paddingHorizontal="@dimen/padding_medium"
+                    android:background="@drawable/drw_send_square_corner"
+                    app:srcCompat="@drawable/ic_arrow_right" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

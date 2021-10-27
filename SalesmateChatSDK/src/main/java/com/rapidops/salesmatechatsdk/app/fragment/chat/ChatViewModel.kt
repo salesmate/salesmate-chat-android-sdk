@@ -39,6 +39,8 @@ internal class ChatViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
     private val readConversationForVisitorUseCase: ReadConversationForVisitorUseCase,
     private val uploadFileUseCase: UploadFileUseCase,
+    private val submitRatingUseCase: SubmitRatingUseCase,
+    private val submitRemarkUseCase: SubmitRemarkUseCase
 ) : BaseViewModel(coroutineContextProvider) {
 
     companion object {
@@ -54,6 +56,7 @@ internal class ChatViewModel @Inject constructor(
     val showMessageList = SingleLiveEvent<List<MessageItem>>()
     val showNewMessage = SingleLiveEvent<List<MessageItem>>()
     val updateMessage = SingleLiveEvent<MessageItem>()
+    val updateRatingMessage = SingleLiveEvent<String>()
     val showOverLimitFileMessageDialog = SingleLiveEvent<Nothing>()
 
     private var conversationId: String? = null
@@ -153,6 +156,26 @@ internal class ChatViewModel @Inject constructor(
                     if (updateConversationDetail.data.conversations?.id == conversationId) {
                         val conversationDetailItem = updateConversationDetail.data
                         showConversationDetail.value = conversationDetailItem
+                    }
+                }
+        }
+
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.ConversationRatingChangeEvent>()
+                .collectLatest { ratingChangeData ->
+                    if (ratingChangeData.conversationId == conversationId) {
+                        updateRatingMessage.value = ratingChangeData.rating
+                        showConversationDetail.value?.conversations?.rating = ratingChangeData.rating
+                    }
+                }
+        }
+
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.ConversationRemarkChangeEvent>()
+                .collectLatest { remarkChangeData ->
+                    if (remarkChangeData.conversationId == conversationId) {
+                        updateRatingMessage.value = remarkChangeData.remark
+                        showConversationDetail.value?.conversations?.remark = remarkChangeData.remark
                     }
                 }
         }
@@ -347,6 +370,18 @@ internal class ChatViewModel @Inject constructor(
             }
         }, {
 
+        })
+    }
+
+    fun submitRating(rating: String) {
+        withoutProgress({
+            submitRatingUseCase.execute(SubmitRatingUseCase.Param(getConversationId(), rating))
+        })
+    }
+
+    fun submitRemark(remark: String) {
+        withoutProgress({
+            submitRemarkUseCase.execute(SubmitRemarkUseCase.Param(getConversationId(), remark))
         })
     }
 }

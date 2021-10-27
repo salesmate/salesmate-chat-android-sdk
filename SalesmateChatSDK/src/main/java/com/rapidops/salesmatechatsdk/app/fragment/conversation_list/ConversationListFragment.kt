@@ -15,7 +15,7 @@ import com.rapidops.salesmatechatsdk.app.interfaces.IItemListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
-import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
+import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateBackgroundTintAction
 import com.rapidops.salesmatechatsdk.databinding.FConversationListBinding
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 
@@ -66,7 +66,7 @@ internal class ConversationListFragment : BaseFragment<ConversationListViewModel
             }
         }
         binding.apply {
-            txtStartNewChat.updateActionTint()
+            txtStartNewChat.updateBackgroundTintAction()
             txtStartNewChat.compoundDrawablesRelative.forEach {
                 it?.setTint(ColorUtil.actionColor.foregroundColor())
             }

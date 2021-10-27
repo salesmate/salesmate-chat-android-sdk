@@ -14,7 +14,7 @@ import com.rapidops.salesmatechatsdk.app.interfaces.IItemListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
-import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateActionTint
+import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateBackgroundTintAction
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.databinding.FRecentChatListBinding
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
@@ -98,7 +98,7 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
             binding.incLetsChat.apply {
                 txtReplyTime.text =
                     getString(R.string.lbl_the_team_typically_replies_in, availability?.replyTime)
-                txtStartNewChat.updateActionTint()
+                txtStartNewChat.updateBackgroundTintAction()
                 txtStartNewChat.compoundDrawablesRelative.forEach {
                     it?.setTint(ColorUtil.actionColor.foregroundColor())
                 }
@@ -122,7 +122,7 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
         binding.incRecentChat.llRecentChats.isVisible = true
         viewModel.pingRes.apply {
             binding.incRecentChat.apply {
-                txtStartNewChatList.updateActionTint()
+                txtStartNewChatList.updateBackgroundTintAction()
                 txtStartNewChatList.compoundDrawablesRelative.forEach {
                     it?.setTint(ColorUtil.actionColor.foregroundColor())
                 }

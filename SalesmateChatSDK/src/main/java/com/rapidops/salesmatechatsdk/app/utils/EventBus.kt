@@ -38,6 +38,10 @@ internal sealed class AppEvent {
     data class NewMessageEvent(val data: ChatNewMessage) : AppEvent()
     data class UpdateConversationListEvent(val conversationId: String) : AppEvent()
     data class DeleteMessageEvent(val data: MessageItem) : AppEvent()
+    data class ConversationRatingChangeEvent(val conversationId: String, val rating: String) :
+        AppEvent()
+    data class ConversationRemarkChangeEvent(val conversationId: String, val remark: String) :
+        AppEvent()
 
     data class UpdateConversationDetailEvent(val data: ConversationDetailItem) : AppEvent()
 

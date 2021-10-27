@@ -18,4 +18,6 @@ internal interface IConversationDataSource {
     suspend fun sendMessages(conversationId: String, sendMessageReq: SendMessageReq): SendMessageRes
     suspend fun readConversationForVisitor(conversationId: String): ConversationDetailRes
     suspend fun uploadFile(file: File): UploadFileRes
+    suspend fun rating(conversationId: String, rating: String)
+    suspend fun remark(conversationId: String, remark: String)
 }

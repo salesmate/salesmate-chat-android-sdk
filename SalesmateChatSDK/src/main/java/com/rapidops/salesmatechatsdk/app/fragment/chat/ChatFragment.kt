@@ -141,6 +141,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         viewModel.showOverLimitFileMessageDialog.observe(this, {
             showOverLimitFileMessageDialog()
         })
+
+        viewModel.updateRatingMessage.observe(this,{
+            messageAdapter.updateRatingMessage()
+        })
     }
 
     private fun attachListener() {
@@ -295,6 +299,18 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
     private val messageAdapterListener = object : MessageAdapterListener {
         override fun onInfoClick(messageItem: MessageItem) {
             showFailedInfoDialog(messageItem)
+        }
+
+        override fun getConversationDetail(): ConversationDetailItem? {
+            return viewModel.showConversationDetail.value
+        }
+
+        override fun submitRemark(remark: String) {
+            viewModel.submitRemark(remark)
+        }
+
+        override fun submitRating(rating: String) {
+            viewModel.submitRating(rating)
         }
     }
 

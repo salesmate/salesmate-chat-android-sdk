@@ -58,4 +58,16 @@ internal interface IService {
         @Part bodyPart: MultipartBody.Part
     ): Response<UploadFileRes>
 
+
+    @POST("v1/conversations/{conversationId}/rating")
+    suspend fun rating(
+        @Path("conversationId") conversationId: String,
+        @Body body: Map<String, String>
+    ): Response<Unit>
+
+    @POST("v1/conversations/{conversationId}/remark")
+    suspend fun remark(
+        @Path("conversationId") conversationId: String,
+        @Body body: Map<String, String>
+    ): Response<Unit>
 }

@@ -1,7 +1,8 @@
 package com.rapidops.salesmatechatsdk.domain.models.message
 
 enum class MessageType(var value: String) {
-    COMMENT("comment");
+    COMMENT("comment"),
+    RATING_ASKED("rating_asked");
 
     companion object {
         fun findEnumFromValue(lookupValue: String): MessageType {

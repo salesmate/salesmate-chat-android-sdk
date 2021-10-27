@@ -1,5 +1,6 @@
 package com.rapidops.salesmatechatsdk.data.repositories
 
+import com.google.gson.JsonElement
 import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.data.resmodels.*
 import com.rapidops.salesmatechatsdk.data.webserivce.IService
@@ -55,4 +56,22 @@ internal class ConversationRepository(private val service: IService) : IConversa
         val filePart = MultipartUtil.prepareFilePart("file", file)
         return APIResponseMapper.getResponse { service.uploadFile(true, filePart) }
     }
+
+
+    override suspend fun rating(conversationId: String, rating: String) {
+        val body = hashMapOf<String, String>()
+        body["rating"] = rating
+        return APIResponseMapper.getResponse {
+            service.rating(conversationId, body)
+        }
+    }
+
+    override suspend fun remark(conversationId: String, remark: String) {
+        val body = hashMapOf<String, String>()
+        body["remark"] = remark
+        return APIResponseMapper.getResponse {
+            service.remark(conversationId, body)
+        }
+    }
+
 }

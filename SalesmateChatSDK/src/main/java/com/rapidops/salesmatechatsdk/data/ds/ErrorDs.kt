@@ -19,24 +19,26 @@ internal class ErrorDs : JsonDeserializer<Error> {
         var errorMessage = ""
 
         if (json!!.isJsonObject) {
-            val jsonObject = json.asJsonObject;
-            if (jsonObject.hasProperty("Code")) {
-                apiErrorCode = jsonObject.get("Code").asInt
-            }
-            if (jsonObject.hasProperty("code")) {
-                apiErrorCode = jsonObject.get("code").asInt
-            }
-            if (jsonObject.hasProperty("Name")) {
-                errorName = jsonObject.get("Name").asString
-            }
-            if (jsonObject.hasProperty("name")) {
-                errorName = jsonObject.get("name").asString
-            }
-            if (jsonObject.hasProperty("Message")) {
-                errorMessage = jsonObject.get("Message").asString
-            }
-            if (jsonObject.hasProperty("message")) {
-                errorName = jsonObject.get("message").asString
+            val jsonObject = json.asJsonObject
+            jsonObject.getAsJsonObject("Error")?.let { errorJsonObj ->
+                if (errorJsonObj.hasProperty("Code")) {
+                    apiErrorCode = errorJsonObj.get("Code").asInt
+                }
+                if (errorJsonObj.hasProperty("code")) {
+                    apiErrorCode = errorJsonObj.get("code").asInt
+                }
+                if (errorJsonObj.hasProperty("Name")) {
+                    errorName = errorJsonObj.get("Name").asString
+                }
+                if (errorJsonObj.hasProperty("name")) {
+                    errorName = errorJsonObj.get("name").asString
+                }
+                if (errorJsonObj.hasProperty("Message")) {
+                    errorMessage = errorJsonObj.get("Message").asString
+                }
+                if (errorJsonObj.hasProperty("message")) {
+                    errorMessage = errorJsonObj.get("message").asString
+                }
             }
         }
         return Error(

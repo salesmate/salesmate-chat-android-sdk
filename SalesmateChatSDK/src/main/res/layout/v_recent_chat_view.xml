@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/ic_send"
         android:background="@drawable/drw_corner_background"
-        android:paddingHorizontal="@dimen/padding_xxlarge"
+        android:paddingHorizontal="@dimen/padding_xxxlarge"
         android:paddingVertical="@dimen/padding_small3"
         android:textColor="@color/white"
         style="@style/TextMedium"

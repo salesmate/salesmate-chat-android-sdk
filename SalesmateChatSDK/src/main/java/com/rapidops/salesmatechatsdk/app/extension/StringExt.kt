@@ -6,8 +6,7 @@ import com.rapidops.salesmatechatsdk.R
 
 
 fun String.fromNormalHtml(): Spanned {
-    val result: Spanned
-    result = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+    val result: Spanned = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
         Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
     } else {
         Html.fromHtml(this)

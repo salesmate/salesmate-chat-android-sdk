@@ -110,7 +110,7 @@ internal object ColorUtil {
         }
     }
 
-    fun View.updateActionTint() {
+    fun View.updateBackgroundTintAction() {
         backgroundTintList = ColorStateList.valueOf(actionColor)
     }
 
@@ -149,6 +149,19 @@ internal object ColorUtil {
             ContextCompat.getColor(context, R.color.hint_color),
         )
         setTextColor(ColorStateList(states, colors))
+    }
+
+    fun View.setSendButtonColorStateList() {
+        val states = arrayOf(
+            intArrayOf(android.R.attr.state_enabled),
+            intArrayOf(-android.R.attr.state_enabled),
+        )
+
+        val colors = intArrayOf(
+            actionColor,
+            ContextCompat.getColor(context, R.color.rating_send_back),
+        )
+        backgroundTintList = ColorStateList(states, colors)
     }
 
     fun FrameLayout.updateBackgroundPattern() {

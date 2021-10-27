@@ -111,31 +111,62 @@ internal class SocketController @Inject constructor(
                 if (jsonObject.hasProperty("type")) {
                     val type = jsonObject.getString("type") ?: ""
                     val publishType = PublishType.findEnumFromValue(type)
-                    if (publishType == PublishType.NEW_MESSAGE) {
-                        /*{"type":"NEW_MESSAGE","data":{
-                        "conversationId":"846c7b72-3169-4c3a-8e46-07decd30bc3f","createdDate":"2021-10-12T08:34:40.393Z",
-                        "messageId":"46f843f8-4832-49a2-95cc-4d7d4a0dd166","blocks":[]}}*/
-                        jsonObject.getJsonObject("data")?.let {
-                            val chatNewMessage: ChatNewMessage =
-                                gson.fromJson(it, ChatNewMessage::class.java)
-                            eventBus.fireEvent(AppEvent.NewMessageEvent(chatNewMessage))
+                    when (publishType) {
+                        PublishType.NEW_MESSAGE -> {
+                            /*{"type":"NEW_MESSAGE","data":{
+                                        "conversationId":"846c7b72-3169-4c3a-8e46-07decd30bc3f","createdDate":"2021-10-12T08:34:40.393Z",
+                                        "messageId":"46f843f8-4832-49a2-95cc-4d7d4a0dd166","blocks":[]}}*/
+                            jsonObject.getJsonObject("data")?.let {
+                                val chatNewMessage: ChatNewMessage =
+                                    gson.fromJson(it, ChatNewMessage::class.java)
+                                eventBus.fireEvent(AppEvent.NewMessageEvent(chatNewMessage))
+                            }
                         }
-                    } else if (publishType == PublishType.UPDATE_CONVERSATIONS_LIST) {
-                        /*{"type":"UPDATE_CONVERSATIONS_LIST","data":{"conversationId":"31f588e5-5495-4c08-930c-6829e405eb80","isInbound":true}}*/
-                        jsonObject.getJsonObject("data")?.let {
-                            it.getString("conversationId")?.let { conversationId ->
+                        PublishType.UPDATE_CONVERSATIONS_LIST -> {
+                            /*{"type":"UPDATE_CONVERSATIONS_LIST","data":{"conversationId":"31f588e5-5495-4c08-930c-6829e405eb80","isInbound":true}}*/
+                            jsonObject.getJsonObject("data")?.let {
+                                it.getString("conversationId")?.let { conversationId ->
+                                    eventBus.fireEvent(
+                                        AppEvent.UpdateConversationListEvent(conversationId)
+                                    )
+                                }
+
+                            }
+                        }
+                        PublishType.MESSAGE_DELETED -> {
+                            /*{"type":"MESSAGE_DELETED","data":{"messageData":{"id":"a3c0f489-5389-4d06-86a0-0286b1265e93","conversation_id":"92e67f42-adb7-4811-aef8-2b2e5ce73418","user_id":"10","message_summary":"This message was deleted.","is_internal_message":false,"deleted_by":"10","deleted_date":"2021-10-20T09:43:49.686Z","unique_id":null,"verified_id":null,"created_date":"2021-10-20T09:38:51.591Z"}}}*/
+                            jsonObject.getJsonObject("data")?.getJsonObject("messageData")?.let {
+                                val chatNewMessage: MessageItem =
+                                    gson.fromJson(it, MessageItem::class.java)
+                                eventBus.fireEvent(AppEvent.DeleteMessageEvent(chatNewMessage))
+                            }
+                        }
+                        PublishType.CONVERSATION_RATING_CHANGED -> {
+                            /*{"type":"CONVERSATION_RATING_CHANGED","data":{"conversationId":"b31e02fe-af65-4109-850c-a292976390da","rating":"1"}}*/
+                            jsonObject.getJsonObject("data")?.let {
+                                val conversationID = it.getString("conversationId") ?: ""
+                                val rating = it.getString("rating") ?: ""
                                 eventBus.fireEvent(
-                                    AppEvent.UpdateConversationListEvent(conversationId)
+                                    AppEvent.ConversationRatingChangeEvent(
+                                        conversationID,
+                                        rating
+                                    )
                                 )
                             }
-
                         }
-                    } else if (publishType == PublishType.MESSAGE_DELETED) {
-                        /*{"type":"MESSAGE_DELETED","data":{"messageData":{"id":"a3c0f489-5389-4d06-86a0-0286b1265e93","conversation_id":"92e67f42-adb7-4811-aef8-2b2e5ce73418","user_id":"10","message_summary":"This message was deleted.","is_internal_message":false,"deleted_by":"10","deleted_date":"2021-10-20T09:43:49.686Z","unique_id":null,"verified_id":null,"created_date":"2021-10-20T09:38:51.591Z"}}}*/
-                        jsonObject.getJsonObject("data")?.getJsonObject("messageData")?.let {
-                            val chatNewMessage: MessageItem =
-                                gson.fromJson(it, MessageItem::class.java)
-                            eventBus.fireEvent(AppEvent.DeleteMessageEvent(chatNewMessage))
+
+                        PublishType.CONVERSATION_REMARK_ADDED -> {
+                            /*{"type":"CONVERSATION_REMARK_ADDED","data":{"conversationId":"b31e02fe-af65-4109-850c-a292976390da","remark":"Hello"}}*/
+                            jsonObject.getJsonObject("data")?.let {
+                                val conversationID = it.getString("conversationId") ?: ""
+                                val remark = it.getString("remark") ?: ""
+                                eventBus.fireEvent(
+                                    AppEvent.ConversationRemarkChangeEvent(
+                                        conversationID,
+                                        remark
+                                    )
+                                )
+                            }
                         }
                     }
                 }
