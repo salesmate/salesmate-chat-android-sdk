@@ -4,4 +4,8 @@
     <dimen name="img_rounded_corner">10dp</dimen>
     <dimen name="card_radius">10dp</dimen>
 
+    <dimen name="LoadingDots_dots_size_default">12dp</dimen>
+    <dimen name="LoadingDots_dots_space_default">2dp</dimen>
+    <dimen name="LoadingDots_jump_height_default">12dp</dimen>
+
 </resources>

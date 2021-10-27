@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:background="@color/default_background_color">
+    tools:background="@color/default_background_color"
+    android:animateLayoutChanges="true">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:orientation="vertical"
@@ -67,12 +68,18 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <include
+        android:id="@+id/incTypingMessage"
+        layout="@layout/v_typing_message" />
+
+
     <LinearLayout
         android:id="@+id/llMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical">
+
 
         <View
             android:layout_width="match_parent"

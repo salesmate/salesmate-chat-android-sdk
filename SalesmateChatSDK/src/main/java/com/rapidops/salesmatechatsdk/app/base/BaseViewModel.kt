@@ -91,6 +91,7 @@ internal open class BaseViewModel(private val dispatcher: ICoroutineContextProvi
             defaultErrorHandler(it)
         }
     ) {
+        cancellableScope.cancel()
         cancellableScope = CoroutineScope(Job() + Dispatchers.Main)
         cancellableScope.launch(dispatcher.io) {
             try {

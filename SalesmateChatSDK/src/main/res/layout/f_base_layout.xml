@@ -7,7 +7,7 @@
     <FrameLayout
         android:id="@+id/flBackground"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="280dp"
         android:background="@drawable/drw_pattern_background" />
 
 

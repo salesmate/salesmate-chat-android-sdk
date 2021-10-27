@@ -6,6 +6,6 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackgroundBorderless"
     android:textColor="@color/black"
-    android:padding="@dimen/padding_micro4"
+    android:padding="@dimen/padding_micro5"
     android:textSize="@dimen/font_size_large"
     tools:text="☹" />

@@ -13,13 +13,16 @@ import com.rapidops.salesmatechatsdk.data.utils.getJsonObject
 import com.rapidops.salesmatechatsdk.data.utils.getString
 import com.rapidops.salesmatechatsdk.data.utils.hasProperty
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
+import com.rapidops.salesmatechatsdk.domain.models.Conversations
 import com.rapidops.salesmatechatsdk.domain.models.PublishType
 import com.rapidops.salesmatechatsdk.domain.models.UserAvailability
 import com.rapidops.salesmatechatsdk.domain.models.events.ChatNewMessage
+import com.rapidops.salesmatechatsdk.domain.models.events.TypingMessage
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import io.github.sac.BasicListener
 import io.github.sac.ReconnectStrategy
 import io.github.sac.Socket
+import org.json.JSONObject
 import javax.inject.Inject
 
 internal class SocketController @Inject constructor(
@@ -168,7 +171,16 @@ internal class SocketController @Inject constructor(
                                 )
                             }
                         }
+
                     }
+                } else {
+                    val typingMessage = TypingMessage().apply {
+                        conversationId = jsonObject.getString("conversationId") ?: ""
+                        userId = jsonObject.getString("userId") ?: ""
+                        workspaceId = jsonObject.getString("workspaceId") ?: ""
+                        messageType = jsonObject.getString("messageType") ?: ""
+                    }
+                    eventBus.fireEvent(AppEvent.TypingMessageEvent(typingMessage))
                 }
             }
         } else {
@@ -415,4 +427,18 @@ internal class SocketController @Inject constructor(
         }
 
     }*/
+
+    fun sendTypingEvent(conversation: Conversations) {
+        try {
+            val jsonObject = JSONObject()
+            jsonObject.put("conversationId", conversation.id)
+            jsonObject.put("visitorName", appSettingsDataSource.contactName)
+            if (isSocketConnected) {
+                _socket?.emit("visitor-is-typing", jsonObject)
+                Log.w(TAG, "sendTypingEvent: $jsonObject")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }

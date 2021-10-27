@@ -6,7 +6,7 @@ import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
@@ -22,6 +22,7 @@ import com.rapidops.salesmatechatsdk.app.fragment.upload_attachment.UploadAttach
 import com.rapidops.salesmatechatsdk.app.fragment.upload_attachment.UploadAttachmentDialogFragmentListener
 import com.rapidops.salesmatechatsdk.app.interfaces.EndlessScrollListener
 import com.rapidops.salesmatechatsdk.app.interfaces.MessageAdapterListener
+import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setSendButtonColorStateList
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
@@ -142,13 +143,25 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             showOverLimitFileMessageDialog()
         })
 
-        viewModel.updateRatingMessage.observe(this,{
+        viewModel.updateRatingMessage.observe(this, {
             messageAdapter.updateRatingMessage()
+        })
+
+        viewModel.showTypingMessageView.observe(this, {
+            showTypingMessage(it)
+        })
+
+        viewModel.hideTypingMessageView.observe(this, {
+            binding.incTypingMessage.loadingDotsTyping.stopAnimation()
+            binding.incTypingMessage.root.isVisible = false
         })
     }
 
     private fun attachListener() {
-        binding.edtMessage.addTextChangedListener {
+        binding.edtMessage.doOnTextChanged { text, start, before, count ->
+            if (count > before) {
+                viewModel.sendTypingEvent()
+            }
             binding.txtSend.isEnabled = getTypedMessage().isNotEmpty()
         }
 
@@ -353,6 +366,21 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             override fun onFilePicked(uri: Uri) {
                 viewModel.sendAttachment(requireContext(), uri)
             }
+        }
+    }
+
+    private fun showTypingMessage(user: User) {
+        if (binding.incTypingMessage.root.isVisible) return
+        binding.incTypingMessage.root.isVisible = true
+        binding.incTypingMessage.apply {
+            loadingDotsTyping.stopAnimation()
+            loadingDotsTyping.dotsColor = ColorUtil.actionColor
+            root.isVisible = true
+            loadingDotsTyping.startAnimation()
+            imgUser.loadCircleProfileImage(
+                user.profileUrl,
+                user.firstName
+            )
         }
     }
 }

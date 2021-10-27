@@ -3,9 +3,11 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.viewModelScope
 import com.rapidops.salesmatechatsdk.app.base.BaseViewModel
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.extension.DateUtil
+import com.rapidops.salesmatechatsdk.app.socket.SocketController
 import com.rapidops.salesmatechatsdk.app.utils.AppEvent
 import com.rapidops.salesmatechatsdk.app.utils.EventBus
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.getFile
@@ -19,12 +21,14 @@ import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.BlockType
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
+import com.rapidops.salesmatechatsdk.domain.models.User
 import com.rapidops.salesmatechatsdk.domain.models.message.*
 import com.rapidops.salesmatechatsdk.domain.usecases.*
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.*
@@ -40,11 +44,13 @@ internal class ChatViewModel @Inject constructor(
     private val readConversationForVisitorUseCase: ReadConversationForVisitorUseCase,
     private val uploadFileUseCase: UploadFileUseCase,
     private val submitRatingUseCase: SubmitRatingUseCase,
-    private val submitRemarkUseCase: SubmitRemarkUseCase
+    private val submitRemarkUseCase: SubmitRemarkUseCase,
+    private val socketController: SocketController
 ) : BaseViewModel(coroutineContextProvider) {
 
     companion object {
         private const val PAGE_SIZE = 50
+        private const val TYPING_DEBOUNCE = 800L
     }
 
     var adapterMessageList: List<MessageItem> = listOf()
@@ -58,6 +64,8 @@ internal class ChatViewModel @Inject constructor(
     val updateMessage = SingleLiveEvent<MessageItem>()
     val updateRatingMessage = SingleLiveEvent<String>()
     val showOverLimitFileMessageDialog = SingleLiveEvent<Nothing>()
+    val showTypingMessageView = SingleLiveEvent<User>()
+    val hideTypingMessageView = SingleLiveEvent<Nothing>()
 
     private var conversationId: String? = null
     private var lastSendMessageId: String? = null
@@ -103,7 +111,6 @@ internal class ChatViewModel @Inject constructor(
         conversationId: String,
         lastMessageDate: String
     ) {
-        cancellableScope.cancel()
         cancelableJobWithoutProgress({
             val params = GetMessageListUseCase.Param(conversationId, 10, 0, lastMessageDate)
             val response = getMessageListUseCase.execute(params).toMutableList()
@@ -191,8 +198,23 @@ internal class ChatViewModel @Inject constructor(
                 }
         }
 
+        var hideTypingJob: Job? = null
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.TypingMessageEvent>()
+                .collectLatest { typingMessageData ->
+                    if (conversationId == typingMessageData.typingMessage.conversationId) {
+                        val user =
+                            getUserFromUserIdUseCase.execute(typingMessageData.typingMessage.userId)
+                        showTypingMessageView.value = user
+                        hideTypingJob?.cancel()
+                        hideTypingJob = viewModelScope.launch {
+                            delay(3000)
+                            hideTypingMessageView.call()
+                        }
+                    }
+                }
+        }
     }
-
     fun updateAdapterList(items: MutableList<MessageItem>?) {
         adapterMessageList = items ?: listOf()
     }
@@ -383,5 +405,14 @@ internal class ChatViewModel @Inject constructor(
         withoutProgress({
             submitRemarkUseCase.execute(SubmitRemarkUseCase.Param(getConversationId(), remark))
         })
+    }
+
+    fun sendTypingEvent() {
+        cancelableJobWithoutProgress({
+            delay(TYPING_DEBOUNCE)
+            showConversationDetail.value?.conversations?.let {
+                socketController.sendTypingEvent(it)
+            }
+        }, {})
     }
 }

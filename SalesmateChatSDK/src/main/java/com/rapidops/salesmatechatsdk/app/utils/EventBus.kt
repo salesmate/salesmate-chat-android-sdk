@@ -3,6 +3,7 @@ package com.rapidops.salesmatechatsdk.app.utils
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.UserAvailability
 import com.rapidops.salesmatechatsdk.domain.models.events.ChatNewMessage
+import com.rapidops.salesmatechatsdk.domain.models.events.TypingMessage
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,11 @@ internal sealed class AppEvent {
     data class DeleteMessageEvent(val data: MessageItem) : AppEvent()
     data class ConversationRatingChangeEvent(val conversationId: String, val rating: String) :
         AppEvent()
+
     data class ConversationRemarkChangeEvent(val conversationId: String, val remark: String) :
+        AppEvent()
+
+    data class TypingMessageEvent(val typingMessage: TypingMessage) :
         AppEvent()
 
     data class UpdateConversationDetailEvent(val data: ConversationDetailItem) : AppEvent()
