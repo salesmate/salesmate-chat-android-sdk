@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:showIn="@layout/r_email_asked_message"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_gray"
+        android:textSize="@dimen/font_size_micro2"
+        android:textStyle="bold"
+        android:text="@string/lbl_name" />
+
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/edtName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/lbl_enter_name"
+        android:textColor="@color/text_black"
+        android:layout_marginTop="@dimen/margin_small"
+        android:textSize="@dimen/font_size_small"
+        android:textColorHint="@color/dark_hint_color"
+        android:inputType="textCapSentences"
+        android:lines="1"
+        android:padding="@dimen/padding_small2"
+        android:background="@drawable/drw_edit_back_corner_stroke" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_gray"
+        android:textSize="@dimen/font_size_micro2"
+        android:layout_marginTop="@dimen/margin_large"
+        android:textStyle="bold"
+        android:text="@string/lbl_email" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/edtEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_black"
+        android:textColorHint="@color/dark_hint_color"
+        android:hint="@string/hint_enter_email_address"
+        android:layout_marginTop="@dimen/margin_small"
+        android:textSize="@dimen/font_size_small"
+        android:inputType="textEmailAddress"
+        android:padding="@dimen/padding_small2"
+        android:imeOptions="actionDone"
+        android:background="@drawable/drw_edit_back_corner_stroke" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txtEmailError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/font_size_micro"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        android:textColor="@color/error_color"
+        android:text="@string/lbl_that_email_doesn_t_look_quite_right" />
+
+    <com.rapidops.salesmatechatsdk.app.view.AppTextView
+        android:id="@+id/txtSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        app:textColorStyle="actionForegroundColor"
+        android:background="@drawable/drw_corner_back_action"
+        android:textSize="@dimen/font_size_micro3"
+        style="@style/TextMedium"
+        android:layout_marginTop="@dimen/margin_small2"
+        android:paddingVertical="@dimen/padding_micro4"
+        android:alpha="0.5"
+        android:enabled="false"
+        android:paddingHorizontal="@dimen/padding_small3"
+        android:text="@string/lbl_submit" />
+</LinearLayout>

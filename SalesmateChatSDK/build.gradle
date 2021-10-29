@@ -23,20 +23,34 @@ android {
     }
 
     buildTypes {
+
+        def generateAPIUrl = { baseUrl, endPoint -> "\"$baseUrl$endPoint\"" }
+
         debug {
             minifyEnabled false
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            buildConfigField "String", "BASE_URL", "\"https://apis-dev.salesmate.io/messenger/\""
+            def baseUrl = "https://apis-dev.salesmate.io/"
 
+            buildConfigField "String", "BASE_URL", "\"$baseUrl\""
+            buildConfigField "String", "BASE_API_URL", generateAPIUrl(baseUrl, "messenger/")
+            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "apis/sm-web-anl/v1/track")
+
+            //buildConfigField "String", "BASE_URL", "\"https://apis-dev.salesmate.io/messenger/\""
         }
 
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            buildConfigField "String", "BASE_URL", "\"https://apis.salesmate.io/messenger/\""
+            //buildConfigField "String", "BASE_URL", "\"https://apis.salesmate.io/messenger/\""
+
+            def baseUrl = "https://apis.salesmate.io/"
+
+            buildConfigField "String", "BASE_URL", "\"$baseUrl\""
+            buildConfigField "String", "BASE_API_URL", generateAPIUrl(baseUrl, "messenger/")
+            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "apis/sm-web-anl/v1/track")
         }
     }
     compileOptions {

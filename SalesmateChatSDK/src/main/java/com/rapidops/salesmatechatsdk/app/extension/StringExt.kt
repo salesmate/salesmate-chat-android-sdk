@@ -3,6 +3,8 @@ package com.rapidops.salesmatechatsdk.app.extension
 import android.text.Html
 import android.text.Spanned
 import com.rapidops.salesmatechatsdk.R
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 fun String.fromNormalHtml(): Spanned {
@@ -49,4 +51,15 @@ fun String.getResourceIdFromFileExtension(): Int {
             R.drawable.ic_attachment_other
         }
     }
+}
+
+
+fun String.isValidEmail(): Boolean = if (this.isEmpty()) {
+    false
+} else {
+    val emailPattern =
+        "^[A-Za-z\\d._\\-+]{3,64}@([A-Za-z\\d]+)\\.[A-Za-z\\d]+(.[A-Za-z\\d]+)?$"
+    val pattern = Pattern.compile(emailPattern)
+    val matcher: Matcher = pattern.matcher(this)
+    matcher.matches()
 }

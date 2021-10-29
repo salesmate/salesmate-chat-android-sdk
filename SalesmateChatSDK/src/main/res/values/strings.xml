@@ -39,4 +39,12 @@
     <string name="msg_support_file_sizes_upto_25mb">We support file sizes up to 25MB. If your file is larger than 25MB, we suggest you break it up into multiple files.</string>
     <string name="lbl_rate_your_conversation">Rate Your Conversation</string>
     <string name="lbl_share_your_feedback_optional">Share your feedback (optional)</string>
+    <string name="lbl_get_notified">Get notified</string>
+    <string name="lbl_enter_name">Enter name</string>
+    <string name="lbl_name">Name</string>
+    <string name="lbl_email">Email</string>
+    <string name="hint_enter_email_address">Enter email address</string>
+    <string name="lbl_submit">Submit</string>
+    <string name="lbl_that_email_doesn_t_look_quite_right">That email doesn’t look quite right.</string>
+    <string name="lbl_you_will_be_notified_on_the_below_email">You will be notified on the below email</string>
 </resources>

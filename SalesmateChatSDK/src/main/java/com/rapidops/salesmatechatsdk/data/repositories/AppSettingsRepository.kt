@@ -48,7 +48,11 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
 
 
     override var androidUniqueId: String
-        get() = Prefs.getString(PREF_UNIQUE_ID, "") ?: ""
+        get() {
+            return Prefs.getString(PREF_UNIQUE_ID, "") ?: ""
+            //return "a44dc310-f254-4cbd-9d95-42392d0f2a08"
+            /*return "75087209-c884-4827-8b36-5f06f9ef127b"*/
+        }
         set(value) {
             Prefs.putString(PREF_UNIQUE_ID, value)
         }
@@ -68,6 +72,9 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
     override val contactName: String
         get() = contactData?.name ?: pseudoName
 
+    override val email: String?
+        get() = contactData?.email
+
     override var contactData: ContactData?
         get() {
             val string = Prefs.getString(PREF_CONTACT_DATA, "")
@@ -80,6 +87,10 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
         set(value) {
             Prefs.putString(PREF_CONTACT_DATA, gson.toJson(value))
         }
+
+    override fun saveContactDetail(contactId: String, email: String, name: String) {
+        contactData = ContactData(id = contactId, name = name, email = email)
+    }
 
     override var pingRes: PingRes
         get() = _pingRes

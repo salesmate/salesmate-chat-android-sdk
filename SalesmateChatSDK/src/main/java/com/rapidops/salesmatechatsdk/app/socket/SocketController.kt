@@ -172,6 +172,21 @@ internal class SocketController @Inject constructor(
                             }
                         }
 
+                        PublishType.CONTACT_CREATED -> {
+                            jsonObject.getJsonObject("data")?.let {
+                                val uniqueId = it.getString("uniqueId") ?: ""
+                                val contactId = it.getString("contactId") ?: ""
+                                val email = it.getString("email") ?: ""
+                                val contactName = it.getString("name") ?: ""
+                                appSettingsDataSource.saveContactDetail(
+                                    contactId,
+                                    email,
+                                    contactName
+                                )
+                                eventBus.fireEvent(AppEvent.ContactCreateEvent)
+                            }
+                        }
+
                     }
                 } else {
                     val typingMessage = TypingMessage().apply {

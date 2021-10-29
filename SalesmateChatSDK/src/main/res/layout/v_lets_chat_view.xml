@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         style="@style/TextMedium"
-        android:drawablePadding="@dimen/padding_small2"
+        android:drawablePadding="@dimen/padding_small1"
         app:textColorStyle="actionForegroundColor"
         android:textSize="@dimen/font_size_medium"
         android:text="@string/lbl_start_new_chat" />

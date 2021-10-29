@@ -48,6 +48,8 @@ internal sealed class AppEvent {
     data class TypingMessageEvent(val typingMessage: TypingMessage) :
         AppEvent()
 
+    object ContactCreateEvent : AppEvent()
+
     data class UpdateConversationDetailEvent(val data: ConversationDetailItem) : AppEvent()
 
 }

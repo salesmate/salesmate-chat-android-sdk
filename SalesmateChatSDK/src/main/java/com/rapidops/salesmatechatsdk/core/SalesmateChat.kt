@@ -41,7 +41,7 @@ internal class SalesmateChat(
         daggerDataComponent = DaggerDataComponent.builder()
             .contextModule(ContextModule(application))
             .dataModule(DataModule())
-            .networkModule(NetworkModule(BuildConfig.BASE_URL, BuildConfig.DEBUG))
+            .networkModule(NetworkModule(BuildConfig.BASE_API_URL, BuildConfig.DEBUG))
             .viewModelModule(ViewModelModule())
             .build()
 

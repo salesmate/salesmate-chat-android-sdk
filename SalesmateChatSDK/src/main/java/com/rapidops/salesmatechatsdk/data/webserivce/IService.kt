@@ -70,4 +70,13 @@ internal interface IService {
         @Path("conversationId") conversationId: String,
         @Body body: Map<String, String>
     ): Response<Unit>
+
+    @POST("v1/contact")
+    suspend fun contact(
+        @Body body: Map<String, String?>
+    ): Response<Unit>
+
+    @POST
+    @FormUrlEncoded
+    suspend fun track(@Url url: String, @FieldMap fieldMap: Map<String, String>): Response<Unit>
 }

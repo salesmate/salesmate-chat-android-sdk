@@ -5,7 +5,6 @@ import com.rapidops.salesmatechatsdk.app.fragment.chat.adapterdelegates.*
 import com.rapidops.salesmatechatsdk.app.interfaces.MessageAdapterListener
 import com.rapidops.salesmatechatsdk.app.recyclerview.adapterdelegates.ListDelegationAdapter
 import com.rapidops.salesmatechatsdk.core.SalesmateChat
-import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageType
 
@@ -15,7 +14,6 @@ internal open class MessageAdapter(
 ) :
     ListDelegationAdapter<MutableList<MessageItem>>() {
 
-    private var conversationDetail: ConversationDetailItem? = null
     val appSettingsDataSource = SalesmateChat.daggerDataComponent.getAppSettingsDataSource()
 
     init {
@@ -28,6 +26,11 @@ internal open class MessageAdapter(
                 messageAdapterListener,
                 appSettingsDataSource.pingRes.emojiMapping
             )
+        )
+        delegatesManager.addDelegate(
+            EmailAskMessageDelegate(activity, messageAdapterListener) {
+                appSettingsDataSource.contactData
+            }
         )
         delegatesManager.addDelegate(BotMessageDelegate(activity))
         delegatesManager.fallbackDelegate = FallbackMessageDelegate(activity)
@@ -65,6 +68,13 @@ internal open class MessageAdapter(
         val indexOfRatingMessage =
             items.indexOfFirst { it.messageType == MessageType.RATING_ASKED.value }
         notifyItemChanged(indexOfRatingMessage)
+    }
+
+    fun updateAskEmailMessage() {
+        val indexOfAskEmailMessage =
+            items.indexOfFirst { it.messageType == MessageType.EMAIL_ASKED.value }
+        items[indexOfAskEmailMessage].isEmailSubmitted = true
+        notifyItemChanged(indexOfAskEmailMessage)
     }
 
 }

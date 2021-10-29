@@ -2,16 +2,19 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat
 
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseFragment
+import com.rapidops.salesmatechatsdk.app.extension.isValidEmail
 import com.rapidops.salesmatechatsdk.app.extension.loadCircleProfileImage
 import com.rapidops.salesmatechatsdk.app.extension.loadImage
 import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
@@ -26,6 +29,7 @@ import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setSendButtonColorStateList
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
+import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateBackgroundTintAction
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.databinding.FChatBinding
@@ -147,6 +151,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             messageAdapter.updateRatingMessage()
         })
 
+        viewModel.updateAskEmailMessage.observe(this, {
+            messageAdapter.updateAskEmailMessage()
+        })
+
         viewModel.showTypingMessageView.observe(this, {
             showTypingMessage(it)
         })
@@ -154,6 +162,15 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         viewModel.hideTypingMessageView.observe(this, {
             binding.incTypingMessage.loadingDotsTyping.stopAnimation()
             binding.incTypingMessage.root.isVisible = false
+        })
+
+        viewModel.showAskEmailView.observe(this, {
+            setUpEmailAskView()
+        })
+
+        viewModel.hideAskEmailView.observe(this, {
+            binding.llAskEmail.isVisible = false
+            binding.llMessage.isVisible = true
         })
     }
 
@@ -325,6 +342,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         override fun submitRating(rating: String) {
             viewModel.submitRating(rating)
         }
+
+        override fun submitContact(name: String, email: String) {
+            viewModel.submitContactDetail(name, email)
+        }
     }
 
     private fun showFailedInfoDialog(messageItem: MessageItem) {
@@ -381,6 +402,47 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
                 user.profileUrl,
                 user.firstName
             )
+        }
+    }
+
+    private fun setUpEmailAskView() {
+        binding.llMessage.isVisible = false
+        binding.llAskEmail.isVisible = true
+        binding.incEmailAsked.apply {
+            txtSubmit.updateBackgroundTintAction()
+            edtName.addTextChangedListener(afterTextChanged = nameAndEmailChange)
+            edtEmail.addTextChangedListener(afterTextChanged = nameAndEmailChange)
+
+            txtSubmit.setOnClickListener {
+                if (edtEmail.text.toString().trim().isValidEmail()) {
+                    txtEmailError.isVisible = false
+                    viewModel.submitContactDetail(
+                        edtName.text.toString().trim(),
+                        edtEmail.text.toString().trim()
+                    )
+                } else {
+                    txtEmailError.isVisible = true
+                }
+            }
+
+            val onFocusChangeLister = View.OnFocusChangeListener { _, isFocus ->
+                if (isFocus) {
+                    binding.appBar.setExpanded(false, true)
+                }
+            }
+            edtName.onFocusChangeListener = onFocusChangeLister
+            edtEmail.onFocusChangeListener = onFocusChangeLister
+        }
+
+
+    }
+
+    private val nameAndEmailChange: (text: Editable?) -> Unit = {
+        binding.incEmailAsked.apply {
+            val isFilled =
+                edtName.editableText.isNotEmpty() && edtEmail.editableText.isNotEmpty()
+            txtSubmit.isEnabled = isFilled
+            txtSubmit.alpha = if (isFilled) 1f else 0.5f
         }
     }
 }

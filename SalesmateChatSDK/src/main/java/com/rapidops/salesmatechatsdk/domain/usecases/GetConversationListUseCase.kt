@@ -26,6 +26,13 @@ internal class GetConversationListUseCase @Inject constructor(
             val user = getUserFromUserIdUseCase.execute(conversations.lastParticipatingUserId)
             conversationDetailItemList.add(ConversationDetailItem(conversations, user))
         }
+
+        if (appSettingsDataSource.contactData == null) {
+            conversationsRes.conversationList.firstOrNull { it.contactId.isNotEmpty() }?.let {
+                appSettingsDataSource.saveContactDetail(it.contactId, it.email, it.name)
+            }
+        }
+
         return conversationDetailItemList
     }
 

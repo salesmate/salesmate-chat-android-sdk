@@ -66,9 +66,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="@dimen/margin_micro4"
-                android:padding="@dimen/padding_small2"
+                android:padding="@dimen/padding_small1"
                 android:gravity="center"
-                android:background="@color/rating_back">
+                android:background="@color/edit_back">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edtFeedback"

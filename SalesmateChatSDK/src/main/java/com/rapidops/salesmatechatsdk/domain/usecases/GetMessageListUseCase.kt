@@ -27,6 +27,16 @@ internal class GetMessageListUseCase @Inject constructor(
             it.user = getUserFromUserIdUseCase.execute(it.userId)
         }
 
+        if (appSettingsDataSource.contactData == null) {
+            messageListRes.messageList.firstOrNull { it.contactId.isNotEmpty() }?.let {
+                appSettingsDataSource.saveContactDetail(
+                    it.contactId,
+                    it.contactEmail,
+                    it.contactName
+                )
+            }
+        }
+
         return messageListRes.messageList.reversed()
     }
 

@@ -16,7 +16,8 @@
     <color name="incoming_message_background">#EDF0F7</color>
     <color name="error_color">#DE350B</color>
     <color name="dark_blue">#172B4D</color>
-    <color name="rating_back">#F4F5F7</color>
+    <color name="edit_back">#F4F5F7</color>
     <color name="rating_send_back">#EBECF0</color>
+    <color name="dark_hint_color">#6B778C</color>
 
 </resources>

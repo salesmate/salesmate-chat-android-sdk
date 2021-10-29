@@ -24,6 +24,9 @@ internal class SendMessageReq {
     @SerializedName("conversation_name")
     var conversationName: String = ""
 
+    @SerializedName("email")
+    var email: String? = null
+
 }
 
 internal class Blocks {

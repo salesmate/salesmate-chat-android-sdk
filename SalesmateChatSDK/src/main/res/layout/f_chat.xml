@@ -73,6 +73,12 @@
         layout="@layout/v_typing_message" />
 
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray" />
+
+
     <LinearLayout
         android:id="@+id/llMessage"
         android:layout_width="match_parent"
@@ -81,17 +87,12 @@
         android:orientation="vertical">
 
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/light_gray" />
-
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edtMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/padding_large"
-            android:paddingVertical="@dimen/padding_small2"
+            android:paddingVertical="@dimen/padding_small1"
             android:hint="@string/lbl_start_typing"
             android:background="@null"
             android:inputType="text|textCapSentences|textMultiLine"
@@ -105,7 +106,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/padding_small2">
+            android:paddingHorizontal="@dimen/padding_small1">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgAttachment"
@@ -113,7 +114,7 @@
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_attachment"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="@dimen/padding_small2" />
+                android:padding="@dimen/padding_small1" />
 
             <Space
                 android:layout_width="0dp"
@@ -124,7 +125,7 @@
                 android:id="@+id/txtSend"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:padding="@dimen/padding_small2"
+                android:padding="@dimen/padding_small1"
                 style="@style/TextMedium"
                 android:layout_gravity="center"
                 android:textColor="@color/color_send"
@@ -133,6 +134,22 @@
                 android:background="?attr/selectableItemBackground"
                 android:text="@string/lbl_send" />
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llAskEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:padding="@dimen/padding_large">
+
+        <include
+            android:id="@+id/incEmailAsked"
+            layout="@layout/v_email_asked" />
 
     </LinearLayout>
 

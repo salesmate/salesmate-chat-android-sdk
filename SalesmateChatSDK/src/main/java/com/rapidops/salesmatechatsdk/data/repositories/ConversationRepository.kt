@@ -1,6 +1,6 @@
 package com.rapidops.salesmatechatsdk.data.repositories
 
-import com.google.gson.JsonElement
+import com.rapidops.salesmatechatsdk.BuildConfig
 import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.data.resmodels.*
 import com.rapidops.salesmatechatsdk.data.webserivce.IService
@@ -71,6 +71,22 @@ internal class ConversationRepository(private val service: IService) : IConversa
         body["remark"] = remark
         return APIResponseMapper.getResponse {
             service.remark(conversationId, body)
+        }
+    }
+
+    override suspend fun contact(conversationId: String?, email: String) {
+        val body = hashMapOf<String, String?>()
+        body["conversation_id"] = conversationId
+        body["email"] = email
+        return APIResponseMapper.getResponse {
+            service.contact(body)
+        }
+    }
+
+    override suspend fun track(body: Map<String, String>) {
+        val url = BuildConfig.TRACK_API_URL
+        return APIResponseMapper.getResponse {
+            service.track(url, body)
         }
     }
 

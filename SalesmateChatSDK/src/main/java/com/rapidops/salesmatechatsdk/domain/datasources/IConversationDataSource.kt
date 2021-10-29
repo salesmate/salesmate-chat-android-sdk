@@ -20,4 +20,6 @@ internal interface IConversationDataSource {
     suspend fun uploadFile(file: File): UploadFileRes
     suspend fun rating(conversationId: String, rating: String)
     suspend fun remark(conversationId: String, remark: String)
+    suspend fun contact(conversationId: String?, email: String)
+    suspend fun track(body: Map<String, String>)
 }

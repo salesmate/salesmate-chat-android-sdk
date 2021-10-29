@@ -13,7 +13,8 @@ import java.util.concurrent.TimeUnit
 internal enum class DateFormatType(val value: String) {
     yyyy_MM_dd_T_HH_mm_ss_SSS_Z("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
     MMM_dd_yyyy_hh_mm_a("MMM dd, yyyy, hh:mm a"),
-    MMM_dd_hh_mm_a("MMM dd, hh:mm a");
+    MMM_dd_hh_mm_a("MMM dd, hh:mm a"),
+    hh_mm_a("hh:mm a");
 }
 
 internal fun DateTime?.getMessageDate(): CharSequence? {
@@ -154,4 +155,40 @@ internal object DateUtil {
         return withZone(DateTimeZone.UTC).parseDate(DateFormatType.yyyy_MM_dd_T_HH_mm_ss_SSS_Z)
     }
 
+    fun String.isCurrentWeekDay(): Boolean {
+        return this.equals(DateTime.now().dayOfWeek().asText.lowercase(), true)
+    }
+
+    private val weekDay = arrayOf(1, 2, 3, 4, 5)
+    private val weekEnds = arrayOf(6, 7)
+
+    const val WEEK_DAYS = "weekdays"
+    const val WEEK_ENDS = "weekends"
+
+    fun getWeekDayTypeOfToday(): String {
+        return if (weekEnds.contains(DateTime.now().dayOfWeek)) WEEK_ENDS else WEEK_DAYS
+    }
+
+
+    fun isTodayInBetween(startTimeStr: String, endTimeStr: String): Boolean {
+        val startTime = startTimeStr.parseDate(DateFormatType.hh_mm_a)
+        val endTime = endTimeStr.parseDate(DateFormatType.hh_mm_a)
+        val currentDateTime = DateTime.now()
+        val startDateTime = DateTime(
+            currentDateTime.year,
+            currentDateTime.monthOfYear,
+            currentDateTime.dayOfMonth,
+            startTime.hourOfDay,
+            startTime.minuteOfHour
+        )
+
+        val endDateTime = DateTime(
+            currentDateTime.year,
+            currentDateTime.monthOfYear,
+            currentDateTime.dayOfMonth,
+            endTime.hourOfDay,
+            endTime.minuteOfHour
+        )
+        return startDateTime.isBeforeNow && endDateTime.isAfterNow
+    }
 }

@@ -4,6 +4,8 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.rapidops.salesmatechatsdk.data.resmodels.SendMessageRes
+import com.rapidops.salesmatechatsdk.data.utils.getBoolean
+import com.rapidops.salesmatechatsdk.data.utils.getJsonObject
 import com.rapidops.salesmatechatsdk.data.utils.getString
 import java.lang.reflect.Type
 
@@ -20,9 +22,9 @@ internal class SendMessageResDs : JsonDeserializer<SendMessageRes> {
 
         sendMessageRes.status = jsonObject.getString("Status") ?: ""
 
-        /*jsonObject.getJsonObject("Data")?.let { dataObject ->
-
-        }*/
+        jsonObject.getJsonObject("Data")?.let { dataObject ->
+            sendMessageRes.isEmailAsked = dataObject.getBoolean("isEmailAsked")
+        }
         return sendMessageRes
     }
 }

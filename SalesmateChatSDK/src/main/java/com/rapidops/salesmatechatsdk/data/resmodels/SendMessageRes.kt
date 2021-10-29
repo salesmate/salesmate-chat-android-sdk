@@ -8,7 +8,10 @@ internal data class SendMessageRes(
     @SerializedName("status")
     var status: String = "",
 
-    ) : BaseRes() {
+    @SerializedName("isEmailAsked")
+    var isEmailAsked: Boolean = false
+
+) : BaseRes() {
 
     val isSuccess: Boolean
         get() = status.equals("success", true)

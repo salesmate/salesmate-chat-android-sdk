@@ -2,11 +2,13 @@ package com.rapidops.salesmatechatsdk.app.fragment.chat
 
 import android.content.Context
 import android.net.Uri
+import android.os.CountDownTimer
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.viewModelScope
 import com.rapidops.salesmatechatsdk.app.base.BaseViewModel
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.extension.DateUtil
+import com.rapidops.salesmatechatsdk.app.extension.DateUtil.isCurrentWeekDay
 import com.rapidops.salesmatechatsdk.app.socket.SocketController
 import com.rapidops.salesmatechatsdk.app.utils.AppEvent
 import com.rapidops.salesmatechatsdk.app.utils.EventBus
@@ -21,6 +23,7 @@ import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.BlockType
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
+import com.rapidops.salesmatechatsdk.domain.models.FrequencyType
 import com.rapidops.salesmatechatsdk.domain.models.User
 import com.rapidops.salesmatechatsdk.domain.models.message.*
 import com.rapidops.salesmatechatsdk.domain.usecases.*
@@ -45,12 +48,15 @@ internal class ChatViewModel @Inject constructor(
     private val uploadFileUseCase: UploadFileUseCase,
     private val submitRatingUseCase: SubmitRatingUseCase,
     private val submitRemarkUseCase: SubmitRemarkUseCase,
-    private val socketController: SocketController
+    private val socketController: SocketController,
+    private val submitContactUseCase: SubmitContactUseCase,
+    private val trackEventUseCase: TrackEventUseCase,
 ) : BaseViewModel(coroutineContextProvider) {
 
     companion object {
         private const val PAGE_SIZE = 50
         private const val TYPING_DEBOUNCE = 800L
+        private const val ASK_EMAIL_TIMER: Long = (2 * 60 * 1000).toLong()
     }
 
     var adapterMessageList: List<MessageItem> = listOf()
@@ -66,9 +72,14 @@ internal class ChatViewModel @Inject constructor(
     val showOverLimitFileMessageDialog = SingleLiveEvent<Nothing>()
     val showTypingMessageView = SingleLiveEvent<User>()
     val hideTypingMessageView = SingleLiveEvent<Nothing>()
+    val showAskEmailView = SingleLiveEvent<Nothing>()
+    val hideAskEmailView = SingleLiveEvent<Nothing>()
+    val updateAskEmailMessage = SingleLiveEvent<Nothing>()
 
     private var conversationId: String? = null
     private var lastSendMessageId: String? = null
+
+    private var isEmailAsked = false
 
 
     fun subscribe(conversationId: String?, isLastMessageRead: Boolean = false) {
@@ -89,6 +100,8 @@ internal class ChatViewModel @Inject constructor(
         }
 
         subscribeEvents()
+
+        checkAndShowAskEmailView()
     }
 
     private fun getConversationId(): String {
@@ -125,6 +138,9 @@ internal class ChatViewModel @Inject constructor(
     }
 
     private fun getFilteredMessages(messageItem: List<MessageItem>): List<MessageItem> {
+        if (messageItem.any { it.messageType == MessageType.EMAIL_ASKED.value }) {
+            isEmailAsked = true
+        }
         return messageItem.filter { item -> adapterMessageList.any { item.id == it.id }.not() }
     }
 
@@ -214,6 +230,13 @@ internal class ChatViewModel @Inject constructor(
                     }
                 }
         }
+
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.ContactCreateEvent>()
+                .collectLatest {
+                    updateAskEmailMessage.call()
+                }
+        }
     }
     fun updateAdapterList(items: MutableList<MessageItem>?) {
         adapterMessageList = items ?: listOf()
@@ -248,6 +271,7 @@ internal class ChatViewModel @Inject constructor(
                 messageItem.sendStatus =
                     if (response.isSuccess) SendStatus.SUCCESS else SendStatus.FAIL
                 updateMessage.value = messageItem
+                setAndResetTimerForAskEmailIfRequired()
             }
         }, {
             messageItem.sendStatus = SendStatus.FAIL
@@ -288,7 +312,7 @@ internal class ChatViewModel @Inject constructor(
         withoutProgress({
             DocumentFile.fromSingleUri(context, uri)?.let { documentFile ->
                 if (documentFile.length().isValidFileSize()) {
-                    val messageItem = getNewMessageItem(documentFile, context)
+                    val messageItem = getNewAttachmentMessageItem(documentFile, context)
                     messageItem.sendStatus = SendStatus.SENDING
                     withContext(coroutineContextProvider.ui) {
                         showNewMessage.value = listOf(messageItem)
@@ -337,7 +361,7 @@ internal class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun getNewMessageItem(
+    private fun getNewAttachmentMessageItem(
         documentFile: DocumentFile,
         context: Context
     ): MessageItem {
@@ -414,5 +438,120 @@ internal class ChatViewModel @Inject constructor(
                 socketController.sendTypingEvent(it)
             }
         }, {})
+    }
+
+    private fun checkAndShowAskEmailView() {
+        if (appSettingsDataSource.contactData == null) {
+            when (pingRes.upfrontEmailCollection?.frequency) {
+                FrequencyType.ALWAYS.value -> {
+                    showAskEmailView.call()
+                }
+                FrequencyType.ONLY_OUTSIDE_OF_OFFICE_HOURS.value -> {
+                    if (isOnOfficeHours().not()) {
+                        showAskEmailView.call()
+                    } else {
+                        hideAskEmailView.call()
+                    }
+                }
+                else -> {
+                    hideAskEmailView.call()
+                }
+            }
+        }
+    }
+
+    private fun isOnOfficeHours(): Boolean {
+        pingRes.availability?.officeHours?.let { officeHours ->
+            officeHours.find { it.weekName.isCurrentWeekDay() }?.let {
+                if (DateUtil.isTodayInBetween(it.startTime, it.endTime)) {
+                    return true
+                }
+            }
+            officeHours.find { it.weekName == DateUtil.getWeekDayTypeOfToday() }
+                ?.let {
+                    if (DateUtil.isTodayInBetween(it.startTime, it.endTime)) {
+                        return true
+                    }
+                }
+        }
+        return false
+    }
+
+    fun submitContactDetail(name: String, email: String) {
+        withProgress({
+            submitContactUseCase.execute(SubmitContactUseCase.Param(conversationId, email))
+            val sessionId = showConversationDetail.value?.conversations?.sessionId ?: ""
+            trackEventUseCase.execute((TrackEventUseCase.Param(name, email, sessionId)))
+            withContext(coroutineContextProvider.ui) {
+                updateAskEmailMessage.call()
+                hideAskEmailView.call()
+            }
+        })
+    }
+
+    fun sendEmailAskedMessage() {
+        val sendMessageReq = sendMessageUseCase.getNewSendMessageReq(isBot = true)
+        sendMessageReq.blockData.apply {
+            add(Blocks().apply {
+                this.text = "Give the team a way to reach you:"
+                this.type = BlockType.TEXT.value
+            })
+        }
+        val messageItem = sendMessageReq.convertToMessageItem()
+        messageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
+        messageItem.sendStatus = SendStatus.NONE
+
+        val emailAskMessageReq = sendMessageUseCase.getNewSendMessageReq(isBot = true)
+        emailAskMessageReq.messageType = MessageType.EMAIL_ASKED.value
+        val emailAskMessageItem = emailAskMessageReq.convertToMessageItem()
+        emailAskMessageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
+        emailAskMessageItem.sendStatus = SendStatus.NONE
+
+        withoutProgress({
+            isEmailAsked = true
+            val response = sendMessageUseCase.execute(
+                SendMessageUseCase.Param(
+                    getConversationId(),
+                    sendMessageReq
+                )
+            )
+            if (response.isEmailAsked.not()) {
+                sendMessageUseCase.execute(
+                    SendMessageUseCase.Param(
+                        getConversationId(),
+                        emailAskMessageReq
+                    )
+                )
+                lastSendMessageId = sendMessageReq.messageId
+                withContext(coroutineContextProvider.ui) {
+                    showNewMessage.value = listOf(emailAskMessageItem, messageItem)
+                }
+            }
+        }, {
+            isEmailAsked = false
+        })
+    }
+
+    private var askForEmailTimer: CountDownTimer? = null
+    private fun setAndResetTimerForAskEmailIfRequired() {
+        askForEmailTimer?.cancel()
+        if (requiredEmailAsked()) {
+            askForEmailTimer =
+                object : CountDownTimer(ASK_EMAIL_TIMER, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+
+                    }
+
+                    override fun onFinish() {
+                        if (isEmailAsked) return
+                        sendEmailAskedMessage()
+                    }
+                }
+            askForEmailTimer?.start()
+        }
+    }
+
+    private fun requiredEmailAsked(): Boolean {
+        return appSettingsDataSource.contactData == null && isEmailAsked.not()
     }
 }

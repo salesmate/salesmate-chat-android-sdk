@@ -26,15 +26,16 @@ internal class SendMessageUseCase @Inject constructor(
 
     }
 
-    fun getNewSendMessageReq(messageId: String? = null): SendMessageReq {
+    fun getNewSendMessageReq(messageId: String? = null, isBot: Boolean = false): SendMessageReq {
         val uniqueMessageId = messageId ?: UUID.randomUUID().toString()
         val sendMessageReq = SendMessageReq()
         sendMessageReq.apply {
             this.messageType = MessageType.COMMENT.value
             this.messageId = uniqueMessageId
-            this.isBot = false
+            this.isBot = isBot
             this.isInbound = true
             this.conversationName = appSettingsDataSource.contactName
+            this.email = appSettingsDataSource.email
         }
         return sendMessageReq
     }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingHorizontal="@dimen/padding_large"
+    android:layout_marginVertical="@dimen/margin_micro4"
+    android:orientation="horizontal">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/margin_small2"
+        app:srcCompat="@drawable/ic_bot_avatar_outlined" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small2"
+        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="@dimen/card_radius"
+        app:contentPadding="@dimen/padding_large"
+        android:layout_marginEnd="@dimen/margin_xxxlarge"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/lblGetNotified"
+                android:layout_width="wrap_content"
+                android:textColor="@color/text_black"
+                android:textStyle="bold"
+                android:textSize="@dimen/font_size_medium"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_large"
+                android:text="@string/lbl_get_notified" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/lblNotifiedInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_gray_medium"
+                android:textStyle="bold"
+                android:textSize="@dimen/font_size_micro1"
+                android:text="@string/lbl_you_will_be_notified_on_the_below_email"
+                android:layout_marginBottom="@dimen/margin_large" />
+
+            <include
+                android:id="@+id/incEmailAsked"
+                layout="@layout/v_email_asked" />
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

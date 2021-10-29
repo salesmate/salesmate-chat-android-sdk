@@ -54,7 +54,7 @@
             app:textColorStyle="actionForegroundColor"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:drawablePadding="@dimen/padding_small2"
+            android:drawablePadding="@dimen/padding_small1"
             android:textSize="@dimen/font_size_medium"
             android:text="@string/lbl_start_new_chat" />
 

@@ -21,4 +21,7 @@ internal interface IAppSettingsDataSource {
     val linkName: String
     var contactData: ContactData?
     val contactName: String
+    val email: String?
+
+    fun saveContactDetail(contactId: String, email: String, name: String)
 }

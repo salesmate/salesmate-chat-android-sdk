@@ -72,6 +72,8 @@ internal data class MessageItem(
 
 	var sendStatus = SendStatus.NONE
 
+	var isEmailSubmitted: Boolean = false
+
 	val isStatusFailed: Boolean
 		get() {
 			return sendStatus == SendStatus.FAIL || sendStatus == SendStatus.UPLOADING_FAIL
