@@ -90,4 +90,10 @@ internal class ConversationRepository(private val service: IService) : IConversa
         }
     }
 
+    override suspend fun downloadTranscript(conversationId: String): DownloadTranscriptRes {
+        return APIResponseMapper.getResponse {
+            service.downloadTranscript(conversationId)
+        }
+    }
+
 }

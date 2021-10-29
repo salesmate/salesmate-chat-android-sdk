@@ -79,4 +79,7 @@ internal interface IService {
     @POST
     @FormUrlEncoded
     suspend fun track(@Url url: String, @FieldMap fieldMap: Map<String, String>): Response<Unit>
+
+    @POST("v1/conversations/{conversationId}/download-transcript")
+    suspend fun downloadTranscript(@Path("conversationId") conversationId: String): Response<DownloadTranscriptRes>
 }

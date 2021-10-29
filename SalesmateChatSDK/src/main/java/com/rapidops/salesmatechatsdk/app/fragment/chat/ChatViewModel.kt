@@ -51,6 +51,7 @@ internal class ChatViewModel @Inject constructor(
     private val socketController: SocketController,
     private val submitContactUseCase: SubmitContactUseCase,
     private val trackEventUseCase: TrackEventUseCase,
+    private val downloadTranscriptUseCase: DownloadTranscriptUseCase,
 ) : BaseViewModel(coroutineContextProvider) {
 
     companion object {
@@ -75,6 +76,7 @@ internal class ChatViewModel @Inject constructor(
     val showAskEmailView = SingleLiveEvent<Nothing>()
     val hideAskEmailView = SingleLiveEvent<Nothing>()
     val updateAskEmailMessage = SingleLiveEvent<Nothing>()
+    val showExportedChatFile = SingleLiveEvent<File>()
 
     private var conversationId: String? = null
     private var lastSendMessageId: String? = null
@@ -553,5 +555,14 @@ internal class ChatViewModel @Inject constructor(
 
     private fun requiredEmailAsked(): Boolean {
         return appSettingsDataSource.contactData == null && isEmailAsked.not()
+    }
+
+    fun downloadTranscript() {
+        withProgress({
+            val file = downloadTranscriptUseCase.execute(getConversationId())
+            withContext(coroutineContextProvider.ui) {
+                showExportedChatFile.value = file
+            }
+        })
     }
 }

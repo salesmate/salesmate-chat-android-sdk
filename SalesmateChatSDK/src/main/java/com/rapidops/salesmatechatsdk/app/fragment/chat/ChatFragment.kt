@@ -1,5 +1,6 @@
 package com.rapidops.salesmatechatsdk.app.fragment.chat
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -30,13 +31,16 @@ import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setSendButtonColorState
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateBackgroundTintAction
+import com.rapidops.salesmatechatsdk.app.utils.FileUtil
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.databinding.FChatBinding
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.User
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
+import java.io.File
 import kotlin.math.abs
+
 
 internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
@@ -172,6 +176,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             binding.llAskEmail.isVisible = false
             binding.llMessage.isVisible = true
         })
+
+        viewModel.showExportedChatFile.observe(this, {
+            showExportedChat(it)
+        })
     }
 
     private fun attachListener() {
@@ -224,6 +232,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
                 binding.appBar.setExpanded(true)
             }
         }
+        getBaseActivity().invalidateOptionsMenu()
     }
 
     private fun showToolbarWithoutUserDetail() {
@@ -314,13 +323,19 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_conversation_list, menu)
         menu.findItem(R.id.action_close).icon.setTintFromBackground()
-
+        menu.findItem(R.id.action_download).icon.setTintFromBackground()
+        menu.findItem(R.id.action_download).isVisible =
+            viewModel.showConversationDetail.value != null
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_close -> {
                 getBaseActivity().finish()
+            }
+
+            R.id.action_download -> {
+                viewModel.downloadTranscript()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -444,5 +459,12 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             txtSubmit.isEnabled = isFilled
             txtSubmit.alpha = if (isFilled) 1f else 0.5f
         }
+    }
+
+    private fun showExportedChat(file: File) {
+        val intent =
+            Intent(Intent.ACTION_VIEW, FileUtil.getUriFromFileProvider(requireContext(), file))
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        startActivity(intent)
     }
 }

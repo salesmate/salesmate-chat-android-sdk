@@ -5,13 +5,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.FileProvider
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseActivity
 import org.joda.time.DateTime
@@ -21,7 +19,6 @@ import java.io.File
 internal class FilePicker(private val context: Context) {
 
     private var destinationUri: Uri? = null
-    private val fileProviderAuthority: String = "com.rapidops.salesmatechatsdk.fileprovider"
     var filePickerListener: FilePickerListener? = null
     private var requestCode = -1
 
@@ -51,20 +48,7 @@ internal class FilePicker(private val context: Context) {
         val imageFileName = "JPEG_" + timeStamp + "_"
         val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val image: File = File.createTempFile(imageFileName, ".jpg", storageDir)
-        return getUriFromFileProvider(image)
-    }
-
-    private fun getUriFromFileProvider(file: File): Uri {
-        val contentUri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            FileProvider.getUriForFile(
-                context,
-                fileProviderAuthority,
-                file
-            )
-        } else {
-            Uri.fromFile(file)
-        }
-        return contentUri
+        return FileUtil.getUriFromFileProvider(context, image)
     }
 
     fun onActivityResult(activityResult: ActivityResult) {

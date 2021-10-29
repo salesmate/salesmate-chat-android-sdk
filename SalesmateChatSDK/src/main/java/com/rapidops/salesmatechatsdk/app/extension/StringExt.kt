@@ -2,26 +2,28 @@ package com.rapidops.salesmatechatsdk.app.extension
 
 import android.text.Html
 import android.text.Spanned
+import android.util.Base64
 import com.rapidops.salesmatechatsdk.R
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 
-fun String.fromNormalHtml(): Spanned {
-    val result: Spanned = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-        Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
-    } else {
-        Html.fromHtml(this)
-    }
+internal fun String.fromNormalHtml(): Spanned {
+    val result: Spanned =
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            Html.fromHtml(this)
+        }
     return result
 }
 
 
-fun String.getExtensionFromFile(): String {
+internal fun String.getExtensionFromFile(): String {
     return this.substringAfterLast(".").lowercase().trim()
 }
 
-fun String.getResourceIdFromFileExtension(): Int {
+internal fun String.getResourceIdFromFileExtension(): Int {
     return when (getExtensionFromFile()) {
         "jpg", "jpeg", "png", "gif", "ico" -> {
             R.drawable.ic_attachment_jpeg
@@ -62,4 +64,13 @@ fun String.isValidEmail(): Boolean = if (this.isEmpty()) {
     val pattern = Pattern.compile(emailPattern)
     val matcher: Matcher = pattern.matcher(this)
     matcher.matches()
+}
+
+
+internal fun String.encrypt(): String {
+    return Base64.encodeToString(this.toByteArray(), Base64.DEFAULT).trim { it <= ' ' }
+}
+
+internal fun String.decrypt(): String {
+    return String(Base64.decode(this, Base64.DEFAULT)).trim { it <= ' ' }
 }

@@ -3,14 +3,19 @@ package com.rapidops.salesmatechatsdk.app.utils
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
+import androidx.core.content.FileProvider
 import androidx.core.net.toFile
 import androidx.documentfile.provider.DocumentFile
 import java.io.*
 
+
 object FileUtil {
+
+    private const val fileProviderAuthority: String = "com.rapidops.salesmatechatsdk.fileprovider"
 
     const val MAX_FILE_SIZE_SUPPORT_IN_MB = 25
 
@@ -163,5 +168,32 @@ object FileUtil {
 
     private fun getExtensionFromMimeType(mimeType: String): String? {
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+    }
+
+    fun createTextFile(name: String, data: String): File {
+        val file = File.createTempFile(name, ".txt")
+        try {
+            val writer = FileWriter(file)
+            writer.append(data)
+            writer.flush()
+            writer.close()
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return file
+    }
+
+    fun getUriFromFileProvider(context:Context,file: File): Uri {
+        val contentUri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            FileProvider.getUriForFile(
+                context,
+                fileProviderAuthority,
+                file
+            )
+        } else {
+            Uri.fromFile(file)
+        }
+        return contentUri
     }
 }
