@@ -239,6 +239,19 @@ internal class ChatViewModel @Inject constructor(
                     updateAskEmailMessage.call()
                 }
         }
+
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.UserAvailabilityEvent>()
+                .collectLatest { userAvailabilityEventData ->
+                    showConversationDetail.value?.let {
+                        if (userAvailabilityEventData.data.userIds.contains(it.user?.id)) {
+                            it.user?.status = userAvailabilityEventData.data.status
+                            showConversationDetail.value = it
+                        }
+                    }
+                }
+        }
+
     }
     fun updateAdapterList(items: MutableList<MessageItem>?) {
         adapterMessageList = items ?: listOf()

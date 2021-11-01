@@ -226,6 +226,11 @@ internal class SocketController @Inject constructor(
                         jsonObject.getJsonObject("data")?.let {
                             val userAvailability: UserAvailability =
                                 gson.fromJson(it, UserAvailability::class.java)
+                            appSettingsDataSource.pingRes.users.forEach { user ->
+                                if (userAvailability.userIds.contains(user.id)) {
+                                    user.status = userAvailability.status
+                                }
+                            }
                             eventBus.fireEvent(AppEvent.UserAvailabilityEvent(userAvailability))
                         }
                     }

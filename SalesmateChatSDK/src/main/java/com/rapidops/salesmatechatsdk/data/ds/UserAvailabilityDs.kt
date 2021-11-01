@@ -26,7 +26,7 @@ internal class UserAvailabilityDs : JsonDeserializer<UserAvailability> {
         val jsonObject = json.asJsonObject
 
 
-        jsonObject.getJsonArray("unReadConversations")?.let {
+        jsonObject.getJsonArray("userIds")?.let {
             val listType = object : TypeToken<List<String>>() {}.type
             userAvailability.userIds = gson.fromJson(it, listType)
         }

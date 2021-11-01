@@ -36,6 +36,6 @@ internal data class PingRes(
 ) : BaseRes(){
 
     fun getAvailableUserList(): List<User> {
-        return users.filter { it.status == "available" }
+        return users.filter { it.status == AvailabilityStatus.AVAILABLE.value }
     }
 }

@@ -1,6 +1,7 @@
 package com.rapidops.salesmatechatsdk.app.fragment.chat
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -35,6 +36,7 @@ import com.rapidops.salesmatechatsdk.app.utils.FileUtil
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.databinding.FChatBinding
+import com.rapidops.salesmatechatsdk.domain.models.AvailabilityStatus
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.User
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
@@ -293,7 +295,19 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
                     it.firstName
                 )
                 txtUserName.text = String.format("%s %s", it.firstName, it.lastName)
-                txtStatus.text = it.status
+                txtStatus.text = it.status.replaceFirstChar { it.uppercaseChar() }
+
+                val statusYellowColor = if (it.status == AvailabilityStatus.AVAILABLE.value)
+                    R.color.light_green
+                else
+                    R.color.status_yellow_color
+
+                imgStatus.imageTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        statusYellowColor
+                    )
+                )
                 imgStatus.background.setTintBackground()
             }
         }

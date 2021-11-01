@@ -9,7 +9,7 @@
     android:layout_marginBottom="@dimen/margin_xlarge"
     tools:showIn="@layout/f_chat"
     android:visibility="gone"
-    tools:visibility="visible">
+    tools:visibility="gone">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgLogo"

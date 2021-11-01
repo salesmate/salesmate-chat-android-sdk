@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="horizontal"
     android:visibility="gone"
-    tools:visibility="gone"
+    tools:visibility="visible"
     tools:showIn="@layout/f_chat"
     android:baselineAligned="false">
 

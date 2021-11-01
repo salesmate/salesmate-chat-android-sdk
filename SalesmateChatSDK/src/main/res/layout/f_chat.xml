@@ -62,6 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/llMessage"
+            tools:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:background="@drawable/drw_corner_top_background_white"
             tools:listitem="@layout/r_outgoing_message" />
