@@ -86,6 +86,19 @@ internal class RecentChatViewModel @Inject constructor(
 
                 }
         }
+
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.ConversationHasReadEvent>()
+                .collectLatest { conversationHasReadEventData ->
+                    val list = showConversationList.value?.toMutableList() ?: mutableListOf()
+                    list.find { it.conversations?.id == conversationHasReadEventData.conversationId }
+                        ?.let {
+                            it.conversations?.contactHasRead =
+                                conversationHasReadEventData.contactHasRead
+                        }
+                    showConversationList.value = list
+                }
+        }
     }
 
 

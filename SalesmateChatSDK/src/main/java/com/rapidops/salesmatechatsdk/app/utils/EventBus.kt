@@ -52,4 +52,10 @@ internal sealed class AppEvent {
 
     data class UpdateConversationDetailEvent(val data: ConversationDetailItem) : AppEvent()
 
+    data class ConversationHasReadEvent(
+        val conversationId: String,
+        val userHasRead: Boolean,
+        val contactHasRead: Boolean
+    ) : AppEvent()
+
 }

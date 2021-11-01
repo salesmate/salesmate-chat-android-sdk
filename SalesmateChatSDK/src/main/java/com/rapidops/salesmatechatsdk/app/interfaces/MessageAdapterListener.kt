@@ -10,4 +10,5 @@ internal interface MessageAdapterListener {
     fun submitRating(rating: String)
     fun submitContact(name: String, email: String)
 
+    fun isUserHasRead(): Boolean
 }

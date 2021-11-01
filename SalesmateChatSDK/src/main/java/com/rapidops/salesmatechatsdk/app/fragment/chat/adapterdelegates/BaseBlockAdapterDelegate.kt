@@ -23,8 +23,6 @@ internal abstract class BaseBlockAdapterDelegate(activity: Activity) :
         holder: RecyclerView.ViewHolder,
         payloads: MutableList<Any>
     ) {
-        //holder.setIsRecyclable(false)
-        bindDateTimeView(holder, items, position)
 
         onBindMessageViewHolder(items, position, holder as MessageViewHolder)
     }
@@ -42,15 +40,4 @@ internal abstract class BaseBlockAdapterDelegate(activity: Activity) :
     )
 
     protected abstract fun isForViewType(item: BlockDataItem, position: Int): Boolean
-
-    private fun bindDateTimeView(
-        holder: RecyclerView.ViewHolder,
-        items: MutableList<BlockDataItem>,
-        position: Int,
-    ) {
-        val blockItem = items[position]
-
-    }
-
-
 }

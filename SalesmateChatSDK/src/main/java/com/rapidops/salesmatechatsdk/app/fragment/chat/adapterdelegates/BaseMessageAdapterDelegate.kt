@@ -9,12 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.extension.getMessageTime
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
+import com.rapidops.salesmatechatsdk.app.interfaces.MessageAdapterListener
 import com.rapidops.salesmatechatsdk.app.recyclerview.adapterdelegates.AdapterDelegate
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import com.rapidops.salesmatechatsdk.domain.models.message.SendStatus
 
-internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
-    AdapterDelegate<MutableList<MessageItem>>() {
+internal abstract class BaseMessageAdapterDelegate(
+    activity: Activity,
+    private val messageAdapterListener: MessageAdapterListener
+) : AdapterDelegate<MutableList<MessageItem>>() {
 
     protected val inflater: LayoutInflater = activity.layoutInflater
 
@@ -28,7 +31,6 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
         holder: RecyclerView.ViewHolder,
         payloads: MutableList<Any>
     ) {
-        //holder.setIsRecyclable(false)
 
         bindDateTimeStatusView(holder, items, position)
 
@@ -77,6 +79,15 @@ internal abstract class BaseMessageAdapterDelegate(activity: Activity) :
                 } else {
                     isVisible = true
                     text = messageItem.createdDate.getMessageTime()
+                    if (this@BaseMessageAdapterDelegate is OutgoingMessageDelegate &&
+                        position == 0
+                    ) {
+                        if (messageAdapterListener.isUserHasRead()) {
+                            append(" " + context.getString(R.string.lbl_seen))
+                        } else {
+                            append(" " + context.getString(R.string.lbl_not_seen_yet))
+                        }
+                    }
                 }
             }
 

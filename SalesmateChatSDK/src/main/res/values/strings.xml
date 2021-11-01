@@ -48,4 +48,6 @@
     <string name="lbl_that_email_doesn_t_look_quite_right">That email doesn’t look quite right.</string>
     <string name="lbl_you_will_be_notified_on_the_below_email">You will be notified on the below email</string>
     <string name="lbl_download">Download</string>
+    <string name="lbl_not_seen_yet">Not seen yet</string>
+    <string name="lbl_seen">Seen</string>
 </resources>

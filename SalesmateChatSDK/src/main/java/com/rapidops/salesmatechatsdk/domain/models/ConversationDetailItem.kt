@@ -4,7 +4,7 @@ internal data class ConversationDetailItem(
     var conversations: Conversations? = null,
     var user: User? = null,
 ) : BaseModel() {
-    val isConversationRead: Boolean
+    val isContactHasRead: Boolean
         get() {
             return if (conversations?.lastMessageData?.userId.isNullOrEmpty()) {
                 true

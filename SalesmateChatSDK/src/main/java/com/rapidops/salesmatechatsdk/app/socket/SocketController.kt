@@ -8,10 +8,7 @@ import com.neovisionaries.ws.client.WebSocketFrame
 import com.rapidops.salesmatechatsdk.BuildConfig
 import com.rapidops.salesmatechatsdk.app.utils.AppEvent
 import com.rapidops.salesmatechatsdk.app.utils.EventBus
-import com.rapidops.salesmatechatsdk.data.utils.GsonUtils
-import com.rapidops.salesmatechatsdk.data.utils.getJsonObject
-import com.rapidops.salesmatechatsdk.data.utils.getString
-import com.rapidops.salesmatechatsdk.data.utils.hasProperty
+import com.rapidops.salesmatechatsdk.data.utils.*
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.Conversations
 import com.rapidops.salesmatechatsdk.domain.models.PublishType
@@ -184,6 +181,21 @@ internal class SocketController @Inject constructor(
                                     contactName
                                 )
                                 eventBus.fireEvent(AppEvent.ContactCreateEvent)
+                            }
+                        }
+
+                        PublishType.CONVERSATION_HAS_READ -> {
+                            jsonObject.getJsonObject("data")?.let {
+                                val conversationId = it.getString("conversationId") ?: ""
+                                val userHashRead = it.getBoolean("userHasRead")
+                                val contactHasRead = it.getBoolean("contactHasRead")
+                                eventBus.fireEvent(
+                                    AppEvent.ConversationHasReadEvent(
+                                        conversationId,
+                                        userHashRead,
+                                        contactHasRead
+                                    )
+                                )
                             }
                         }
 

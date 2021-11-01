@@ -19,7 +19,7 @@ internal class OutgoingMessageDelegate(
     private val activity: Activity,
     private val messageAdapterListener: MessageAdapterListener
 ) :
-    BaseMessageAdapterDelegate(activity) {
+    BaseMessageAdapterDelegate(activity, messageAdapterListener) {
     override fun onCreateMessageHolder(parent: ViewGroup): MessageViewHolder {
         val view = ROutgoingMessageBinding.inflate(inflater, parent, false).root
         return OutgoingMessageViewHolder(view)

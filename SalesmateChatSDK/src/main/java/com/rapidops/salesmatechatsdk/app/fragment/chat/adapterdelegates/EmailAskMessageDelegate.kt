@@ -25,7 +25,7 @@ internal class EmailAskMessageDelegate(
     private val messageAdapterListener: MessageAdapterListener,
     private val getContactDetail: () -> ContactData?,
 ) :
-    BaseMessageAdapterDelegate(activity) {
+    BaseMessageAdapterDelegate(activity, messageAdapterListener) {
 
 
     override fun onCreateMessageHolder(parent: ViewGroup): MessageViewHolder {

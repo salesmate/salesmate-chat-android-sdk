@@ -10,7 +10,6 @@ import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationListUseCase
-import com.rapidops.salesmatechatsdk.domain.usecases.GetUserFromUserIdUseCase
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.withContext
@@ -19,13 +18,13 @@ import javax.inject.Inject
 internal class ConversationListViewModel @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
     private val coroutineContextProvider: ICoroutineContextProvider,
-    private val getConversationUseCase: GetConversationListUseCase,
-    private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase
+    private val getConversationUseCase: GetConversationListUseCase
 ) : BaseViewModel(coroutineContextProvider) {
 
     val showConversationList = SingleLiveEvent<List<ConversationDetailItem>>()
     val updateConversationItem = SingleLiveEvent<ConversationDetailItem>()
     val updateConversationItemMessage = SingleLiveEvent<MessageItem>()
+    val updateReadStatus = SingleLiveEvent<AppEvent.ConversationHasReadEvent>()
     val showLoadMore = SingleLiveEvent<Boolean>()
 
     companion object {
@@ -72,6 +71,13 @@ internal class ConversationListViewModel @Inject constructor(
             EventBus.events.filterIsInstance<AppEvent.DeleteMessageEvent>()
                 .collectLatest { deleteMessageEventDetail ->
                     updateConversationItemMessage.value = deleteMessageEventDetail.data
+                }
+        }
+
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.ConversationHasReadEvent>()
+                .collectLatest { conversationHasReadEventData ->
+                    updateReadStatus.value = conversationHasReadEventData
                 }
         }
     }

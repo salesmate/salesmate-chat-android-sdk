@@ -77,14 +77,17 @@ internal class ChatViewModel @Inject constructor(
     val hideAskEmailView = SingleLiveEvent<Nothing>()
     val updateAskEmailMessage = SingleLiveEvent<Nothing>()
     val showExportedChatFile = SingleLiveEvent<File>()
+    val updateConversationReadStatus = SingleLiveEvent<Nothing>()
 
     private var conversationId: String? = null
     private var lastSendMessageId: String? = null
 
     private var isEmailAsked = false
-
+    var isUserHasRead: Boolean = false
+    private var isContactHasRead: Boolean = false
 
     fun subscribe(conversationId: String?, isLastMessageRead: Boolean = false) {
+        isContactHasRead = isLastMessageRead
         conversationId?.let {
             this.conversationId = conversationId
             withProgress({
@@ -92,13 +95,12 @@ internal class ChatViewModel @Inject constructor(
                 val conversationDetailRes = getConversationDetailUseCase.execute(params)
                 withContext(coroutineContextProvider.ui) {
                     showConversationDetail.value = conversationDetailRes
+                    isUserHasRead = conversationDetailRes.conversations?.userHasRead == true
                 }
                 loadMessageList(it)
             })
 
-            if (isLastMessageRead.not()) {
-                loadReadConversationForVisitor()
-            }
+            loadReadConversationForVisitorIfRequired()
         }
 
         subscribeEvents()
@@ -164,6 +166,7 @@ internal class ChatViewModel @Inject constructor(
                     val eventData = event.data
                     if (eventData.conversationId == conversationId && lastSendMessageId != eventData.messageId) {
                         conversationId?.let { conversationId ->
+                            isContactHasRead = false
                             adapterMessageList.firstOrNull()?.let { messageItem ->
                                 loadMessageListByLastMessageDate(
                                     conversationId,
@@ -252,6 +255,16 @@ internal class ChatViewModel @Inject constructor(
                 }
         }
 
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.ConversationHasReadEvent>()
+                .collectLatest { conversationHasReadEventData ->
+                    if (conversationHasReadEventData.conversationId == conversationId) {
+                        isUserHasRead = conversationHasReadEventData.userHasRead
+                        updateConversationReadStatus.call()
+                    }
+                }
+        }
+
     }
     fun updateAdapterList(items: MutableList<MessageItem>?) {
         adapterMessageList = items ?: listOf()
@@ -282,6 +295,7 @@ internal class ChatViewModel @Inject constructor(
                 )
             )
             lastSendMessageId = sendMessageReq.messageId
+            isUserHasRead = false
             withContext(coroutineContextProvider.ui) {
                 messageItem.sendStatus =
                     if (response.isSuccess) SendStatus.SUCCESS else SendStatus.FAIL
@@ -294,17 +308,20 @@ internal class ChatViewModel @Inject constructor(
         })
     }
 
-    private fun loadReadConversationForVisitor() {
-        conversationId?.let { conversationId ->
-            withoutProgress({
-                readConversationForVisitorUseCase.execute(
-                    ReadConversationForVisitorUseCase.Param(
-                        conversationId
+    private fun loadReadConversationForVisitorIfRequired() {
+        if (isContactHasRead.not()) {
+            conversationId?.let { conversationId ->
+                isContactHasRead = true
+                withoutProgress({
+                    readConversationForVisitorUseCase.execute(
+                        ReadConversationForVisitorUseCase.Param(
+                            conversationId
+                        )
                     )
-                )
-            }, {
-
-            })
+                }, {
+                    isContactHasRead = false
+                })
+            }
         }
     }
 
@@ -453,6 +470,7 @@ internal class ChatViewModel @Inject constructor(
                 socketController.sendTypingEvent(it)
             }
         }, {})
+        loadReadConversationForVisitorIfRequired()
     }
 
     private fun checkAndShowAskEmailView() {

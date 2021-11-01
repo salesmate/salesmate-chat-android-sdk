@@ -117,7 +117,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         attachListener()
         viewModel.subscribe(
             conversationDetailItem?.conversations?.id,
-            conversationDetailItem?.isConversationRead ?: true
+            conversationDetailItem?.isContactHasRead ?: true
         )
     }
 
@@ -181,6 +181,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
         viewModel.showExportedChatFile.observe(this, {
             showExportedChat(it)
+        })
+
+        viewModel.updateConversationReadStatus.observe(this, {
+            messageAdapter.updateMessages()
         })
     }
 
@@ -374,6 +378,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
         override fun submitContact(name: String, email: String) {
             viewModel.submitContactDetail(name, email)
+        }
+
+        override fun isUserHasRead(): Boolean {
+            return viewModel.isUserHasRead
         }
     }
 

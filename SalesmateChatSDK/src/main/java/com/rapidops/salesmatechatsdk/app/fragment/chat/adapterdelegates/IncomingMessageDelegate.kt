@@ -7,14 +7,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rapidops.salesmatechatsdk.app.extension.loadCircleProfileImage
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.BlockAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageViewHolder
+import com.rapidops.salesmatechatsdk.app.interfaces.MessageAdapterListener
 import com.rapidops.salesmatechatsdk.app.view.SpacesItemDecoration
 import com.rapidops.salesmatechatsdk.databinding.RIncomingMessageBinding
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageType
 
 
-internal class IncomingMessageDelegate(private val activity: Activity) :
-    BaseMessageAdapterDelegate(activity) {
+internal class IncomingMessageDelegate(
+    private val activity: Activity,
+    private val messageAdapterListener: MessageAdapterListener
+) :
+    BaseMessageAdapterDelegate(activity, messageAdapterListener) {
     override fun onCreateMessageHolder(parent: ViewGroup): MessageViewHolder {
         val view = RIncomingMessageBinding.inflate(inflater, parent, false).root
         return IncomingMessageViewHolder(view)

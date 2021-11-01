@@ -56,6 +56,9 @@ internal data class Conversations(
 	var rating: String = "",
 
 	@field:SerializedName("remark")
-	var remark: String = ""
+	var remark: String = "",
+
+	@field:SerializedName("userHasRead")
+	var userHasRead: Boolean = false
 
 ) : BaseModel()

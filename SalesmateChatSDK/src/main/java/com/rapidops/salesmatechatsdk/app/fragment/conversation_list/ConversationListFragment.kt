@@ -109,8 +109,12 @@ internal class ConversationListFragment : BaseFragment<ConversationListViewModel
             conversationAdapter.updateConversation(conversationDetailItem)
         })
 
-        viewModel.updateConversationItemMessage.observe(this, {messageItem->
+        viewModel.updateConversationItemMessage.observe(this, { messageItem ->
             conversationAdapter.updateConversationMessage(messageItem)
+        })
+
+        viewModel.updateReadStatus.observe(this, { conversationHasReadEvent ->
+            conversationAdapter.updateReadStatus(conversationHasReadEvent)
         })
     }
 

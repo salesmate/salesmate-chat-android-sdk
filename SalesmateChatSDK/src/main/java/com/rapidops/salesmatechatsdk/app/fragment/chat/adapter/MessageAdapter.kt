@@ -18,7 +18,7 @@ internal open class MessageAdapter(
 
     init {
         // Delegates
-        delegatesManager.addDelegate(IncomingMessageDelegate(activity))
+        delegatesManager.addDelegate(IncomingMessageDelegate(activity, messageAdapterListener))
         delegatesManager.addDelegate(OutgoingMessageDelegate(activity, messageAdapterListener))
         delegatesManager.addDelegate(
             RatingAskMessageDelegate(
@@ -32,8 +32,9 @@ internal open class MessageAdapter(
                 appSettingsDataSource.contactData
             }
         )
-        delegatesManager.addDelegate(BotMessageDelegate(activity))
-        delegatesManager.fallbackDelegate = FallbackMessageDelegate(activity)
+        delegatesManager.addDelegate(BotMessageDelegate(activity, messageAdapterListener))
+        delegatesManager.fallbackDelegate =
+            FallbackMessageDelegate(activity, messageAdapterListener)
     }
 
     fun addItems(items: MutableList<MessageItem>) {
@@ -53,6 +54,9 @@ internal open class MessageAdapter(
     fun addNewItems(items: MutableList<MessageItem>) {
         this.items.addAll(0, items)
         notifyItemRangeInserted(0, items.size)
+        if (this.items.size > 1) {
+            notifyItemChanged(1)
+        }
     }
 
 
@@ -75,6 +79,10 @@ internal open class MessageAdapter(
             items.indexOfFirst { it.messageType == MessageType.EMAIL_ASKED.value }
         items[indexOfAskEmailMessage].isEmailSubmitted = true
         notifyItemChanged(indexOfAskEmailMessage)
+    }
+
+    fun updateMessages() {
+        notifyDataSetChanged()
     }
 
 }

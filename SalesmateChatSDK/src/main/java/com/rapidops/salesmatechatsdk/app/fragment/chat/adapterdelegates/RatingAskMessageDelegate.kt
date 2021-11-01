@@ -24,7 +24,7 @@ internal class RatingAskMessageDelegate(
     private val messageAdapterListener: MessageAdapterListener,
     private val emojiMappingList: List<EmojiMapping>
 ) :
-    BaseMessageAdapterDelegate(activity) {
+    BaseMessageAdapterDelegate(activity, messageAdapterListener) {
 
     private var newRemark: String = ""
 

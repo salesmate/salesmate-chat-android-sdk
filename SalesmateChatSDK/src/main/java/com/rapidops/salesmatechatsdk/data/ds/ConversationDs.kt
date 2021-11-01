@@ -46,7 +46,7 @@ internal class ConversationDs : JsonDeserializer<Conversations> {
         conversations.closedDate = jsonObject.getString("closedDate") ?: ""
         conversations.rating = jsonObject.getString("rating") ?: ""
         conversations.remark = jsonObject.getString("remark") ?: ""
-
+        conversations.userHasRead = jsonObject.getBoolean("userHasRead")
 
         return conversations
     }

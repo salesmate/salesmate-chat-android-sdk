@@ -7,6 +7,7 @@ import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.LoadMoreBaseRecyclerViewAdapter
 import com.rapidops.salesmatechatsdk.app.extension.getPeriod
 import com.rapidops.salesmatechatsdk.app.extension.loadCircleProfileImage
+import com.rapidops.salesmatechatsdk.app.utils.AppEvent
 import com.rapidops.salesmatechatsdk.databinding.RConversationItemBinding
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
@@ -39,7 +40,7 @@ internal class ConversationAdapter : LoadMoreBaseRecyclerViewAdapter<Conversatio
         private val bind = RConversationItemBinding.bind(itemView)
         fun bindViewHolder(item: ConversationDetailItem) {
 
-            bind.imgStatus.isInvisible = item.isConversationRead
+            bind.imgStatus.isInvisible = item.isContactHasRead
 
             bind.imgConversation.loadCircleProfileImage(
                 item.user?.profileUrl,
@@ -83,6 +84,17 @@ internal class ConversationAdapter : LoadMoreBaseRecyclerViewAdapter<Conversatio
         } else {
             list.add(0, conversationDetailItem)
             notifyItemInserted(0)
+        }
+    }
+
+    fun updateReadStatus(conversationHasReadEvent: AppEvent.ConversationHasReadEvent) {
+        val list = getItems()
+        val indexOfFirst =
+            list.indexOfFirst { it.conversations?.id == conversationHasReadEvent.conversationId }
+        if (indexOfFirst != -1) {
+            list[indexOfFirst].conversations?.contactHasRead =
+                conversationHasReadEvent.contactHasRead
+            notifyItemChanged(indexOfFirst)
         }
     }
 
