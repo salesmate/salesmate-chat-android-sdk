@@ -199,6 +199,19 @@ internal class SocketController @Inject constructor(
                             }
                         }
 
+                        PublishType.CONVERSATION_STATUS_UPDATE -> {
+                            jsonObject.getJsonObject("data")?.let {
+                                val conversationId = it.getString("conversationId") ?: ""
+                                val status = it.getString("status") ?: ""
+                                eventBus.fireEvent(
+                                    AppEvent.ConversationStatusUpdateEvent(
+                                        conversationId,
+                                        status
+                                    )
+                                )
+                            }
+                        }
+
                     }
                 } else {
                     val typingMessage = TypingMessage().apply {

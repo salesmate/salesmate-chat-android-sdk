@@ -28,6 +28,7 @@ import com.rapidops.salesmatechatsdk.app.fragment.upload_attachment.UploadAttach
 import com.rapidops.salesmatechatsdk.app.interfaces.EndlessScrollListener
 import com.rapidops.salesmatechatsdk.app.interfaces.MessageAdapterListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
+import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setSendButtonColorStateList
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
@@ -119,6 +120,8 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             conversationDetailItem?.conversations?.id,
             conversationDetailItem?.isContactHasRead ?: true
         )
+
+        binding.imgAttachment.isVisible = viewModel.canUploadAttachment
     }
 
     private fun observeViewModel() {
@@ -171,12 +174,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         })
 
         viewModel.showAskEmailView.observe(this, {
-            setUpEmailAskView()
-        })
-
-        viewModel.hideAskEmailView.observe(this, {
-            binding.llAskEmail.isVisible = false
-            binding.llMessage.isVisible = true
+            showEmailAskView(it)
         })
 
         viewModel.showExportedChatFile.observe(this, {
@@ -185,6 +183,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
         viewModel.updateConversationReadStatus.observe(this, {
             messageAdapter.updateMessages()
+        })
+
+        viewModel.isConversationOpenForMessage.observe(this, {
+            setUpConversationByStatus(it)
         })
     }
 
@@ -343,7 +345,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         menu.findItem(R.id.action_close).icon.setTintFromBackground()
         menu.findItem(R.id.action_download).icon.setTintFromBackground()
         menu.findItem(R.id.action_download).isVisible =
-            viewModel.showConversationDetail.value != null
+            viewModel.showConversationDetail.value?.user?.id.isNullOrEmpty().not()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -442,36 +444,39 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         }
     }
 
-    private fun setUpEmailAskView() {
-        binding.llMessage.isVisible = false
-        binding.llAskEmail.isVisible = true
-        binding.incEmailAsked.apply {
-            txtSubmit.updateBackgroundTintAction()
-            edtName.addTextChangedListener(afterTextChanged = nameAndEmailChange)
-            edtEmail.addTextChangedListener(afterTextChanged = nameAndEmailChange)
+    private fun showEmailAskView(show: Boolean) {
+        if (show) {
+            binding.llMessage.isVisible = false
+            binding.llAskEmail.isVisible = true
+            binding.incEmailAsked.apply {
+                txtSubmit.updateBackgroundTintAction()
+                edtName.addTextChangedListener(afterTextChanged = nameAndEmailChange)
+                edtEmail.addTextChangedListener(afterTextChanged = nameAndEmailChange)
 
-            txtSubmit.setOnClickListener {
-                if (edtEmail.text.toString().trim().isValidEmail()) {
-                    txtEmailError.isVisible = false
-                    viewModel.submitContactDetail(
-                        edtName.text.toString().trim(),
-                        edtEmail.text.toString().trim()
-                    )
-                } else {
-                    txtEmailError.isVisible = true
+                txtSubmit.setOnClickListener {
+                    if (edtEmail.text.toString().trim().isValidEmail()) {
+                        txtEmailError.isVisible = false
+                        viewModel.submitContactDetail(
+                            edtName.text.toString().trim(),
+                            edtEmail.text.toString().trim()
+                        )
+                    } else {
+                        txtEmailError.isVisible = true
+                    }
                 }
-            }
 
-            val onFocusChangeLister = View.OnFocusChangeListener { _, isFocus ->
-                if (isFocus) {
-                    binding.appBar.setExpanded(false, true)
+                val onFocusChangeLister = View.OnFocusChangeListener { _, isFocus ->
+                    if (isFocus) {
+                        binding.appBar.setExpanded(false, true)
+                    }
                 }
+                edtName.onFocusChangeListener = onFocusChangeLister
+                edtEmail.onFocusChangeListener = onFocusChangeLister
             }
-            edtName.onFocusChangeListener = onFocusChangeLister
-            edtEmail.onFocusChangeListener = onFocusChangeLister
+        } else {
+            binding.llAskEmail.isVisible = false
+            binding.llMessage.isVisible = true
         }
-
-
     }
 
     private val nameAndEmailChange: (text: Editable?) -> Unit = {
@@ -489,4 +494,25 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         startActivity(intent)
     }
+
+    private fun setUpConversationByStatus(isOpen: Boolean) {
+        if (isOpen) {
+            binding.llMessage.isVisible = true
+            binding.llAskEmail.isVisible = false
+            binding.llConversationClosed.isVisible = false
+        } else {
+            binding.llMessage.isVisible = false
+            binding.llAskEmail.isVisible = false
+            binding.llConversationClosed.isVisible = true
+            binding.txtStartNewChat.updateBackgroundTintAction()
+            binding.txtStartNewChat.compoundDrawablesRelative.forEach {
+                it?.setTint(ColorUtil.actionColor.foregroundColor())
+            }
+
+            binding.txtStartNewChat.setOnClickListener {
+
+            }
+        }
+    }
+
 }

@@ -24,4 +24,9 @@ internal interface IAppSettingsDataSource {
     val email: String?
 
     fun saveContactDetail(contactId: String, email: String, name: String)
+
+    val isContact: Boolean
+
+    val preventRepliesToCloseConversations: Boolean
+    val preventRepliesToCloseConversationsWithinNumberOfDays: Int
 }

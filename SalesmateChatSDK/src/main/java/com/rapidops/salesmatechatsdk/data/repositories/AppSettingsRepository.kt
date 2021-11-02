@@ -50,7 +50,7 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
     override var androidUniqueId: String
         get() {
             //return Prefs.getString(PREF_UNIQUE_ID, "") ?: ""
-            return "39c22d9c-62e3-4871-8952-364700e5d49c"
+            return "475849d4-e8ba-48c1-b719-2aa707f91b0b"
         }
         set(value) {
             Prefs.putString(PREF_UNIQUE_ID, value)
@@ -106,4 +106,29 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
         set(value) {
             _channel = value
         }
+
+    override val isContact: Boolean
+        get() = contactData != null
+
+
+    override val preventRepliesToCloseConversations: Boolean
+        get() {
+            return if (isContact) {
+                pingRes.conversationsSettings?.preventRepliesToCloseConversationsForContacts == true
+            } else {
+                pingRes.conversationsSettings?.preventRepliesToCloseConversationsForVisitors == true
+            }
+        }
+
+    override val preventRepliesToCloseConversationsWithinNumberOfDays: Int
+        get() {
+            return if (isContact) {
+                pingRes.conversationsSettings?.preventRepliesToCloseConversationsWithinNumberOfDaysForContacts?.toInt()
+                    ?: 0
+            } else {
+                pingRes.conversationsSettings?.preventRepliesToCloseConversationsWithinNumberOfDaysForVisitors?.toInt()
+                    ?: 0
+            }
+        }
+
 }

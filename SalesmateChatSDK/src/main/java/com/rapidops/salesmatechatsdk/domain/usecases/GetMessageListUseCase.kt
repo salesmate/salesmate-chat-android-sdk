@@ -27,7 +27,7 @@ internal class GetMessageListUseCase @Inject constructor(
             it.user = getUserFromUserIdUseCase.execute(it.userId)
         }
 
-        if (appSettingsDataSource.contactData == null) {
+        if (appSettingsDataSource.isContact.not()) {
             messageListRes.messageList.firstOrNull { it.contactId.isNotEmpty() }?.let {
                 appSettingsDataSource.saveContactDetail(
                     it.contactId,

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 
 internal enum class DateFormatType(val value: String) {
-    yyyy_MM_dd_T_HH_mm_ss_SSS_Z("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+    yyyy_MM_dd_T_HH_mm_ss_SSS_Z("yyyy-MM-dd'T'HH:mm:ss.SSSZ"),
     MMM_dd_yyyy_hh_mm_a("MMM dd, yyyy, hh:mm a"),
     MMM_dd_hh_mm_a("MMM dd, hh:mm a"),
     hh_mm_a("hh:mm a");

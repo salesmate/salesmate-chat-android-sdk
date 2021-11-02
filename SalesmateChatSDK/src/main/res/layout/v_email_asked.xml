@@ -28,6 +28,7 @@
         android:inputType="textCapSentences"
         android:lines="1"
         android:padding="@dimen/padding_small2"
+        android:maxLength="100"
         android:background="@drawable/drw_edit_back_corner_stroke" />
 
     <androidx.appcompat.widget.AppCompatTextView

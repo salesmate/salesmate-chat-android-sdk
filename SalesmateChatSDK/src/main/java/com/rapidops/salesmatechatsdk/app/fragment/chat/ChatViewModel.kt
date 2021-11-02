@@ -9,6 +9,7 @@ import com.rapidops.salesmatechatsdk.app.base.BaseViewModel
 import com.rapidops.salesmatechatsdk.app.coroutines.ICoroutineContextProvider
 import com.rapidops.salesmatechatsdk.app.extension.DateUtil
 import com.rapidops.salesmatechatsdk.app.extension.DateUtil.isCurrentWeekDay
+import com.rapidops.salesmatechatsdk.app.extension.parseFromISOFormat
 import com.rapidops.salesmatechatsdk.app.socket.SocketController
 import com.rapidops.salesmatechatsdk.app.utils.AppEvent
 import com.rapidops.salesmatechatsdk.app.utils.EventBus
@@ -21,10 +22,7 @@ import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.data.reqmodels.convertToMessageItem
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
-import com.rapidops.salesmatechatsdk.domain.models.BlockType
-import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
-import com.rapidops.salesmatechatsdk.domain.models.FrequencyType
-import com.rapidops.salesmatechatsdk.domain.models.User
+import com.rapidops.salesmatechatsdk.domain.models.*
 import com.rapidops.salesmatechatsdk.domain.models.message.*
 import com.rapidops.salesmatechatsdk.domain.usecases.*
 import kotlinx.coroutines.Job
@@ -60,6 +58,10 @@ internal class ChatViewModel @Inject constructor(
         private const val ASK_EMAIL_TIMER: Long = (2 * 60 * 1000).toLong()
     }
 
+    val canUploadAttachment: Boolean by lazy {
+        pingRes.securitySettings?.canUploadAttachment ?: false
+    }
+
     var adapterMessageList: List<MessageItem> = listOf()
 
     val pingRes: PingRes by lazy {
@@ -73,11 +75,11 @@ internal class ChatViewModel @Inject constructor(
     val showOverLimitFileMessageDialog = SingleLiveEvent<Nothing>()
     val showTypingMessageView = SingleLiveEvent<User>()
     val hideTypingMessageView = SingleLiveEvent<Nothing>()
-    val showAskEmailView = SingleLiveEvent<Nothing>()
-    val hideAskEmailView = SingleLiveEvent<Nothing>()
+    val showAskEmailView = SingleLiveEvent<Boolean>()
     val updateAskEmailMessage = SingleLiveEvent<Nothing>()
     val showExportedChatFile = SingleLiveEvent<File>()
     val updateConversationReadStatus = SingleLiveEvent<Nothing>()
+    val isConversationOpenForMessage = SingleLiveEvent<Boolean>()
 
     private var conversationId: String? = null
     private var lastSendMessageId: String? = null
@@ -96,11 +98,14 @@ internal class ChatViewModel @Inject constructor(
                 withContext(coroutineContextProvider.ui) {
                     showConversationDetail.value = conversationDetailRes
                     isUserHasRead = conversationDetailRes.conversations?.userHasRead == true
+                    checkConversationForStatus()
                 }
                 loadMessageList(it)
             })
 
             loadReadConversationForVisitorIfRequired()
+        } ?: run {
+            isConversationOpenForMessage.value = true
         }
 
         subscribeEvents()
@@ -261,6 +266,16 @@ internal class ChatViewModel @Inject constructor(
                     if (conversationHasReadEventData.conversationId == conversationId) {
                         isUserHasRead = conversationHasReadEventData.userHasRead
                         updateConversationReadStatus.call()
+                    }
+                }
+        }
+
+        subscribeEvent {
+            EventBus.events.filterIsInstance<AppEvent.ConversationStatusUpdateEvent>()
+                .collectLatest {
+                    if (it.conversationId == conversationId) {
+                        isConversationOpenForMessage.value =
+                            it.status == ConversationStatus.OPEN.value
                     }
                 }
         }
@@ -474,20 +489,16 @@ internal class ChatViewModel @Inject constructor(
     }
 
     private fun checkAndShowAskEmailView() {
-        if (appSettingsDataSource.contactData == null) {
+        if (appSettingsDataSource.isContact.not()) {
             when (pingRes.upfrontEmailCollection?.frequency) {
                 FrequencyType.ALWAYS.value -> {
-                    showAskEmailView.call()
+                    showAskEmailView.value = true
                 }
                 FrequencyType.ONLY_OUTSIDE_OF_OFFICE_HOURS.value -> {
-                    if (isOnOfficeHours().not()) {
-                        showAskEmailView.call()
-                    } else {
-                        hideAskEmailView.call()
-                    }
+                    showAskEmailView.value = isOnOfficeHours().not()
                 }
                 else -> {
-                    hideAskEmailView.call()
+                    showAskEmailView.value = false
                 }
             }
         }
@@ -517,7 +528,7 @@ internal class ChatViewModel @Inject constructor(
             trackEventUseCase.execute((TrackEventUseCase.Param(name, email, sessionId)))
             withContext(coroutineContextProvider.ui) {
                 updateAskEmailMessage.call()
-                hideAskEmailView.call()
+                showAskEmailView.value = false
             }
         })
     }
@@ -585,7 +596,7 @@ internal class ChatViewModel @Inject constructor(
     }
 
     private fun requiredEmailAsked(): Boolean {
-        return appSettingsDataSource.contactData == null && isEmailAsked.not()
+        return appSettingsDataSource.isContact.not() && isEmailAsked.not()
     }
 
     fun downloadTranscript() {
@@ -595,5 +606,20 @@ internal class ChatViewModel @Inject constructor(
                 showExportedChatFile.value = file
             }
         })
+    }
+
+    private fun checkConversationForStatus() {
+        showConversationDetail.value?.conversations?.let {
+            if (it.status == ConversationStatus.OPEN.value) {
+                isConversationOpenForMessage.value = true
+            } else if (appSettingsDataSource.preventRepliesToCloseConversations) {
+                val closedDate = it.closedDate.parseFromISOFormat()
+                val nextToAvailableDate =
+                    closedDate.plusDays(appSettingsDataSource.preventRepliesToCloseConversationsWithinNumberOfDays)
+                isConversationOpenForMessage.value = nextToAvailableDate.isAfterNow
+            } else {
+                isConversationOpenForMessage.value = true
+            }
+        }
     }
 }

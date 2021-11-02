@@ -58,4 +58,9 @@ internal sealed class AppEvent {
         val contactHasRead: Boolean
     ) : AppEvent()
 
+    data class ConversationStatusUpdateEvent(
+        val conversationId: String,
+        val status: String,
+    ) : AppEvent()
+
 }
