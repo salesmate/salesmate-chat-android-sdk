@@ -14,6 +14,7 @@ import com.rapidops.salesmatechatsdk.app.socket.SocketController
 import com.rapidops.salesmatechatsdk.app.utils.AppEvent
 import com.rapidops.salesmatechatsdk.app.utils.EventBus
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.getFile
+import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isGifFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isImageFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isValidFileSize
 import com.rapidops.salesmatechatsdk.app.utils.PlayType
@@ -74,6 +75,7 @@ internal class ChatViewModel @Inject constructor(
     val updateMessage = SingleLiveEvent<MessageItem>()
     val updateRatingMessage = SingleLiveEvent<String>()
     val showOverLimitFileMessageDialog = SingleLiveEvent<Nothing>()
+    val showGIFNotSupportMessageDialog = SingleLiveEvent<Nothing>()
     val showTypingMessageView = SingleLiveEvent<User>()
     val hideTypingMessageView = SingleLiveEvent<Nothing>()
     val showAskEmailView = SingleLiveEvent<Boolean>()
@@ -363,16 +365,24 @@ internal class ChatViewModel @Inject constructor(
     fun sendAttachment(context: Context, uri: Uri) {
         withoutProgress({
             DocumentFile.fromSingleUri(context, uri)?.let { documentFile ->
-                if (documentFile.length().isValidFileSize()) {
-                    val messageItem = getNewAttachmentMessageItem(documentFile, context)
-                    messageItem.sendStatus = SendStatus.SENDING
-                    withContext(coroutineContextProvider.ui) {
-                        showNewMessage.value = listOf(messageItem)
+                if (isSupportedFile(context, documentFile)) {
+                    if (documentFile.length().isValidFileSize()) {
+                        val messageItem = getNewAttachmentMessageItem(documentFile, context)
+                        messageItem.sendStatus = SendStatus.SENDING
+                        withContext(coroutineContextProvider.ui) {
+                            showNewMessage.value = listOf(messageItem)
+                        }
+                        val file = documentFile.uri.getFile(context)
+                        uploadFile(file, messageItem)
+                    } else {
+                        withContext(coroutineContextProvider.ui) {
+                            showOverLimitFileMessageDialog.call()
+                        }
                     }
-                    val file = documentFile.uri.getFile(context)
-                    uploadFile(file, messageItem)
                 } else {
-                    showOverLimitFileMessageDialog.call()
+                    withContext(coroutineContextProvider.ui) {
+                        showGIFNotSupportMessageDialog.call()
+                    }
                 }
             }
         }, {
@@ -380,9 +390,18 @@ internal class ChatViewModel @Inject constructor(
         })
     }
 
+    private fun isSupportedFile(context: Context, documentFile: DocumentFile): Boolean {
+        return if (documentFile.isGifFile(context)) {
+            pingRes.misc?.gifSupportEnabled == true
+        } else {
+            true
+        }
+    }
+
     private suspend fun uploadFile(file: File, messageItem: MessageItem) {
         try {
-            val sendMessageReq = uploadFileUseCase.execute(UploadFileUseCase.Param(file, messageItem.id))
+            val sendMessageReq =
+                uploadFileUseCase.execute(UploadFileUseCase.Param(file, messageItem.id))
 
             val updatedMessageItem = sendMessageReq.convertToMessageItem()
             updatedMessageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()

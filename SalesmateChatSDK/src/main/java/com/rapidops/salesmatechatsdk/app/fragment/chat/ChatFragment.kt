@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.view.*
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -154,7 +155,11 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         })
 
         viewModel.showOverLimitFileMessageDialog.observe(this, {
-            showOverLimitFileMessageDialog()
+            showFailedMessageDialog(R.string.msg_support_file_sizes_upto_25mb)
+        })
+
+        viewModel.showGIFNotSupportMessageDialog.observe(this, {
+            showFailedMessageDialog(R.string.msg_gif_not_support)
         })
 
         viewModel.updateRatingMessage.observe(this, {
@@ -405,10 +410,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         ).show()
     }
 
-    private fun showOverLimitFileMessageDialog() {
+    private fun showFailedMessageDialog(@StringRes stringResId:Int) {
         showAlertDialog(
             titleId = R.string.lbl_failed,
-            messageId = R.string.msg_support_file_sizes_upto_25mb,
+            messageId = stringResId,
             positiveButtonId = R.string.dialog_ok,
         ).show()
     }

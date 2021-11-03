@@ -121,12 +121,21 @@ object FileUtil {
         return this.toDouble().sizeInMb <= FileUtil.MAX_FILE_SIZE_SUPPORT_IN_MB
     }
 
+    fun DocumentFile.isGifFile(context: Context): Boolean {
+        val gifMimeType = "image/gif"
+        val mimeType: String = getMimeType(context)
+        return mimeType == gifMimeType
+    }
+
 
     fun DocumentFile.isImageFile(context: Context): Boolean {
         val imageMimeType = "image/"
-        val mimeType: String =
-            type ?: getMimeType(this.uri.toString()) ?: getMimeType(context, this.uri) ?: ""
+        val mimeType: String = getMimeType(context)
         return mimeType.startsWith(imageMimeType)
+    }
+
+    private fun DocumentFile.getMimeType(context: Context): String {
+        return type ?: getMimeType(uri.toString()) ?: getMimeType(context, uri) ?: ""
     }
 
     fun String.isImageType(): Boolean {

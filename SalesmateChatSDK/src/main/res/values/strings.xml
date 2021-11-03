@@ -51,4 +51,5 @@
     <string name="lbl_not_seen_yet">Not seen yet</string>
     <string name="lbl_seen">Seen</string>
     <string name="msg_this_conversation_is_closed">This conversation is closed</string>
+    <string name="msg_gif_not_support">Currently GIF is not supported, but no worries we will be supporting it soon.</string>
 </resources>
