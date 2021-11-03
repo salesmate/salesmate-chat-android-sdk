@@ -16,6 +16,7 @@ import com.rapidops.salesmatechatsdk.app.utils.EventBus
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.getFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isImageFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isValidFileSize
+import com.rapidops.salesmatechatsdk.app.utils.PlayType
 import com.rapidops.salesmatechatsdk.app.utils.SingleLiveEvent
 import com.rapidops.salesmatechatsdk.data.reqmodels.Blocks
 import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
@@ -80,6 +81,7 @@ internal class ChatViewModel @Inject constructor(
     val showExportedChatFile = SingleLiveEvent<File>()
     val updateConversationReadStatus = SingleLiveEvent<Nothing>()
     val isConversationOpenForMessage = SingleLiveEvent<Boolean>()
+    val playSoundForMessage = SingleLiveEvent<PlayType>()
 
     private var conversationId: String? = null
     private var lastSendMessageId: String? = null
@@ -138,6 +140,7 @@ internal class ChatViewModel @Inject constructor(
             val response = getMessageListUseCase.execute(params).toMutableList()
             val filteredMessages = getFilteredMessages(response)
             withContext(coroutineContextProvider.ui) {
+                playSound(PlayType.RECEIVE)
                 showNewMessage.value = filteredMessages
             }
         }, {
@@ -314,11 +317,13 @@ internal class ChatViewModel @Inject constructor(
             withContext(coroutineContextProvider.ui) {
                 messageItem.sendStatus =
                     if (response.isSuccess) SendStatus.SUCCESS else SendStatus.FAIL
+                playSound(if (response.isSuccess) PlayType.SEND else PlayType.FAIL)
                 updateMessage.value = messageItem
                 setAndResetTimerForAskEmailIfRequired()
             }
         }, {
             messageItem.sendStatus = SendStatus.FAIL
+            playSound(PlayType.FAIL)
             updateMessage.value = messageItem
         })
     }
@@ -403,6 +408,7 @@ internal class ChatViewModel @Inject constructor(
                     blockData.fileAttachmentData?.url = file.path
                 }
                 messageItem.sendStatus = SendStatus.UPLOADING_FAIL
+                playSound(PlayType.FAIL)
                 updateMessage.value = messageItem
             }
         }
@@ -620,6 +626,12 @@ internal class ChatViewModel @Inject constructor(
             } else {
                 isConversationOpenForMessage.value = true
             }
+        }
+    }
+
+    private fun playSound(playType: PlayType) {
+        if (pingRes.misc?.playSoundsForMessenger == true) {
+            playSoundForMessage.value = playType
         }
     }
 }

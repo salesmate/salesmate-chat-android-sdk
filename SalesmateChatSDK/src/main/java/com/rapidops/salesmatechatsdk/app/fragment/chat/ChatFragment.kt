@@ -34,6 +34,7 @@ import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateBackgroundTintAction
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil
+import com.rapidops.salesmatechatsdk.app.utils.MediaUtil
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
 import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 import com.rapidops.salesmatechatsdk.databinding.FChatBinding
@@ -187,6 +188,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
         viewModel.isConversationOpenForMessage.observe(this, {
             setUpConversationByStatus(it)
+        })
+
+        viewModel.playSoundForMessage.observe(this, {
+            MediaUtil.playMedia(requireContext(), it)
         })
     }
 
