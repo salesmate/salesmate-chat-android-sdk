@@ -78,12 +78,13 @@ internal class ChatViewModel @Inject constructor(
     val showGIFNotSupportMessageDialog = SingleLiveEvent<Nothing>()
     val showTypingMessageView = SingleLiveEvent<User>()
     val hideTypingMessageView = SingleLiveEvent<Nothing>()
-    val showAskEmailView = SingleLiveEvent<Boolean>()
+    val showAskEmailView = SingleLiveEvent<Nothing>()
     val updateAskEmailMessage = SingleLiveEvent<Nothing>()
     val showExportedChatFile = SingleLiveEvent<File>()
     val updateConversationReadStatus = SingleLiveEvent<Nothing>()
-    val isConversationOpenForMessage = SingleLiveEvent<Boolean>()
+    val showCloseConversationView = SingleLiveEvent<Nothing>()
     val playSoundForMessage = SingleLiveEvent<PlayType>()
+    val showSendMessageView = SingleLiveEvent<Nothing>()
 
     private var conversationId: String? = null
     private var lastSendMessageId: String? = null
@@ -94,27 +95,39 @@ internal class ChatViewModel @Inject constructor(
 
     fun subscribe(conversationId: String?, isLastMessageRead: Boolean = false) {
         isContactHasRead = isLastMessageRead
+        this.conversationId = conversationId
         conversationId?.let {
-            this.conversationId = conversationId
             withProgress({
                 val params = GetConversationDetailUseCase.Param(conversationId)
                 val conversationDetailRes = getConversationDetailUseCase.execute(params)
                 withContext(coroutineContextProvider.ui) {
                     showConversationDetail.value = conversationDetailRes
                     isUserHasRead = conversationDetailRes.conversations?.userHasRead == true
-                    checkConversationForStatus()
+                    showInitialView(conversationDetailRes.conversations)
                 }
-                loadMessageList(it)
+                loadMessageList(conversationId)
+            },{
+
             })
 
             loadReadConversationForVisitorIfRequired()
         } ?: run {
-            isConversationOpenForMessage.value = true
+            showInitialView()
         }
 
         subscribeEvents()
+    }
 
-        checkAndShowAskEmailView()
+    private fun showInitialView(conversations: Conversations? = null) {
+        if (isConversationOpen(conversations)) {
+            if (shouldShowAskEmailView()) {
+                showAskEmailView.call()
+            } else {
+                showSendMessageView.call()
+            }
+        } else {
+            showCloseConversationView.call()
+        }
     }
 
     private fun getConversationId(): String {
@@ -159,13 +172,11 @@ internal class ChatViewModel @Inject constructor(
     }
 
     fun loadMoreMessageList(offSet: Int) {
-        conversationId?.let {
-            withoutProgress({
-                loadMessageList(it, offSet)
-            }, {
+        withoutProgress({
+            loadMessageList(getConversationId(), offSet)
+        }, {
 
-            })
-        }
+        })
     }
 
 
@@ -174,15 +185,13 @@ internal class ChatViewModel @Inject constructor(
             EventBus.events.filterIsInstance<AppEvent.NewMessageEvent>()
                 .collectLatest { event ->
                     val eventData = event.data
-                    if (eventData.conversationId == conversationId && lastSendMessageId != eventData.messageId) {
-                        conversationId?.let { conversationId ->
-                            isContactHasRead = false
-                            adapterMessageList.firstOrNull()?.let { messageItem ->
-                                loadMessageListByLastMessageDate(
-                                    conversationId,
-                                    messageItem.createdDate
-                                )
-                            }
+                    if (eventData.conversationId == getConversationId() && lastSendMessageId != eventData.messageId) {
+                        isContactHasRead = false
+                        adapterMessageList.firstOrNull()?.let { messageItem ->
+                            loadMessageListByLastMessageDate(
+                                getConversationId(),
+                                messageItem.createdDate
+                            )
                         }
                     }
                 }
@@ -191,7 +200,7 @@ internal class ChatViewModel @Inject constructor(
         subscribeEvent {
             EventBus.events.filterIsInstance<AppEvent.UpdateConversationDetailEvent>()
                 .collectLatest { updateConversationDetail ->
-                    if (updateConversationDetail.data.conversations?.id == conversationId) {
+                    if (updateConversationDetail.data.conversations?.id == getConversationId()) {
                         val conversationDetailItem = updateConversationDetail.data
                         showConversationDetail.value = conversationDetailItem
                     }
@@ -201,9 +210,10 @@ internal class ChatViewModel @Inject constructor(
         subscribeEvent {
             EventBus.events.filterIsInstance<AppEvent.ConversationRatingChangeEvent>()
                 .collectLatest { ratingChangeData ->
-                    if (ratingChangeData.conversationId == conversationId) {
+                    if (ratingChangeData.conversationId == getConversationId()) {
                         updateRatingMessage.value = ratingChangeData.rating
-                        showConversationDetail.value?.conversations?.rating = ratingChangeData.rating
+                        showConversationDetail.value?.conversations?.rating =
+                            ratingChangeData.rating
                     }
                 }
         }
@@ -211,9 +221,10 @@ internal class ChatViewModel @Inject constructor(
         subscribeEvent {
             EventBus.events.filterIsInstance<AppEvent.ConversationRemarkChangeEvent>()
                 .collectLatest { remarkChangeData ->
-                    if (remarkChangeData.conversationId == conversationId) {
+                    if (remarkChangeData.conversationId == getConversationId()) {
                         updateRatingMessage.value = remarkChangeData.remark
-                        showConversationDetail.value?.conversations?.remark = remarkChangeData.remark
+                        showConversationDetail.value?.conversations?.remark =
+                            remarkChangeData.remark
                     }
                 }
         }
@@ -223,7 +234,7 @@ internal class ChatViewModel @Inject constructor(
                 .collectLatest { deleteMessageDetail ->
                     deleteMessageDetail.data.user =
                         getUserFromUserIdUseCase.execute(deleteMessageDetail.data.userId)
-                    if (deleteMessageDetail.data.conversationId == conversationId) {
+                    if (deleteMessageDetail.data.conversationId == getConversationId()) {
                         updateMessage.value = deleteMessageDetail.data
                     }
                 }
@@ -233,7 +244,7 @@ internal class ChatViewModel @Inject constructor(
         subscribeEvent {
             EventBus.events.filterIsInstance<AppEvent.TypingMessageEvent>()
                 .collectLatest { typingMessageData ->
-                    if (conversationId == typingMessageData.typingMessage.conversationId) {
+                    if (getConversationId() == typingMessageData.typingMessage.conversationId) {
                         val user =
                             getUserFromUserIdUseCase.execute(typingMessageData.typingMessage.userId)
                         showTypingMessageView.value = user
@@ -268,7 +279,7 @@ internal class ChatViewModel @Inject constructor(
         subscribeEvent {
             EventBus.events.filterIsInstance<AppEvent.ConversationHasReadEvent>()
                 .collectLatest { conversationHasReadEventData ->
-                    if (conversationHasReadEventData.conversationId == conversationId) {
+                    if (conversationHasReadEventData.conversationId == getConversationId()) {
                         isUserHasRead = conversationHasReadEventData.userHasRead
                         updateConversationReadStatus.call()
                     }
@@ -278,14 +289,13 @@ internal class ChatViewModel @Inject constructor(
         subscribeEvent {
             EventBus.events.filterIsInstance<AppEvent.ConversationStatusUpdateEvent>()
                 .collectLatest {
-                    if (it.conversationId == conversationId) {
-                        isConversationOpenForMessage.value =
-                            it.status == ConversationStatus.OPEN.value
+                    if (it.conversationId == getConversationId() && it.status == ConversationStatus.CLOSED.value) {
+                        showCloseConversationView.call()
                     }
                 }
         }
-
     }
+
     fun updateAdapterList(items: MutableList<MessageItem>?) {
         adapterMessageList = items ?: listOf()
     }
@@ -332,18 +342,14 @@ internal class ChatViewModel @Inject constructor(
 
     private fun loadReadConversationForVisitorIfRequired() {
         if (isContactHasRead.not()) {
-            conversationId?.let { conversationId ->
                 isContactHasRead = true
                 withoutProgress({
                     readConversationForVisitorUseCase.execute(
-                        ReadConversationForVisitorUseCase.Param(
-                            conversationId
-                        )
+                        ReadConversationForVisitorUseCase.Param(getConversationId())
                     )
                 }, {
                     isContactHasRead = false
                 })
-            }
         }
     }
 
@@ -513,19 +519,21 @@ internal class ChatViewModel @Inject constructor(
         loadReadConversationForVisitorIfRequired()
     }
 
-    private fun checkAndShowAskEmailView() {
+    private fun shouldShowAskEmailView(): Boolean {
         if (appSettingsDataSource.isContact.not()) {
-            when (pingRes.upfrontEmailCollection?.frequency) {
+            return when (pingRes.upfrontEmailCollection?.frequency) {
                 FrequencyType.ALWAYS.value -> {
-                    showAskEmailView.value = true
+                    true
                 }
                 FrequencyType.ONLY_OUTSIDE_OF_OFFICE_HOURS.value -> {
-                    showAskEmailView.value = isOnOfficeHours().not()
+                    isOnOfficeHours().not()
                 }
                 else -> {
-                    showAskEmailView.value = false
+                    false
                 }
             }
+        } else {
+            return false
         }
     }
 
@@ -548,12 +556,12 @@ internal class ChatViewModel @Inject constructor(
 
     fun submitContactDetail(name: String, email: String) {
         withProgress({
-            submitContactUseCase.execute(SubmitContactUseCase.Param(conversationId, email))
+            submitContactUseCase.execute(SubmitContactUseCase.Param(getConversationId(), email))
             val sessionId = showConversationDetail.value?.conversations?.sessionId ?: ""
             trackEventUseCase.execute((TrackEventUseCase.Param(name, email, sessionId)))
             withContext(coroutineContextProvider.ui) {
                 updateAskEmailMessage.call()
-                showAskEmailView.value = false
+                showSendMessageView.call()
             }
         })
     }
@@ -570,12 +578,6 @@ internal class ChatViewModel @Inject constructor(
         messageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
         messageItem.sendStatus = SendStatus.NONE
 
-        val emailAskMessageReq = sendMessageUseCase.getNewSendMessageReq(isBot = true)
-        emailAskMessageReq.messageType = MessageType.EMAIL_ASKED.value
-        val emailAskMessageItem = emailAskMessageReq.convertToMessageItem()
-        emailAskMessageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
-        emailAskMessageItem.sendStatus = SendStatus.NONE
-
         withoutProgress({
             isEmailAsked = true
             val response = sendMessageUseCase.execute(
@@ -585,6 +587,11 @@ internal class ChatViewModel @Inject constructor(
                 )
             )
             if (response.isEmailAsked.not()) {
+                val emailAskMessageReq = sendMessageUseCase.getNewSendMessageReq(isBot = true)
+                emailAskMessageReq.messageType = MessageType.EMAIL_ASKED.value
+                val emailAskMessageItem = emailAskMessageReq.convertToMessageItem()
+                emailAskMessageItem.createdDate = DateUtil.getCurrentISOFormatDateTime()
+                emailAskMessageItem.sendStatus = SendStatus.NONE
                 sendMessageUseCase.execute(
                     SendMessageUseCase.Param(
                         getConversationId(),
@@ -633,19 +640,24 @@ internal class ChatViewModel @Inject constructor(
         })
     }
 
-    private fun checkConversationForStatus() {
-        showConversationDetail.value?.conversations?.let {
-            if (it.status == ConversationStatus.OPEN.value) {
-                isConversationOpenForMessage.value = true
-            } else if (appSettingsDataSource.preventRepliesToCloseConversations) {
-                val closedDate = it.closedDate.parseFromISOFormat()
-                val nextToAvailableDate =
-                    closedDate.plusDays(appSettingsDataSource.preventRepliesToCloseConversationsWithinNumberOfDays)
-                isConversationOpenForMessage.value = nextToAvailableDate.isAfterNow
-            } else {
-                isConversationOpenForMessage.value = true
+    private fun isConversationOpen(conversations: Conversations?): Boolean {
+        conversations?.let {
+            return when {
+                it.status == ConversationStatus.OPEN.value -> {
+                    true
+                }
+                appSettingsDataSource.preventRepliesToCloseConversations -> {
+                    val closedDate = it.closedDate.parseFromISOFormat()
+                    val nextToAvailableDate =
+                        closedDate.plusDays(appSettingsDataSource.preventRepliesToCloseConversationsWithinNumberOfDays)
+                    nextToAvailableDate.isAfterNow
+                }
+                else -> {
+                    true
+                }
             }
         }
+        return true
     }
 
     private fun playSound(playType: PlayType) {

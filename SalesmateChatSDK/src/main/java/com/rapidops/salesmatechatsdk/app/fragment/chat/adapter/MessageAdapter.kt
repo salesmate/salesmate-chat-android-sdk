@@ -52,33 +52,43 @@ internal open class MessageAdapter(
     }
 
     fun addNewItems(items: MutableList<MessageItem>) {
-        this.items.addAll(0, items)
-        notifyItemRangeInserted(0, items.size)
-        if (this.items.size > 1) {
-            notifyItemChanged(1)
+        this.items?.let {
+            this.items.addAll(0, items)
+            notifyItemRangeInserted(0, items.size)
+            if (this.items.size > 1) {
+                notifyItemChanged(1)
+            }
         }
     }
 
 
     fun updateMessage(item: MessageItem) {
-        val indexOfFirst = items.indexOfFirst { item.id == it.id }
-        if (indexOfFirst != -1) {
-            items[indexOfFirst] = item
-            notifyItemChanged(indexOfFirst)
+        items?.let {
+            val indexOfFirst = items.indexOfFirst { item.id == it.id }
+            if (indexOfFirst != -1) {
+                items[indexOfFirst] = item
+                notifyItemChanged(indexOfFirst)
+            }
         }
     }
 
     fun updateRatingMessage() {
-        val indexOfRatingMessage =
-            items.indexOfFirst { it.messageType == MessageType.RATING_ASKED.value }
-        notifyItemChanged(indexOfRatingMessage)
+        items?.let {
+            val indexOfRatingMessage =
+                items.indexOfFirst { it.messageType == MessageType.RATING_ASKED.value }
+            notifyItemChanged(indexOfRatingMessage)
+        }
     }
 
     fun updateAskEmailMessage() {
-        val indexOfAskEmailMessage =
-            items.indexOfFirst { it.messageType == MessageType.EMAIL_ASKED.value }
-        items[indexOfAskEmailMessage].isEmailSubmitted = true
-        notifyItemChanged(indexOfAskEmailMessage)
+        items?.let {
+            val indexOfAskEmailMessage =
+                items.indexOfFirst { it.messageType == MessageType.EMAIL_ASKED.value }
+            if (indexOfAskEmailMessage != -1) {
+                items[indexOfAskEmailMessage].isEmailSubmitted = true
+                notifyItemChanged(indexOfAskEmailMessage)
+            }
+        }
     }
 
     fun updateMessages() {

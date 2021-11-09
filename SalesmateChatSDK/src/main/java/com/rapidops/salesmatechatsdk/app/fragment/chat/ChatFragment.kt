@@ -118,6 +118,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
 
         observeViewModel()
         attachListener()
+        setUpTopBar(conversationDetailItem)
         viewModel.subscribe(
             conversationDetailItem?.conversations?.id,
             conversationDetailItem?.isContactHasRead ?: true
@@ -180,7 +181,11 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         })
 
         viewModel.showAskEmailView.observe(this, {
-            showEmailAskView(it)
+            showEmailAskView()
+        })
+
+        viewModel.showSendMessageView.observe(this, {
+            showSendMessageView()
         })
 
         viewModel.showExportedChatFile.observe(this, {
@@ -191,8 +196,8 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             messageAdapter.updateMessages()
         })
 
-        viewModel.isConversationOpenForMessage.observe(this, {
-            setUpConversationByStatus(it)
+        viewModel.showCloseConversationView.observe(this, {
+            showClosedConversation()
         })
 
         viewModel.playSoundForMessage.observe(this, {
@@ -410,7 +415,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         ).show()
     }
 
-    private fun showFailedMessageDialog(@StringRes stringResId:Int) {
+    private fun showFailedMessageDialog(@StringRes stringResId: Int) {
         showAlertDialog(
             titleId = R.string.lbl_failed,
             messageId = stringResId,
@@ -454,38 +459,39 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         }
     }
 
-    private fun showEmailAskView(show: Boolean) {
-        if (show) {
-            binding.llMessage.isVisible = false
-            binding.llAskEmail.isVisible = true
-            binding.incEmailAsked.apply {
-                txtSubmit.updateBackgroundTintAction()
-                edtName.addTextChangedListener(afterTextChanged = nameAndEmailChange)
-                edtEmail.addTextChangedListener(afterTextChanged = nameAndEmailChange)
+    private fun showSendMessageView() {
+        binding.llConversationClosed.isVisible = false
+        binding.llAskEmail.isVisible = false
+        binding.llMessage.isVisible = true
+    }
 
-                txtSubmit.setOnClickListener {
-                    if (edtEmail.text.toString().trim().isValidEmail()) {
-                        txtEmailError.isVisible = false
-                        viewModel.submitContactDetail(
-                            edtName.text.toString().trim(),
-                            edtEmail.text.toString().trim()
-                        )
-                    } else {
-                        txtEmailError.isVisible = true
-                    }
-                }
+    private fun showEmailAskView() {
+        binding.llMessage.isVisible = false
+        binding.llAskEmail.isVisible = true
+        binding.incEmailAsked.apply {
+            txtSubmit.updateBackgroundTintAction()
+            edtName.addTextChangedListener(afterTextChanged = nameAndEmailChange)
+            edtEmail.addTextChangedListener(afterTextChanged = nameAndEmailChange)
 
-                val onFocusChangeLister = View.OnFocusChangeListener { _, isFocus ->
-                    if (isFocus) {
-                        binding.appBar.setExpanded(false, true)
-                    }
+            txtSubmit.setOnClickListener {
+                if (edtEmail.text.toString().trim().isValidEmail()) {
+                    txtEmailError.isVisible = false
+                    viewModel.submitContactDetail(
+                        edtName.text.toString().trim(),
+                        edtEmail.text.toString().trim()
+                    )
+                } else {
+                    txtEmailError.isVisible = true
                 }
-                edtName.onFocusChangeListener = onFocusChangeLister
-                edtEmail.onFocusChangeListener = onFocusChangeLister
             }
-        } else {
-            binding.llAskEmail.isVisible = false
-            binding.llMessage.isVisible = true
+
+            val onFocusChangeLister = View.OnFocusChangeListener { _, isFocus ->
+                if (isFocus) {
+                    binding.appBar.setExpanded(false, true)
+                }
+            }
+            edtName.onFocusChangeListener = onFocusChangeLister
+            edtEmail.onFocusChangeListener = onFocusChangeLister
         }
     }
 
@@ -505,23 +511,20 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         startActivity(intent)
     }
 
-    private fun setUpConversationByStatus(isOpen: Boolean) {
-        if (isOpen) {
-            binding.llMessage.isVisible = true
-            binding.llAskEmail.isVisible = false
-            binding.llConversationClosed.isVisible = false
-        } else {
-            binding.llMessage.isVisible = false
-            binding.llAskEmail.isVisible = false
-            binding.llConversationClosed.isVisible = true
-            binding.txtStartNewChat.updateBackgroundTintAction()
-            binding.txtStartNewChat.compoundDrawablesRelative.forEach {
-                it?.setTint(ColorUtil.actionColor.foregroundColor())
-            }
+    private fun showClosedConversation() {
+        binding.llMessage.isVisible = false
+        binding.llAskEmail.isVisible = false
+        binding.llConversationClosed.isVisible = true
+        binding.txtStartNewChat.updateBackgroundTintAction()
+        binding.txtStartNewChat.compoundDrawablesRelative.forEach {
+            it?.setTint(ColorUtil.actionColor.foregroundColor())
+        }
+        binding.txtStartNewChat.isVisible =
+            viewModel.pingRes.canVisitorOrContactStartNewConversation
 
-            binding.txtStartNewChat.setOnClickListener {
-
-            }
+        binding.txtStartNewChat.setOnClickListener {
+            getBaseActivity().popBackStackImmediate()
+            getBaseActivity().addFragment(newInstance())
         }
     }
 

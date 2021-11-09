@@ -49,8 +49,8 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
 
     override var androidUniqueId: String
         get() {
-            //return Prefs.getString(PREF_UNIQUE_ID, "") ?: ""
-            return "475849d4-e8ba-48c1-b719-2aa707f91b0b"
+            return Prefs.getString(PREF_UNIQUE_ID, "") ?: ""
+//            return "475849d4-e8ba-48c1-b719-2aa707f91b0b"
         }
         set(value) {
             Prefs.putString(PREF_UNIQUE_ID, value)

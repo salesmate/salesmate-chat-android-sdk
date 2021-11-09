@@ -178,6 +178,12 @@ internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
         }
     }
 
+    fun popBackStackImmediate() {
+        if (!supportFragmentManager.isStateSaved) {
+            supportFragmentManager.popBackStackImmediate()
+        }
+    }
+
     fun showAlertMessage(message: String, title: String? = null) {
         val builder = AppCompatAlertDialog.Builder()
         builder.setMessage(message)
