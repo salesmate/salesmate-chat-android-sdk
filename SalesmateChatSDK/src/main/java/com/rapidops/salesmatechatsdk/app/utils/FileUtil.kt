@@ -8,7 +8,6 @@ import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
-import androidx.core.net.toFile
 import androidx.documentfile.provider.DocumentFile
 import java.io.*
 
@@ -41,6 +40,27 @@ object FileUtil {
     fun File.sizeStrWithKb(decimals: Int = 0): String = sizeStrInKb(decimals) + "Kb"
     fun File.sizeStrWithMb(decimals: Int = 0): String = sizeStrInMb(decimals) + "Mb"
     fun File.sizeStrWithGb(decimals: Int = 0): String = sizeStrInGb(decimals) + "Gb"
+
+    val UNSUPPORTED_FILE = listOf(
+        "exe",
+        "cmd",
+        "msi",
+        "com",
+        "hta",
+        "html",
+        "htm",
+        "js",
+        "jar",
+        "vbs",
+        "vb",
+        "sfx",
+        "bat",
+        "ps1",
+        "war",
+        "sh",
+        "bash",
+        "command"
+    )
 
     fun Uri.getFile(context: Context): File {
         val inputStream = context.contentResolver.openInputStream(this)
@@ -88,8 +108,13 @@ object FileUtil {
     }
 
     private fun splitFileName(fileName: String): Array<String> {
-        val name = fileName.substringBeforeLast(".")
-        val extension = fileName.substringAfterLast(".")
+        var name = fileName
+        var extension = ""
+        val i = fileName.lastIndexOf(".")
+        if (i != -1) {
+            name = fileName.substring(0, i)
+            extension = fileName.substring(i)
+        }
         return arrayOf(name, extension)
     }
 
@@ -118,7 +143,7 @@ object FileUtil {
     }
 
     fun Long.isValidFileSize(): Boolean {
-        return this.toDouble().sizeInMb <= FileUtil.MAX_FILE_SIZE_SUPPORT_IN_MB
+        return this.toDouble().sizeInMb <= MAX_FILE_SIZE_SUPPORT_IN_MB
     }
 
     fun DocumentFile.isGifFile(context: Context): Boolean {
@@ -158,7 +183,7 @@ object FileUtil {
                 context.contentResolver.getType(uri)
             } else { //If scheme is a File
                 val extension =
-                    MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(uri.toFile()).toString())
+                    MimeTypeMap.getFileExtensionFromUrl(uri.toString())
                 MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
             }
 
@@ -173,6 +198,17 @@ object FileUtil {
         val mimeType = getMimeType(context, uri)
         val mime = MimeTypeMap.getSingleton()
         return mime.getExtensionFromMimeType(mimeType)
+    }
+
+    fun getExtension(filePath: String?): String {
+        if (filePath == null) return ""
+        val dot = filePath.lastIndexOf(".")
+        return if (dot >= 0) {
+            filePath.substring(dot)
+        } else {
+            // No extension.
+            ""
+        }
     }
 
     private fun getExtensionFromMimeType(mimeType: String): String? {
@@ -204,5 +240,19 @@ object FileUtil {
             Uri.fromFile(file)
         }
         return contentUri
+    }
+
+    fun DocumentFile.isInValidFile(context: Context): Boolean {
+        val mimeType = getMimeType(context)
+        return if (mimeType.isNotEmpty()) {
+            val extensionFromMimeType = getExtensionFromMimeType(mimeType)
+            if (extensionFromMimeType.isNullOrEmpty()) {
+                true
+            } else {
+                UNSUPPORTED_FILE.contains(extensionFromMimeType.lowercase())
+            }
+        } else {
+            true
+        }
     }
 }

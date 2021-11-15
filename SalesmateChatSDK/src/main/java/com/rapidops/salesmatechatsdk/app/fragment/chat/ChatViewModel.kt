@@ -11,14 +11,12 @@ import com.rapidops.salesmatechatsdk.app.extension.DateUtil
 import com.rapidops.salesmatechatsdk.app.extension.DateUtil.isCurrentWeekDay
 import com.rapidops.salesmatechatsdk.app.extension.parseFromISOFormat
 import com.rapidops.salesmatechatsdk.app.socket.SocketController
-import com.rapidops.salesmatechatsdk.app.utils.AppEvent
-import com.rapidops.salesmatechatsdk.app.utils.EventBus
+import com.rapidops.salesmatechatsdk.app.utils.*
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.getFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isGifFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isImageFile
+import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isInValidFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isValidFileSize
-import com.rapidops.salesmatechatsdk.app.utils.PlayType
-import com.rapidops.salesmatechatsdk.app.utils.SingleLiveEvent
 import com.rapidops.salesmatechatsdk.data.reqmodels.Blocks
 import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.data.reqmodels.convertToMessageItem
@@ -76,6 +74,7 @@ internal class ChatViewModel @Inject constructor(
     val updateRatingMessage = SingleLiveEvent<String>()
     val showOverLimitFileMessageDialog = SingleLiveEvent<Nothing>()
     val showGIFNotSupportMessageDialog = SingleLiveEvent<Nothing>()
+    val showFileNotSupporteMessageDialog = SingleLiveEvent<Nothing>()
     val showTypingMessageView = SingleLiveEvent<User>()
     val hideTypingMessageView = SingleLiveEvent<Nothing>()
     val showAskEmailView = SingleLiveEvent<Nothing>()
@@ -387,7 +386,11 @@ internal class ChatViewModel @Inject constructor(
                     }
                 } else {
                     withContext(coroutineContextProvider.ui) {
-                        showGIFNotSupportMessageDialog.call()
+                        if (documentFile.isGifFile(context)) {
+                            showGIFNotSupportMessageDialog.call()
+                        } else {
+                            showFileNotSupporteMessageDialog.call()
+                        }
                     }
                 }
             }
@@ -397,10 +400,17 @@ internal class ChatViewModel @Inject constructor(
     }
 
     private fun isSupportedFile(context: Context, documentFile: DocumentFile): Boolean {
-        return if (documentFile.isGifFile(context)) {
-            pingRes.misc?.gifSupportEnabled == true
-        } else {
-            true
+        return when {
+            FileUtil.getExtension(documentFile.name).isEmpty() ||
+                    documentFile.isInValidFile(context) -> {
+                false
+            }
+            documentFile.isGifFile(context) -> {
+                pingRes.misc?.gifSupportEnabled == true
+            }
+            else -> {
+                true
+            }
         }
     }
 
@@ -418,6 +428,7 @@ internal class ChatViewModel @Inject constructor(
             } else if (blockData is FileBlockDataItem) {
                 blockData.fileAttachmentData?.url = file.path
             }
+            updatedMessageItem.sendStatus = SendStatus.SENDING
             withContext(coroutineContextProvider.ui) {
                 updateMessage.value = updatedMessageItem
             }
@@ -520,8 +531,8 @@ internal class ChatViewModel @Inject constructor(
     }
 
     private fun shouldShowAskEmailView(): Boolean {
-        if (appSettingsDataSource.isContact.not()) {
-            return when (pingRes.upfrontEmailCollection?.frequency) {
+        return if (appSettingsDataSource.isContact.not()) {
+            when (pingRes.upfrontEmailCollection?.frequency) {
                 FrequencyType.ALWAYS.value -> {
                     true
                 }
@@ -533,23 +544,22 @@ internal class ChatViewModel @Inject constructor(
                 }
             }
         } else {
-            return false
+            false
         }
     }
 
     private fun isOnOfficeHours(): Boolean {
         pingRes.availability?.officeHours?.let { officeHours ->
-            officeHours.find { it.weekName.isCurrentWeekDay() }?.let {
+            officeHours.filter { it.weekName.isCurrentWeekDay() }.forEach {
                 if (DateUtil.isTodayInBetween(it.startTime, it.endTime)) {
                     return true
                 }
             }
-            officeHours.find { it.weekName == DateUtil.getWeekDayTypeOfToday() }
-                ?.let {
-                    if (DateUtil.isTodayInBetween(it.startTime, it.endTime)) {
-                        return true
-                    }
+            officeHours.filter { it.weekName == DateUtil.getWeekDayTypeOfToday() }.forEach {
+                if (DateUtil.isTodayInBetween(it.startTime, it.endTime)) {
+                    return true
                 }
+            }
         }
         return false
     }

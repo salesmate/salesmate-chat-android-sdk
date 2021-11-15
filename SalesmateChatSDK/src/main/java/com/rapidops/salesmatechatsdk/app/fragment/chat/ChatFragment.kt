@@ -163,6 +163,10 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             showFailedMessageDialog(R.string.msg_gif_not_support)
         })
 
+        viewModel.showFileNotSupporteMessageDialog.observe(this, {
+            showFailedMessageDialog(R.string.msg_file_extension_isnt_allowed)
+        })
+
         viewModel.updateRatingMessage.observe(this, {
             messageAdapter.updateRatingMessage()
         })

@@ -19,7 +19,7 @@
     <string name="lbl_start_new_chat">Start New Chat</string>
     <string name="lbl_recent_chats">Recent Chats</string>
     <string name="lbl_view_all">View all</string>
-    <string name="lbl_your_conversation">Your Conversation</string>
+    <string name="lbl_your_conversations">Your Conversations</string>
 
     <string name="lbl_we_reply">We reply %s</string>
     <string name="lbl_more">More</string>
@@ -45,11 +45,12 @@
     <string name="lbl_email">Email</string>
     <string name="hint_enter_email_address">Enter email address</string>
     <string name="lbl_submit">Submit</string>
-    <string name="lbl_that_email_doesn_t_look_quite_right">That email doesn’t look quite right.</string>
+    <string name="lbl_that_email_doesn_t_look_quite_right">That email doesn\'t look quite right.</string>
     <string name="lbl_you_will_be_notified_on_the_below_email">You will be notified on the below email</string>
     <string name="lbl_download">Download</string>
     <string name="lbl_not_seen_yet">Not seen yet</string>
     <string name="lbl_seen">Seen</string>
     <string name="msg_this_conversation_is_closed">This conversation is closed</string>
     <string name="msg_gif_not_support">Currently GIF is not supported, but no worries we will be supporting it soon.</string>
+    <string name="msg_file_extension_isnt_allowed">This file extension isn\'t allowed</string>
 </resources>

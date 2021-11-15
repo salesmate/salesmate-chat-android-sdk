@@ -21,7 +21,7 @@
             android:textSize="@dimen/font_size_medium"
             style="@style/TextMedium"
             tools:textColor="@color/white"
-            android:text="@string/lbl_your_conversation" />
+            android:text="@string/lbl_your_conversations" />
 
     </androidx.appcompat.widget.Toolbar>
 
