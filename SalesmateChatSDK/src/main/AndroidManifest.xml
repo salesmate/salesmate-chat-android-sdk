@@ -16,7 +16,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.SalesMatChat" />
+            android:theme="@style/Theme.SalesmateChatSDK" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
