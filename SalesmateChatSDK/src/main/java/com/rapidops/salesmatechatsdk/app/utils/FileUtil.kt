@@ -42,24 +42,24 @@ object FileUtil {
     fun File.sizeStrWithGb(decimals: Int = 0): String = sizeStrInGb(decimals) + "Gb"
 
     val UNSUPPORTED_FILE = listOf(
-        "exe",
-        "cmd",
-        "msi",
-        "com",
-        "hta",
-        "html",
-        "htm",
-        "js",
-        "jar",
-        "vbs",
-        "vb",
-        "sfx",
-        "bat",
-        "ps1",
-        "war",
-        "sh",
-        "bash",
-        "command"
+        ".exe",
+        ".cmd",
+        ".msi",
+        ".com",
+        ".hta",
+        ".html",
+        ".htm",
+        ".js",
+        ".jar",
+        ".vbs",
+        ".vb",
+        ".sfx",
+        ".bat",
+        ".ps1",
+        ".war",
+        ".sh",
+        ".bash",
+        ".command"
     )
 
     fun Uri.getFile(context: Context): File {
@@ -242,17 +242,8 @@ object FileUtil {
         return contentUri
     }
 
-    fun DocumentFile.isInValidFile(context: Context): Boolean {
-        val mimeType = getMimeType(context)
-        return if (mimeType.isNotEmpty()) {
-            val extensionFromMimeType = getExtensionFromMimeType(mimeType)
-            if (extensionFromMimeType.isNullOrEmpty()) {
-                true
-            } else {
-                UNSUPPORTED_FILE.contains(extensionFromMimeType.lowercase())
-            }
-        } else {
-            true
-        }
+    fun String?.isInValidFile(): Boolean {
+        val extension = getExtension(this)
+        return extension.isEmpty() || UNSUPPORTED_FILE.contains(extension.lowercase())
     }
 }

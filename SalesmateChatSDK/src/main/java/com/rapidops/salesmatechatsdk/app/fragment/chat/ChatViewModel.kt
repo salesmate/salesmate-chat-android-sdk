@@ -401,8 +401,7 @@ internal class ChatViewModel @Inject constructor(
 
     private fun isSupportedFile(context: Context, documentFile: DocumentFile): Boolean {
         return when {
-            FileUtil.getExtension(documentFile.name).isEmpty() ||
-                    documentFile.isInValidFile(context) -> {
+            documentFile.name.isInValidFile()->{
                 false
             }
             documentFile.isGifFile(context) -> {
