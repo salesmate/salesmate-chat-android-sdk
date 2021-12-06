@@ -15,6 +15,13 @@ class SalesmateChatApp : Application() {
         val salesmateChatSettings =
             SalesmateChatSettings(workspaceId, appKey, tenantId, BuildType.DEVELOPMENT)
 
+
+        /*val workspaceId = "555448a6-5ca5-4b72-9c7b-fe5adb849b5d"
+        val appKey = "2b753150-969b-11eb-9308-d78117f0a2fb"
+        val tenantId = "mobileapp.salesmate.io"
+        val salesmateChatSettings =
+            SalesmateChatSettings(workspaceId, appKey, tenantId, BuildType.DEVELOPMENT)*/
+
         SalesmateChatSDK.initialize(this, salesmateChatSettings)
     }
 }

@@ -9,9 +9,10 @@ import com.rapidops.salesmatechatsdk.domain.exception.APIResponseMapper
 
 internal class AuthRepository(private val service: IService) : IAuthDataSource {
 
-    override suspend fun ping(tenantId: String): PingRes {
+    override suspend fun ping(tenantId: String, pseudoName: String): PingRes {
         val bodyMap = hashMapOf<String, String>()
         bodyMap["referer"] = tenantId
+        bodyMap["pseudo_name"] = pseudoName
         return APIResponseMapper.getResponse {
             service.ping(bodyMap)
         }

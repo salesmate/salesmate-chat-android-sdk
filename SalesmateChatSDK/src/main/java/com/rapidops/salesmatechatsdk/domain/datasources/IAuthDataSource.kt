@@ -6,7 +6,7 @@ import com.rapidops.salesmatechatsdk.data.resmodels.PingRes
 
 internal interface IAuthDataSource {
 
-    suspend fun ping(tenantId: String): PingRes
+    suspend fun ping(tenantId: String, pseudoName: String): PingRes
     suspend fun generateToken(accessToken: String, pseudoName: String): GenerateTokenRes
     suspend fun getConversations(rows: Int, offSet: Int): ConversationRes
 }

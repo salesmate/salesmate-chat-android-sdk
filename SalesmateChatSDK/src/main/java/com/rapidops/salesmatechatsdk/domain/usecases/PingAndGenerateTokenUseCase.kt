@@ -18,8 +18,15 @@ internal class PingAndGenerateTokenUseCase @Inject constructor(
         coroutineScope {
             awaitAll(
                 async {
-                    appSettingsDataSource.pingRes =
-                        authDataSource.ping(appSettingsDataSource.salesMateChatSetting.tenantId)
+                    val pingRes =
+                        authDataSource.ping(
+                            appSettingsDataSource.salesMateChatSetting.tenantId,
+                            appSettingsDataSource.pseudoName
+                        )
+                    if (pingRes.pseudoName.isNotEmpty()) {
+                        appSettingsDataSource.pseudoName = pingRes.pseudoName
+                    }
+                    appSettingsDataSource.pingRes = pingRes
                 },
                 async {
                     val generateToken = authDataSource.generateToken(
@@ -30,7 +37,9 @@ internal class PingAndGenerateTokenUseCase @Inject constructor(
                         appSettingsDataSource.channel = it
                     }
                     appSettingsDataSource.accessToken = generateToken.authToken
-                    appSettingsDataSource.pseudoName = generateToken.pseudoName
+                    if(generateToken.pseudoName.isNotEmpty()) {
+                        appSettingsDataSource.pseudoName = generateToken.pseudoName
+                    }
                 }
             )
         }

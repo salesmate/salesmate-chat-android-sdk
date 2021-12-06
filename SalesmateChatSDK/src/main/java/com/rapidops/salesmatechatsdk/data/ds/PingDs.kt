@@ -85,6 +85,7 @@ internal class PingDs : JsonDeserializer<PingRes> {
                     gson.fromJson(it, listType)
             }
 
+            pingRes.pseudoName = dataObject.getString("pseudoName")?:""
 
         }
         return pingRes
