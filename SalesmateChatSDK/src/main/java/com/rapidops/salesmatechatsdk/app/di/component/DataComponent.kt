@@ -10,6 +10,7 @@ import com.rapidops.salesmatechatsdk.app.di.module.NetworkModule
 import com.rapidops.salesmatechatsdk.app.di.module.ViewModelModule
 import com.rapidops.salesmatechatsdk.app.socket.SocketController
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
+import com.rapidops.salesmatechatsdk.domain.usecases.SendAnalyticsUseCase
 import dagger.Component
 
 @Component(modules = [ContextModule::class, DataModule::class, NetworkModule::class, ViewModelModule::class])
@@ -21,5 +22,6 @@ internal interface DataComponent {
     fun getAppSettingsDataSource(): IAppSettingsDataSource
     fun getContext(): Context
     fun getSocketController(): SocketController
+    fun getSendAnalyticsUseCase(): SendAnalyticsUseCase
 
 }

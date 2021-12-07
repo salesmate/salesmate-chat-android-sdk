@@ -31,11 +31,15 @@ android {
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            def baseUrl = "https://apis-dev.salesmate.io/"
+            def baseUrl = "https://apis-dev.salesmate.io/"    //Dev
+//            def baseUrl = "https://apis.salesmate.io/"            //Prod
 
             buildConfigField "String", "BASE_URL", "\"$baseUrl\""
             buildConfigField "String", "BASE_API_URL", generateAPIUrl(baseUrl, "messenger/")
-            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "apis/sm-web-anl/v1/track")
+            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "apis/sm-web-anl/v1")        //Dev
+//            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "sm-web-anl/v1")         //Prod
+
+
 
             //buildConfigField "String", "BASE_URL", "\"https://apis-dev.salesmate.io/messenger/\""
         }
@@ -44,14 +48,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            //buildConfigField "String", "BASE_URL", "\"https://apis.salesmate.io/messenger/\""
-
             def baseUrl = "https://apis.salesmate.io/"
 
             buildConfigField "String", "BASE_URL", "\"$baseUrl\""
             buildConfigField "String", "BASE_API_URL", generateAPIUrl(baseUrl, "messenger/")
-            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "apis/sm-web-anl/v1/track")
-        }
+            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "sm-web-anl/v1")
+
+
+            //buildConfigField "String", "BASE_URL", "\"https://apis.salesmate.io/messenger/\""
+
+         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -93,6 +99,7 @@ dependencies {
     //Stetho
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+    //implementation 'com.facebook.stetho:stetho-urlconnection:1.5.1'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
@@ -106,5 +113,8 @@ dependencies {
     implementation ('io.github.sac:SocketclusterClientJava:2.0.0'){
         exclude group :'org.json', module: 'json'
     }
+
+    //Related Countly SDK
+    implementation 'org.greenrobot:eventbus:3.1.1'
 
 }

@@ -17,5 +17,15 @@ class MainActivity : AppCompatActivity() {
             SalesmateChatSDK.getInstance().startMessenger()
         }
 
+
+        binding.btnSendEvent.setOnClickListener {
+            val eventName = binding.edtEventName.text.toString().trim()
+            val key = binding.edtKey.text.toString().trim()
+            val value = binding.edtValue.text.toString().trim()
+            val data = hashMapOf<String, String>()
+            data[key] = value
+            SalesmateChatSDK.getInstance().recordEvent(eventName, data)
+        }
+
     }
 }

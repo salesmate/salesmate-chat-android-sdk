@@ -21,6 +21,5 @@ internal interface IConversationDataSource {
     suspend fun rating(conversationId: String, rating: String)
     suspend fun remark(conversationId: String, remark: String)
     suspend fun contact(conversationId: String?, email: String)
-    suspend fun track(body: Map<String, String>)
     suspend fun downloadTranscript(conversationId: String): DownloadTranscriptRes
 }
