@@ -90,7 +90,8 @@ internal class MessageItemDs : JsonDeserializer<MessageItem> {
                             gson.fromJson(jsonElement, HtmlBlockDataItem::class.java)
                     }
                     blockDataItem.blockType = blockType
-                    blockDataItem.isSelfMessage = messageItem.userId.isEmpty()
+                    blockDataItem.isSelfMessage =
+                        messageItem.userId.isEmpty() && messageItem.isBot.not()
                     blockDataList.add(blockDataItem)
                 }
             }

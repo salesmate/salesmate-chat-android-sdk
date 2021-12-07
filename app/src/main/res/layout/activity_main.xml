@@ -14,4 +14,48 @@
         android:layout_height="wrap_content"
         android:text="Start Chat" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtEventName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Event Name"
+            android:text="EventName"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtKey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Key"
+                android:text="Key"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:hint="Value"
+                android:text="Value"/>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSendEvent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Send Event" />
+
+    </LinearLayout>
+
 </LinearLayout>

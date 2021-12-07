@@ -12,7 +12,12 @@ import com.rapidops.salesmatechatsdk.app.di.module.ContextModule
 import com.rapidops.salesmatechatsdk.app.di.module.DataModule
 import com.rapidops.salesmatechatsdk.app.di.module.NetworkModule
 import com.rapidops.salesmatechatsdk.app.di.module.ViewModelModule
+import com.rapidops.salesmatechatsdk.domain.usecases.SendAnalyticsUseCase
+import com.rapidops.sdk.ly.rapidops.android.sdk.Rapidops
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.collections.HashMap
 
 internal class SalesmateChat(
     private val application: Application,
@@ -36,6 +41,7 @@ internal class SalesmateChat(
         onCreate()
     }
 
+    private lateinit var sendAnalyticsUseCase: SendAnalyticsUseCase
 
     private fun onCreate() {
         daggerDataComponent = DaggerDataComponent.builder()
@@ -50,6 +56,7 @@ internal class SalesmateChat(
         if (appSettingsDataSource.androidUniqueId.isEmpty()) {
             appSettingsDataSource.androidUniqueId = UUID.randomUUID().toString()
         }
+        sendAnalyticsUseCase = daggerDataComponent.getSendAnalyticsUseCase()
         initDebuggers()
 
     }
@@ -63,6 +70,13 @@ internal class SalesmateChat(
         val intent = Intent(context, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)
+    }
+
+    override fun recordEvent(eventName: String, data: HashMap<String, String>) {
+        GlobalScope.launch {
+            val param = SendAnalyticsUseCase.Param(eventName, data)
+            sendAnalyticsUseCase.execute(param)
+        }
     }
 
     private fun initDebuggers() {

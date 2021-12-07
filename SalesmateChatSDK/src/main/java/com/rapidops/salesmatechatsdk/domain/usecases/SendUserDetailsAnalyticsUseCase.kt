@@ -1,6 +1,7 @@
 package com.rapidops.salesmatechatsdk.domain.usecases
 
 import com.google.gson.JsonObject
+import com.rapidops.salesmatechatsdk.domain.datasources.IAnalyticsDataSource
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.datasources.IConversationDataSource
 import org.joda.time.DateTime
@@ -8,11 +9,11 @@ import java.util.*
 import javax.inject.Inject
 
 
-internal class TrackEventUseCase @Inject constructor(
+internal class SendUserDetailsAnalyticsUseCase @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
-    private val conversationDataSource: IConversationDataSource,
+    private val analyticsDataSource: IAnalyticsDataSource,
 ) :
-    UseCase<TrackEventUseCase.Param, Boolean>() {
+    UseCase<SendUserDetailsAnalyticsUseCase.Param, Boolean>() {
 
 
     override suspend fun execute(params: Param?): Boolean {
@@ -26,6 +27,7 @@ internal class TrackEventUseCase @Inject constructor(
         }.toString()
 
         body["user_details"] = userDetailJson
+
         body["app_key"] = appSettingsDataSource.salesMateChatSetting.appKey
         body["device_id"] = appSettingsDataSource.androidUniqueId
         body["sdk_name"] = "sm-analytics"
@@ -33,16 +35,16 @@ internal class TrackEventUseCase @Inject constructor(
         body["tenant_id"] = appSettingsDataSource.salesMateChatSetting.tenantId
         body["email"] = trackEventParams.email
         body["name"] = trackEventParams.name
-        body["visitor_id"] = UUID.randomUUID().toString()
-        body["session_id"] = trackEventParams.sessionId
+        body["visitor_id"] = appSettingsDataSource.androidUniqueId
+        body["session_id"] = appSettingsDataSource.androidUniqueId
         body["timestamp"] = Date().time.toString()
         body["hour"] = DateTime.now().hourOfDay.toString()
 
-        conversationDataSource.track(body)
+        analyticsDataSource.sendUserDetails(body)
         return true
     }
 
-    data class Param(val name: String, val email: String, val sessionId: String)
+    data class Param(val name: String, val email: String)
 
 }
 

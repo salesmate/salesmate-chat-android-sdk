@@ -2,15 +2,9 @@ package com.rapidops.salesmatechatsdk.app.di.module
 
 import android.content.Context
 import com.rapidops.salesmatechatsdk.app.di.ApplicationScope
-import com.rapidops.salesmatechatsdk.data.repositories.AppSettingsRepository
-import com.rapidops.salesmatechatsdk.data.repositories.AuthRepository
-import com.rapidops.salesmatechatsdk.data.repositories.ConversationRepository
-import com.rapidops.salesmatechatsdk.data.repositories.NameRepository
+import com.rapidops.salesmatechatsdk.data.repositories.*
 import com.rapidops.salesmatechatsdk.data.webserivce.IService
-import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
-import com.rapidops.salesmatechatsdk.domain.datasources.IAuthDataSource
-import com.rapidops.salesmatechatsdk.domain.datasources.IConversationDataSource
-import com.rapidops.salesmatechatsdk.domain.datasources.INameDataSource
+import com.rapidops.salesmatechatsdk.domain.datasources.*
 import dagger.Module
 import dagger.Provides
 
@@ -37,8 +31,18 @@ internal class DataModule {
 
     @Provides
     @ApplicationScope
-    internal fun provideConversationRepositary(service: IService): IConversationDataSource {
+    internal fun provideConversationRepository(service: IService): IConversationDataSource {
         return ConversationRepository(service)
+    }
+
+    @Provides
+    @ApplicationScope
+    internal fun provideAnalyticsRepository(
+        context: Context,
+        appSettingsDataSource: IAppSettingsDataSource,
+        service: IService
+    ): IAnalyticsDataSource {
+        return AnalyticsRepository(context, appSettingsDataSource, service)
     }
 
 }

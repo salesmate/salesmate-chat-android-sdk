@@ -68,7 +68,9 @@ internal fun SendMessageReq.convertToMessageItem(): MessageItem {
         this.isBot = sendMessageReq.isBot
         this.blockData.apply {
             sendMessageReq.blockData.forEach {
-                add(it.convertToBlockDataItem())
+                val blockDataItem = it.convertToBlockDataItem()
+                blockDataItem.isSelfMessage = sendMessageReq.isBot.not()
+                add(blockDataItem)
             }
         }
     }
@@ -77,29 +79,30 @@ internal fun SendMessageReq.convertToMessageItem(): MessageItem {
 
 internal fun Blocks.convertToBlockDataItem(): BlockDataItem {
     val blockItem = this
-    val blockDataItem = if (blockItem.type == BlockType.TEXT.value) {
-        TextBlockDataItem().apply {
-            this.blockType = BlockType.TEXT
-            this.text = blockItem.text
-            this.isSelfMessage = true
+    val blockDataItem = when (blockItem.type) {
+        BlockType.TEXT.value -> {
+            TextBlockDataItem().apply {
+                this.blockType = BlockType.TEXT
+                this.text = blockItem.text
+            }
         }
-    } else if (blockItem.type == BlockType.IMAGE.value) {
-        ImageBlockDataItem().apply {
-            this.blockType = BlockType.IMAGE
-            this.fileAttachmentData = blockItem.attachment?.convertToFileAttachment()
-            this.isSelfMessage = true
+        BlockType.IMAGE.value -> {
+            ImageBlockDataItem().apply {
+                this.blockType = BlockType.IMAGE
+                this.fileAttachmentData = blockItem.attachment?.convertToFileAttachment()
+            }
         }
-    } else if (blockItem.type == BlockType.FILE.value) {
-        FileBlockDataItem().apply {
-            this.blockType = BlockType.FILE
-            this.fileAttachmentData = blockItem.attachment?.convertToFileAttachment()
-            this.isSelfMessage = true
+        BlockType.FILE.value -> {
+            FileBlockDataItem().apply {
+                this.blockType = BlockType.FILE
+                this.fileAttachmentData = blockItem.attachment?.convertToFileAttachment()
+            }
         }
-    } else {
-        TextBlockDataItem().apply {
-            this.blockType = BlockType.TEXT
-            this.text = blockItem.text
-            this.isSelfMessage = true
+        else -> {
+            TextBlockDataItem().apply {
+                this.blockType = BlockType.TEXT
+                this.text = blockItem.text
+            }
         }
     }
 

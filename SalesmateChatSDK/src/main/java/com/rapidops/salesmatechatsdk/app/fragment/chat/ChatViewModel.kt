@@ -48,7 +48,7 @@ internal class ChatViewModel @Inject constructor(
     private val submitRemarkUseCase: SubmitRemarkUseCase,
     private val socketController: SocketController,
     private val submitContactUseCase: SubmitContactUseCase,
-    private val trackEventUseCase: TrackEventUseCase,
+    private val trackEventUseCase: SendUserDetailsAnalyticsUseCase,
     private val downloadTranscriptUseCase: DownloadTranscriptUseCase,
 ) : BaseViewModel(coroutineContextProvider) {
 
@@ -566,8 +566,7 @@ internal class ChatViewModel @Inject constructor(
     fun submitContactDetail(name: String, email: String) {
         withProgress({
             submitContactUseCase.execute(SubmitContactUseCase.Param(getConversationId(), email))
-            val sessionId = showConversationDetail.value?.conversations?.sessionId ?: ""
-            trackEventUseCase.execute((TrackEventUseCase.Param(name, email, sessionId)))
+            trackEventUseCase.execute((SendUserDetailsAnalyticsUseCase.Param(name, email)))
             withContext(coroutineContextProvider.ui) {
                 updateAskEmailMessage.call()
                 showSendMessageView.call()

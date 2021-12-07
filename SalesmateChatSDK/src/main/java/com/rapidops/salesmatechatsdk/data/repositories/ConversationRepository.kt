@@ -83,13 +83,6 @@ internal class ConversationRepository(private val service: IService) : IConversa
         }
     }
 
-    override suspend fun track(body: Map<String, String>) {
-        val url = BuildConfig.TRACK_API_URL
-        return APIResponseMapper.getResponse {
-            service.track(url, body)
-        }
-    }
-
     override suspend fun downloadTranscript(conversationId: String): DownloadTranscriptRes {
         return APIResponseMapper.getResponse {
             service.downloadTranscript(conversationId)

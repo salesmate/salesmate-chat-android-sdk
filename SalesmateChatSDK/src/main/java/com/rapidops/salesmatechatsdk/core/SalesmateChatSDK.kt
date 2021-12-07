@@ -39,6 +39,8 @@ abstract class SalesmateChatSDK {
 
     abstract fun startMessenger()
 
+    abstract fun recordEvent(eventName: String, data: HashMap<String, String>)
+
     abstract fun setVerifiedId(verifiedId: String)
 
 }
