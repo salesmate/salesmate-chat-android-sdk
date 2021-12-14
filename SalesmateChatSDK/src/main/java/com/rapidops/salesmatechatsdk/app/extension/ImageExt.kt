@@ -25,6 +25,7 @@ fun AppCompatImageView.loadImageWithRoundedTransformation(url: String?) {
         .load(url)
         .transform(RoundedCorners(dimension.toInt()))
         .diskCacheStrategy(DiskCacheStrategy.DATA)
+        .centerInside()
         .into(this)
 }
 
