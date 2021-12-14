@@ -453,7 +453,7 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         binding.incTypingMessage.root.isVisible = true
         binding.incTypingMessage.apply {
             loadingDotsTyping.stopAnimation()
-            loadingDotsTyping.dotsColor = ColorUtil.actionColor
+            //  loadingDotsTyping.dotsColor = ColorUtil.actionColor
             root.isVisible = true
             loadingDotsTyping.startAnimation()
             imgUser.loadCircleProfileImage(

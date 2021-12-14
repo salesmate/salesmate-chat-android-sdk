@@ -24,13 +24,13 @@ internal class UploadAttachmentDialogFragment :
     private var filePicker: FilePicker? = null
     override fun setUpUI() {
         filePicker = FilePicker(requireContext())
-        binding.txtUploadFromCamera.compoundDrawablesRelative.forEach {
+        /*binding.txtUploadFromCamera.compoundDrawablesRelative.forEach {
             it?.setTint(ColorUtil.actionColor)
         }
 
         binding.txtUploadFromGallery.compoundDrawablesRelative.forEach {
             it?.setTint(ColorUtil.actionColor)
-        }
+        }*/
 
         binding.txtUploadFromGallery.setOnClickListener {
             filePicker?.showGalleryPickerWithPermissionCheck {
