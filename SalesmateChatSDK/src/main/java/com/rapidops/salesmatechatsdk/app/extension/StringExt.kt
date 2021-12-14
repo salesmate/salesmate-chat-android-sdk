@@ -74,3 +74,16 @@ internal fun String.encrypt(): String {
 internal fun String.decrypt(): String {
     return String(Base64.decode(this, Base64.DEFAULT)).trim { it <= ' ' }
 }
+
+internal fun String.getEmojiByUnicode(): String {
+    val code = this.toInt(16)
+    return String(Character.toChars(code))
+}
+
+internal fun String.getEmoji(): String {
+    return if (this == "2639") {
+        "☹️"
+    } else {
+        "&#x${this}"
+    }
+}

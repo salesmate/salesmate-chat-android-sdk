@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseRecyclerViewAdapter
 import com.rapidops.salesmatechatsdk.app.extension.fromNormalHtml
+import com.rapidops.salesmatechatsdk.app.extension.getEmoji
+import com.rapidops.salesmatechatsdk.app.extension.getEmojiByUnicode
 import com.rapidops.salesmatechatsdk.databinding.REmojiBinding
 import com.rapidops.salesmatechatsdk.domain.models.EmojiMapping
 
@@ -20,7 +22,9 @@ internal class EmojiAdapter : BaseRecyclerViewAdapter<EmojiMapping>() {
 
     override fun bind(viewHolder: RecyclerView.ViewHolder, position: Int, item: EmojiMapping) {
         val holder = viewHolder as EmojiViewHolder
-        val text = "&#x${item.unicode}"
+        val text = item.unicode.getEmoji()
+//        val text = item.unicode.getEmojiByUnicode()
+
         holder.bind.txtEmoji.text = text.fromNormalHtml()
         if (selectedRateId.isNullOrEmpty()) {
             holder.bind.txtEmoji.alpha = 1f

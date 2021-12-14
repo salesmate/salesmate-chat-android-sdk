@@ -11,12 +11,15 @@ import com.rapidops.salesmatechatsdk.app.extension.DateUtil
 import com.rapidops.salesmatechatsdk.app.extension.DateUtil.isCurrentWeekDay
 import com.rapidops.salesmatechatsdk.app.extension.parseFromISOFormat
 import com.rapidops.salesmatechatsdk.app.socket.SocketController
-import com.rapidops.salesmatechatsdk.app.utils.*
+import com.rapidops.salesmatechatsdk.app.utils.AppEvent
+import com.rapidops.salesmatechatsdk.app.utils.EventBus
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.getFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isGifFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isImageFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isInValidFile
 import com.rapidops.salesmatechatsdk.app.utils.FileUtil.isValidFileSize
+import com.rapidops.salesmatechatsdk.app.utils.PlayType
+import com.rapidops.salesmatechatsdk.app.utils.SingleLiveEvent
 import com.rapidops.salesmatechatsdk.data.reqmodels.Blocks
 import com.rapidops.salesmatechatsdk.data.reqmodels.SendMessageReq
 import com.rapidops.salesmatechatsdk.data.reqmodels.convertToMessageItem
@@ -654,7 +657,7 @@ internal class ChatViewModel @Inject constructor(
                 it.status == ConversationStatus.OPEN.value -> {
                     true
                 }
-                appSettingsDataSource.preventRepliesToCloseConversations -> {
+                it.closedDate.isNotEmpty() && appSettingsDataSource.preventRepliesToCloseConversations -> {
                     val closedDate = it.closedDate.parseFromISOFormat()
                     val nextToAvailableDate =
                         closedDate.plusDays(appSettingsDataSource.preventRepliesToCloseConversationsWithinNumberOfDays)
