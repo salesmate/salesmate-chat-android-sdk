@@ -17,10 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseFragment
-import com.rapidops.salesmatechatsdk.app.extension.isValidEmail
-import com.rapidops.salesmatechatsdk.app.extension.loadCircleProfileImage
-import com.rapidops.salesmatechatsdk.app.extension.loadImage
-import com.rapidops.salesmatechatsdk.app.extension.obtainViewModel
+import com.rapidops.salesmatechatsdk.app.extension.*
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ChatTopBarUserAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.MessageAdapter
 import com.rapidops.salesmatechatsdk.app.fragment.chat.adapter.ToolbarUserAdapter
@@ -42,7 +39,11 @@ import com.rapidops.salesmatechatsdk.databinding.FChatBinding
 import com.rapidops.salesmatechatsdk.domain.models.AvailabilityStatus
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.models.User
+import com.rapidops.salesmatechatsdk.domain.models.message.FileAttachmentData
+import com.rapidops.salesmatechatsdk.domain.models.message.FileBlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
+import com.stfalcon.imageviewer.StfalconImageViewer
+import com.stfalcon.imageviewer.loader.ImageLoader
 import java.io.File
 import kotlin.math.abs
 
@@ -147,6 +148,12 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             } else {
                 messageAdapter.addNewItems(it.toMutableList())
             }
+            viewModel.updateAdapterList(messageAdapter.items)
+        })
+
+
+        viewModel.showIfNotExist.observe(this, {
+            messageAdapter.addIfNotExist(it.toMutableList())
             viewModel.updateAdapterList(messageAdapter.items)
         })
 
@@ -404,6 +411,14 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
         override fun isUserHasRead(): Boolean {
             return viewModel.isUserHasRead
         }
+
+        override fun onFileClicked(fileBlockDataItem: FileBlockDataItem) {
+            downloadAttachment(fileBlockDataItem)
+        }
+
+        override fun onImageClicked(url: String?) {
+            showImageViewer(url)
+        }
     }
 
     private fun showFailedInfoDialog(messageItem: MessageItem) {
@@ -530,6 +545,40 @@ internal class ChatFragment : BaseFragment<ChatViewModel>() {
             getBaseActivity().popBackStackImmediate()
             getBaseActivity().addFragment(newInstance())
         }
+    }
+
+    private fun downloadAttachment(fileBlockDataItem: FileBlockDataItem) {
+        fileBlockDataItem.fileAttachmentData?.let {
+            if (it.id.isNotEmpty()) {
+                if (it.name.isNotEmpty()) {
+                    downloadFileWithPermission(it)
+                } else {
+                    showAlertMessage("Invalid Attachment")
+                }
+            }
+        }
+    }
+
+    private fun downloadFileWithPermission(fileAttachmentData: FileAttachmentData) {
+        val name = fileAttachmentData.name
+        val fileUrl = fileAttachmentData.url
+        if (fileUrl.isNotEmpty() && fileUrl.isValidUrl()) {
+            FileUtil.directDownloadFileWithDownloadManager(
+                requireContext(),
+                name,
+                fileUrl,
+                fileAttachmentData.contentType
+            )
+        }
+    }
+
+
+    private fun showImageViewer(linkUrl: String?) {
+        val images = listOf(linkUrl)
+        object : StfalconImageViewer.Builder<String>(context, images,
+            ImageLoader { imageView, image ->
+                imageView.loadImage(image)
+            }) {}.show()
     }
 
 }

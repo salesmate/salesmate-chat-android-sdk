@@ -15,6 +15,7 @@ fun ImageView.loadImage(url: String?) {
     Glide.with(context)
         .load(url)
         .diskCacheStrategy(DiskCacheStrategy.DATA)
+        .centerInside()
         .into(this)
 
 }

@@ -73,6 +73,7 @@ internal class ChatViewModel @Inject constructor(
     val showConversationDetail = SingleLiveEvent<ConversationDetailItem>()
     val showMessageList = SingleLiveEvent<List<MessageItem>>()
     val showNewMessage = SingleLiveEvent<List<MessageItem>>()
+    val showIfNotExist = SingleLiveEvent<List<MessageItem>>()
     val updateMessage = SingleLiveEvent<MessageItem>()
     val updateRatingMessage = SingleLiveEvent<String>()
     val showOverLimitFileMessageDialog = SingleLiveEvent<Nothing>()
@@ -142,7 +143,7 @@ internal class ChatViewModel @Inject constructor(
     private suspend fun loadMessageList(conversationId: String, offSet: Int = 0) {
         val params = GetMessageListUseCase.Param(conversationId, PAGE_SIZE, offSet)
         val response = getMessageListUseCase.execute(params).toMutableList()
-        val filteredMessages = getFilteredMessages(response)
+        val filteredMessages = updateMessageList(response)
         withContext(coroutineContextProvider.ui) {
             showMessageList.value = filteredMessages
         }
@@ -155,10 +156,10 @@ internal class ChatViewModel @Inject constructor(
         cancelableJobWithoutProgress({
             val params = GetMessageListUseCase.Param(conversationId, 10, 0, lastMessageDate)
             val response = getMessageListUseCase.execute(params).toMutableList()
-            val filteredMessages = getFilteredMessages(response)
+            val filteredMessages = updateMessageList(response)
             withContext(coroutineContextProvider.ui) {
                 playSound(PlayType.RECEIVE)
-                showNewMessage.value = filteredMessages
+                showIfNotExist.value = filteredMessages
             }
         }, {
 
@@ -166,11 +167,12 @@ internal class ChatViewModel @Inject constructor(
 
     }
 
-    private fun getFilteredMessages(messageItem: List<MessageItem>): List<MessageItem> {
+    private fun updateMessageList(messageItem: List<MessageItem>): List<MessageItem> {
         if (messageItem.any { it.messageType == MessageType.EMAIL_ASKED.value }) {
             isEmailAsked = true
         }
-        return messageItem.filter { item -> adapterMessageList.any { item.id == it.id }.not() }
+        //return messageItem.filter { item -> adapterMessageList.any { item.id == it.id }.not() }
+        return messageItem
     }
 
     fun loadMoreMessageList(offSet: Int) {
@@ -187,7 +189,7 @@ internal class ChatViewModel @Inject constructor(
             EventBus.events.filterIsInstance<AppEvent.NewMessageEvent>()
                 .collectLatest { event ->
                     val eventData = event.data
-                    if (eventData.conversationId == getConversationId() && lastSendMessageId != eventData.messageId) {
+                    if (eventData.conversationId == getConversationId()) {
                         isContactHasRead = false
                         adapterMessageList.firstOrNull()?.let { messageItem ->
                             loadMessageListByLastMessageDate(

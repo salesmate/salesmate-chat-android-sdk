@@ -43,7 +43,7 @@ internal class IncomingMessageDelegate(
     }
 
     internal inner class IncomingMessageViewHolder(itemView: View) : MessageViewHolder(itemView) {
-        val blockAdapter = BlockAdapter(activity)
+        val blockAdapter = BlockAdapter(activity, messageAdapterListener)
         val bind = RIncomingMessageBinding.bind(itemView)
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 

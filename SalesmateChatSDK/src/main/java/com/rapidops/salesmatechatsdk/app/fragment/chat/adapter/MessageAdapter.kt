@@ -61,6 +61,22 @@ internal open class MessageAdapter(
         }
     }
 
+    fun addIfNotExist(items: MutableList<MessageItem>) {
+        items.forEach {
+            val existIndex = getIndexOf(it)
+            if (existIndex != -1) {
+                this.items[existIndex] = it
+            } else {
+                this.items.add(0, it)
+            }
+        }
+        notifyDataSetChanged()
+    }
+
+    private fun getIndexOf(item: MessageItem): Int {
+        return this.items.indexOfFirst { it.id == item.id }
+    }
+
 
     fun updateMessage(item: MessageItem) {
         items?.let {

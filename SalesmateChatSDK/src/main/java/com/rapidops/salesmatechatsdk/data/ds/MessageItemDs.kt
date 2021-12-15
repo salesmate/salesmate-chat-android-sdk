@@ -63,6 +63,7 @@ internal class MessageItemDs : JsonDeserializer<MessageItem> {
             val blockDataItem = DeleteBlockDataItem()
             blockDataItem.text = messageItem.messageSummary
             blockDataItem.isSelfMessage = messageItem.userId.isEmpty()
+            messageItem.messageType = MessageType.COMMENT.value
             blockDataList.add(blockDataItem)
         }
 

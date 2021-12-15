@@ -1,6 +1,7 @@
 package com.rapidops.salesmatechatsdk.app.interfaces
 
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
+import com.rapidops.salesmatechatsdk.domain.models.message.FileBlockDataItem
 import com.rapidops.salesmatechatsdk.domain.models.message.MessageItem
 
 internal interface MessageAdapterListener {
@@ -11,4 +12,7 @@ internal interface MessageAdapterListener {
     fun submitContact(name: String, email: String)
 
     fun isUserHasRead(): Boolean
+
+    fun onFileClicked(fileBlockDataItem: FileBlockDataItem)
+    fun onImageClicked(url: String?)
 }

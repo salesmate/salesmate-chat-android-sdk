@@ -1,14 +1,22 @@
 package com.rapidops.salesmatechatsdk.app.utils
 
+import android.Manifest
+import android.app.DownloadManager
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
+import com.rapidops.salesmatechatsdk.R
+import com.rapidops.salesmatechatsdk.app.base.BaseActivity
+import com.rapidops.salesmatechatsdk.core.SalesmateChat
 import java.io.*
 
 
@@ -167,6 +175,11 @@ object FileUtil {
         return this.startsWith("image/")
     }
 
+    fun String.isImageUrl(): Boolean {
+        return this.lowercase().endsWith(".jpg") || this.lowercase()
+            .endsWith(".jpeg") || this.lowercase().endsWith(".png")
+    }
+
     private fun getMimeType(url: String): String? {
         var type: String? = null
         val extension = MimeTypeMap.getFileExtensionFromUrl(url)
@@ -246,4 +259,72 @@ object FileUtil {
         val extension = getExtension(this)
         return extension.isEmpty() || UNSUPPORTED_FILE.contains(extension.lowercase())
     }
+
+    fun directDownloadFileWithDownloadManager(
+        context: Context,
+        fileName: String,
+        url: String,
+        mimeType: String
+    ) {
+        EasyPermissions.requestPermissions(
+            context,
+            BaseActivity.REQ_STORAGE_PERMISSION,
+            object : EasyPermissions.PermissionCallbacks {
+                override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+                    downloadFileWithDownloadManager(context, url, fileName, mimeType)
+                }
+
+                override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+                    Log.w(FilePicker.TAG, "Denied Storage Permission")
+                }
+
+                override fun onPermissionsPermanentlyDeclined(
+                    requestCode: Int,
+                    perms: List<String>
+                ) {
+                    AlertDialog
+                        .Builder(context)
+                        .setCancelable(false)
+                        .setTitle(R.string.title_permission_denied)
+                        .setMessage(R.string.msg_storage_permission)
+                        .setNegativeButton(R.string.lbl_goto_settings) { _, _ -> EasyPermissions.startSetting() }
+                        .setPositiveButton(R.string.dialog_ok) { _, _ -> }.show()
+                }
+
+            },
+            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+    }
+
+    private fun downloadFileWithDownloadManager(
+        context: Context,
+        url: String,
+        fileName: String,
+        mimeType: String
+    ) {
+        val appSettingsDataSource = SalesmateChat.daggerDataComponent.getAppSettingsDataSource()
+        Toast.makeText(
+            context,
+            context.getString(R.string.file_download_message, fileName),
+            Toast.LENGTH_SHORT
+        ).show()
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        var request = DownloadManager.Request(Uri.parse(url))
+            .addRequestHeader("x-contact-id", appSettingsDataSource.contactData?.id ?: "")
+            .addRequestHeader("x-unique-id", appSettingsDataSource.androidUniqueId)
+            .addRequestHeader("x-linkname", appSettingsDataSource.salesMateChatSetting.tenantId)
+            .addRequestHeader("x-workspace-id", appSettingsDataSource.salesMateChatSetting.workspaceId)
+            .addRequestHeader("x-verified-id", appSettingsDataSource.verifiedId)
+        request =
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        request =
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+        request = request.setTitle(fileName)
+        request = request.setDescription("Downloading a file")
+        if (mimeType.isNotEmpty()) {
+            request = request.setMimeType(mimeType)
+        }
+        downloadManager.enqueue(request)
+    }
+
 }

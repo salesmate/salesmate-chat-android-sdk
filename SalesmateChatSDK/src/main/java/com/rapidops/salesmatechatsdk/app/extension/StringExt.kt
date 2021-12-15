@@ -3,6 +3,7 @@ package com.rapidops.salesmatechatsdk.app.extension
 import android.text.Html
 import android.text.Spanned
 import android.util.Base64
+import android.util.Patterns
 import com.rapidops.salesmatechatsdk.R
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -87,3 +88,5 @@ internal fun String.getEmoji(): String {
         "&#x${this}"
     }
 }
+
+internal fun String.isValidUrl(): Boolean = Patterns.WEB_URL.matcher(this).matches()

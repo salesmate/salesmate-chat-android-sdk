@@ -53,4 +53,6 @@
     <string name="msg_this_conversation_is_closed">This conversation is closed</string>
     <string name="msg_gif_not_support">Currently GIF is not supported, but no worries we will be supporting it soon.</string>
     <string name="msg_file_extension_isnt_allowed">This file extension isn\'t allowed</string>
+
+    <string name="file_download_message">Downloading %1$s</string>
 </resources>

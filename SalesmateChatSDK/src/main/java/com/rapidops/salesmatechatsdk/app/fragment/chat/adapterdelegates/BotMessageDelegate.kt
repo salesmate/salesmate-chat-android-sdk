@@ -38,7 +38,7 @@ internal class BotMessageDelegate(
     }
 
     internal inner class BotMessageViewHolder(itemView: View) : MessageViewHolder(itemView) {
-        val blockAdapter = BlockAdapter(activity)
+        val blockAdapter = BlockAdapter(activity, messageAdapterListener)
         val bind = RBotMessageBinding.bind(itemView)
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
