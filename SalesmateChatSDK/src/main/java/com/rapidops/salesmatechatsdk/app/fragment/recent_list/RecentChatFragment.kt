@@ -72,6 +72,9 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
     }
 
     private fun startNewChat() {
+        if (conversationAdapter.getItems().isEmpty()) {
+            viewModel.sendTrackEvent()
+        }
         getBaseActivity().addFragment(ChatFragment.newInstance())
     }
 

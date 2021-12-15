@@ -76,7 +76,7 @@ public class Rapidops {
      * Determines how many custom events can be queued locally before
      * an attempt is made to submit them to a Count.ly server.
      */
-    private static int EVENT_QUEUE_SIZE_THRESHOLD = 5;
+    private static int EVENT_QUEUE_SIZE_THRESHOLD = 1;
     @SuppressWarnings("FieldCanBeLocal")
     private final ScheduledExecutorService timerService_;
     @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")

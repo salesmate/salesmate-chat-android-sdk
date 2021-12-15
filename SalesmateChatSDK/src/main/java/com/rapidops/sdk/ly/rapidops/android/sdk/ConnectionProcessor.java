@@ -174,7 +174,7 @@ public class ConnectionProcessor implements Runnable {
                     jsonObject.put("visitor_id", Rapidops.sharedInstance().getDeviceID());
                     jsonObject.put("uuid", UUID.randomUUID().toString());
                     String tenantID = Rapidops.sharedInstance().getConnectionQueue().getTenantID();
-                    if(tenantID!=null) {
+                    if(tenantID != null) {
                         jsonObject.put("tenant_id", tenantID);
                     }
 
@@ -338,7 +338,7 @@ public class ConnectionProcessor implements Runnable {
 
                     //rapidOpsSDK.postConnect();
 
-                    try {
+                    /*try {
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         InputStream rawStream = conn.getInputStream();
                         try {
@@ -351,7 +351,7 @@ public class ConnectionProcessor implements Runnable {
                             }
                         }
                     } finally {
-                    }
+                    }*/
 
                     // response code has to be 2xx to be considered a success
                     boolean success = true;

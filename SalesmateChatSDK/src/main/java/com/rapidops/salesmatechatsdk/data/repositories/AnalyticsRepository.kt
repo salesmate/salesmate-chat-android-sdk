@@ -7,6 +7,8 @@ import com.rapidops.salesmatechatsdk.domain.datasources.IAnalyticsDataSource
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.exception.APIResponseMapper
 import com.rapidops.sdk.ly.rapidops.android.sdk.Rapidops
+import java.util.*
+import kotlin.collections.HashMap
 
 internal class AnalyticsRepository(
     context: Context,
@@ -27,6 +29,7 @@ internal class AnalyticsRepository(
             val customHeaderValues = java.util.HashMap<String, String>()
             //customHeaderValues["Content-Type"] = "application/json"
             customHeaderValues["x-linkname"] = appSettingsDataSource.salesMateChatSetting.tenantId
+            customHeaderValues["x-client-timezone"] = TimeZone.getDefault().id
             Rapidops.sharedInstance().addCustomNetworkRequestHeaders(customHeaderValues)
 
             Rapidops.sharedInstance().setTenantID(appSettingsDataSource.salesMateChatSetting.tenantId)

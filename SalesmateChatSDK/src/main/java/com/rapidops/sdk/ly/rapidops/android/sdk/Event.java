@@ -123,11 +123,11 @@ class Event {
 
 
             JSONObject metricsJsonObj = new JSONObject();
-            metricsJsonObj.put("appVersion", android.os.Build.MODEL);
-            metricsJsonObj.put("os", "Android");
-            metricsJsonObj.put("osVersion", android.os.Build.VERSION.RELEASE);
-            // metricsJsonObj.put("resolution", );
-            metricsJsonObj.put("locale", getLocale());
+            metricsJsonObj.put("_app_version", DeviceInfo.getAppVersion(Rapidops.sharedInstance().getContext()));
+            metricsJsonObj.put("_os", DeviceInfo.getOS());
+            metricsJsonObj.put("_os_version", DeviceInfo.getOSVersion());
+            metricsJsonObj.put("_resolution", DeviceInfo.getResolution(Rapidops.sharedInstance().getContext()));
+            metricsJsonObj.put("_locale", getLocale());
             // metricsJsonObj.put("region", "")
 
             json.put(METRICS_KEY, metricsJsonObj);

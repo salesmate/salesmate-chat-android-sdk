@@ -10,6 +10,7 @@ import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.ConversationDetailItem
 import com.rapidops.salesmatechatsdk.domain.usecases.GetConversationListUseCase
 import com.rapidops.salesmatechatsdk.domain.usecases.GetUserFromUserIdUseCase
+import com.rapidops.salesmatechatsdk.domain.usecases.SendAnalyticsUseCase
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.withContext
@@ -20,7 +21,8 @@ internal class RecentChatViewModel @Inject constructor(
     private val appSettingsDataSource: IAppSettingsDataSource,
     private val coroutineContextProvider: ICoroutineContextProvider,
     private val getConversationUseCase: GetConversationListUseCase,
-    private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase
+    private val getUserFromUserIdUseCase: GetUserFromUserIdUseCase,
+    private val sendAnalyticsUseCase: SendAnalyticsUseCase
 ) : BaseViewModel(coroutineContextProvider) {
 
     val recentViewProgress = SingleLiveEvent<Boolean>()
@@ -99,6 +101,19 @@ internal class RecentChatViewModel @Inject constructor(
                     showConversationList.value = list
                 }
         }
+    }
+
+    fun sendTrackEvent() {
+        withProgress({
+            sendAnalyticsUseCase.execute(
+                SendAnalyticsUseCase.Param(
+                    "StartNewConversation",
+                    hashMapOf()
+                )
+            )
+        }, {
+
+        })
     }
 
 
