@@ -29,6 +29,7 @@ internal class AnalyticsRepository(
             val customHeaderValues = java.util.HashMap<String, String>()
             //customHeaderValues["Content-Type"] = "application/json"
             customHeaderValues["x-linkname"] = appSettingsDataSource.salesMateChatSetting.tenantId
+            customHeaderValues["x-client-language"] = Locale.getDefault().toLanguageTag()
             customHeaderValues["x-client-timezone"] = TimeZone.getDefault().id
             Rapidops.sharedInstance().addCustomNetworkRequestHeaders(customHeaderValues)
 
