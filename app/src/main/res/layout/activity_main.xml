@@ -17,45 +17,134 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:orientation="vertical">
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/edtEventName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Event Name"
-            android:text="EventName"/>
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:layout_marginTop="14dp">
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/edtKey"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Key"
-                android:text="Key"/>
+                android:text="Login" />
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/edtValue"
+                android:id="@+id/edtUserId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:hint="Value"
-                android:text="Value"/>
+                android:hint="UserId"
+                android:inputType="text"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtFirstName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="FirstName"
+                android:inputType="text"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtLastName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="LastName"
+                android:inputType="text"/>
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Login" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Update" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Logout" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnGetVisitorId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="GetVisitorId" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txtGetVisitorId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnSendEvent"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:text="Send Event" />
+            android:layout_marginStart="20dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TrackEvent" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtEventName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Event Name"
+                android:text="EventName" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtKey"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Key"
+                    android:text="Key" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:hint="Value"
+                    android:text="Value" />
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSendEvent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Send Event" />
+
+        </LinearLayout>
 
     </LinearLayout>
+
 
 </LinearLayout>

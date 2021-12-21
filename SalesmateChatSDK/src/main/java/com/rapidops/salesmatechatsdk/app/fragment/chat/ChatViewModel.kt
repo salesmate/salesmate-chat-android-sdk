@@ -158,7 +158,9 @@ internal class ChatViewModel @Inject constructor(
             val response = getMessageListUseCase.execute(params).toMutableList()
             val filteredMessages = updateMessageList(response)
             withContext(coroutineContextProvider.ui) {
-                playSound(PlayType.RECEIVE)
+                if (filteredMessages.lastOrNull()?.id != lastSendMessageId) {
+                    playSound(PlayType.RECEIVE)
+                }
                 showIfNotExist.value = filteredMessages
             }
         }, {
@@ -571,7 +573,10 @@ internal class ChatViewModel @Inject constructor(
     fun submitContactDetail(name: String, email: String) {
         withProgress({
             submitContactUseCase.execute(SubmitContactUseCase.Param(getConversationId(), email))
-            trackEventUseCase.execute((SendUserDetailsAnalyticsUseCase.Param(name, email)))
+            val userDetailMap = hashMapOf<String, String>()
+            userDetailMap["name"] = name
+            userDetailMap["email"] = email
+            trackEventUseCase.execute((SendUserDetailsAnalyticsUseCase.Param(userDetailMap)))
             withContext(coroutineContextProvider.ui) {
                 updateAskEmailMessage.call()
                 showSendMessageView.call()

@@ -12,12 +12,13 @@ import com.rapidops.salesmatechatsdk.app.di.module.ContextModule
 import com.rapidops.salesmatechatsdk.app.di.module.DataModule
 import com.rapidops.salesmatechatsdk.app.di.module.NetworkModule
 import com.rapidops.salesmatechatsdk.app.di.module.ViewModelModule
+import com.rapidops.salesmatechatsdk.app.socket.SocketController
+import com.rapidops.salesmatechatsdk.domain.usecases.GenerateTokenUseCase
 import com.rapidops.salesmatechatsdk.domain.usecases.SendAnalyticsUseCase
-import com.rapidops.sdk.ly.rapidops.android.sdk.Rapidops
+import com.rapidops.salesmatechatsdk.domain.usecases.SendUserDetailsAnalyticsUseCase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.HashMap
 
 internal class SalesmateChat(
     private val application: Application,
@@ -42,6 +43,9 @@ internal class SalesmateChat(
     }
 
     private lateinit var sendAnalyticsUseCase: SendAnalyticsUseCase
+    private lateinit var sendUserDetailsAnalyticsUseCase: SendUserDetailsAnalyticsUseCase
+    private lateinit var generateTokenUseCase: GenerateTokenUseCase
+    private lateinit var socketController: SocketController
 
     private fun onCreate() {
         daggerDataComponent = DaggerDataComponent.builder()
@@ -57,6 +61,9 @@ internal class SalesmateChat(
             appSettingsDataSource.androidUniqueId = UUID.randomUUID().toString()
         }
         sendAnalyticsUseCase = daggerDataComponent.getSendAnalyticsUseCase()
+        sendUserDetailsAnalyticsUseCase = daggerDataComponent.getSendUserDetailsAnalyticsUseCase()
+        generateTokenUseCase = daggerDataComponent.getGenerateTokenUseCase()
+        socketController = daggerDataComponent.getSocketController()
         initDebuggers()
 
     }
@@ -85,8 +92,50 @@ internal class SalesmateChat(
         }
     }
 
-    override fun setVerifiedId(verifiedId: String) {
-        val appSettingsDataSource = daggerDataComponent.getAppSettingsDataSource()
-        appSettingsDataSource.verifiedId = verifiedId
+    override fun login(userId: String, userDetails: UserDetails) {
+        GlobalScope.launch {
+            try {
+                val userDetailMap = hashMapOf<String, String>()
+                userDetailMap["first_name"] = userDetails.getFirstName()
+                userDetailMap["last_name"] = userDetails.getLastName()
+                userDetailMap["email"] = userDetails.getEmail()
+                userDetailMap["user_id"] = userId
+                val param = SendUserDetailsAnalyticsUseCase.Param(userDetailMap)
+                sendUserDetailsAnalyticsUseCase.execute(param)
+                daggerDataComponent.getAppSettingsDataSource().verifiedId = userId
+                generateTokenUseCase.execute()
+                socketController.resetSocketAndConnect()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun update(userId: String, userDetails: UserDetails) {
+        GlobalScope.launch {
+            val userDetailMap = hashMapOf<String, String>()
+            if (userDetails.getFirstName().isNotEmpty()) {
+                userDetailMap["first_name"] = userDetails.getFirstName()
+            }
+            if (userDetails.getLastName().isNotEmpty()) {
+                userDetailMap["last_name"] = userDetails.getLastName()
+            }
+            if (userDetails.getEmail().isNotEmpty()) {
+                userDetailMap["email"] = userDetails.getEmail()
+            }
+            userDetailMap["user_id"] = userId
+            val param = SendUserDetailsAnalyticsUseCase.Param(userDetailMap)
+            sendUserDetailsAnalyticsUseCase.execute(param)
+            daggerDataComponent.getAppSettingsDataSource().verifiedId = userId
+        }
+    }
+
+    override fun logout() {
+        daggerDataComponent.getAppSettingsDataSource().clearLocalStorage()
+        daggerDataComponent.getSocketController().resetSocket()
+    }
+
+    override fun getVisitorId(): String {
+        return daggerDataComponent.getAppSettingsDataSource().verifiedId
     }
 }

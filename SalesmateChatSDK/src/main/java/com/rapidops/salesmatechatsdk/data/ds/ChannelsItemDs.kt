@@ -20,6 +20,7 @@ internal class ChannelsItemDs : JsonDeserializer<ChannelsItem> {
 
         channelsItem.tenantSpecificChannelNameForWidget = jsonObject.getString("tenantSpecificChannelNameForWidget") ?: ""
         channelsItem.contactUnVerifiedChannelName = jsonObject.getString("contactUnVerifiedChannelName") ?: ""
+        channelsItem.contactVerifiedChannelName = jsonObject.getString("contactVerifiedChannelName") ?: ""
 
         return channelsItem
     }

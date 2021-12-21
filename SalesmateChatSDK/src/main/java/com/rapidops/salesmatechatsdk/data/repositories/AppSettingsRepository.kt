@@ -10,6 +10,7 @@ import com.rapidops.salesmatechatsdk.data.utils.Prefs
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.models.Channel
 import com.rapidops.salesmatechatsdk.domain.models.ContactData
+import java.util.*
 
 internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource {
 
@@ -20,6 +21,7 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
         private const val PREF_PSEUDO_NAME = "PREF_PSEUDO_NAME"
         private const val PREF_CONTACT_DATA = "PREF_CONTACT_DATA"
         private const val PREF_UNIQUE_ID = "PREF_UNIQUE_ID"
+        private const val PREF_VERIFY_ID = "PREF_VERIFY_ID"
     }
 
     private var mContext: Context = context
@@ -41,11 +43,20 @@ internal class AppSettingsRepository(context: Context) : IAppSettingsDataSource 
         }
 
     override var verifiedId: String
-        get() = _verifiedId
+        get() {
+            return Prefs.getString(PREF_VERIFY_ID, "") ?: ""
+        }
         set(value) {
-            _verifiedId = value
+            Prefs.putString(PREF_VERIFY_ID, value)
         }
 
+    override fun clearLocalStorage() {
+        _pingRes = PingRes()
+        _channel = Channel()
+        _verifiedId = ""
+        Prefs.clear()
+        androidUniqueId = UUID.randomUUID().toString()
+    }
 
     override var androidUniqueId: String
         get() {

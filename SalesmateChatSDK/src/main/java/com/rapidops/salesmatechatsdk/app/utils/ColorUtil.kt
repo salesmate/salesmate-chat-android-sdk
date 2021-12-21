@@ -121,7 +121,7 @@ internal object ColorUtil {
 
     fun Drawable.setTintFromAction() {
         mutate()
-        setTint(backGroundColor.foregroundColor())
+        setTint(actionColor.foregroundColor())
     }
 
     fun Drawable.setTintBackground() {

@@ -1,6 +1,7 @@
 package com.rapidops.salesmatechatsdk.app.fragment.recent_list
 
 import android.view.*
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.rapidops.salesmatechatsdk.R
 import com.rapidops.salesmatechatsdk.app.base.BaseFragment
@@ -13,6 +14,7 @@ import com.rapidops.salesmatechatsdk.app.fragment.recent_list.adapter.LetsChatUs
 import com.rapidops.salesmatechatsdk.app.interfaces.IItemListener
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.foregroundColor
+import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromAction
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.setTintFromBackground
 import com.rapidops.salesmatechatsdk.app.utils.ColorUtil.updateBackgroundTintAction
 import com.rapidops.salesmatechatsdk.app.utils.OverlapDecoration
@@ -126,9 +128,14 @@ internal class RecentChatFragment : BaseFragment<RecentChatViewModel>() {
         viewModel.pingRes.apply {
             binding.incRecentChat.apply {
                 txtStartNewChatList.updateBackgroundTintAction()
-                txtStartNewChatList.compoundDrawablesRelative.forEach {
-                    it?.setTint(ColorUtil.actionColor.foregroundColor())
-                }
+                val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_send)
+                drawable?.setTintFromAction()
+                txtStartNewChatList.setCompoundDrawablesWithIntrinsicBounds(
+                    null,
+                    null,
+                    drawable,
+                    null
+                )
                 txtStartNewChatList.isVisible = canVisitorOrContactStartNewConversation
 
                 conversationAdapter.setItems(list.take(2).toMutableList())

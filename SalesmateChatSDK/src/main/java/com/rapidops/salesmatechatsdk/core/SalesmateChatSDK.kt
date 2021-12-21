@@ -41,6 +41,12 @@ abstract class SalesmateChatSDK {
 
     abstract fun recordEvent(eventName: String, data: HashMap<String, String>)
 
-    abstract fun setVerifiedId(verifiedId: String)
+    abstract fun login(userId: String,userDetails: UserDetails)
+
+    abstract fun update(userId: String, userDetails: UserDetails)
+
+    abstract fun logout()
+
+    abstract fun getVisitorId(): String
 
 }

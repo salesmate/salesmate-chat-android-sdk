@@ -29,4 +29,5 @@ internal interface IAppSettingsDataSource {
 
     val preventRepliesToCloseConversations: Boolean
     val preventRepliesToCloseConversationsWithinNumberOfDays: Int
+    fun clearLocalStorage()
 }

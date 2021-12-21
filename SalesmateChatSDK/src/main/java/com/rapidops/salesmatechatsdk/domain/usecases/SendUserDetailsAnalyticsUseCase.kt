@@ -3,7 +3,6 @@ package com.rapidops.salesmatechatsdk.domain.usecases
 import com.google.gson.JsonObject
 import com.rapidops.salesmatechatsdk.domain.datasources.IAnalyticsDataSource
 import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
-import com.rapidops.salesmatechatsdk.domain.datasources.IConversationDataSource
 import org.joda.time.DateTime
 import java.util.*
 import javax.inject.Inject
@@ -21,20 +20,25 @@ internal class SendUserDetailsAnalyticsUseCase @Inject constructor(
 
         val body = hashMapOf<String, String>()
 
-        val userDetailJson = JsonObject().apply {
+        val userDetailJson = JsonObject()/*.apply {
             addProperty("email", trackEventParams.email)
             addProperty("name", trackEventParams.name)
-        }.toString()
+        }.toString()*/
 
-        body["user_details"] = userDetailJson
+        trackEventParams.userDetailMap.forEach {
+            userDetailJson.addProperty(it.key, it.value)
+            body[it.key] = it.value
+        }
+
+        body["user_details"] = userDetailJson.toString()
 
         body["app_key"] = appSettingsDataSource.salesMateChatSetting.appKey
         body["device_id"] = appSettingsDataSource.androidUniqueId
         body["sdk_name"] = "sm-analytics"
         body["uuid"] = UUID.randomUUID().toString()
         body["tenant_id"] = appSettingsDataSource.salesMateChatSetting.tenantId
-        body["email"] = trackEventParams.email
-        body["name"] = trackEventParams.name
+        /*body["email"] = userDetailJson.get("email").asString ?: ""
+        body["name"] = userDetailJson.get("name").asString ?: ""*/
         body["visitor_id"] = appSettingsDataSource.androidUniqueId
         body["session_id"] = appSettingsDataSource.androidUniqueId
         body["timestamp"] = Date().time.toString()
@@ -44,7 +48,7 @@ internal class SendUserDetailsAnalyticsUseCase @Inject constructor(
         return true
     }
 
-    data class Param(val name: String, val email: String)
+    data class Param(val userDetailMap: Map<String, String>)
 
 }
 
