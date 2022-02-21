@@ -1,6 +1,8 @@
 package com.rapidops.salesmatechatsdk.core
 
 import android.app.Application
+import com.rapidops.salesmatechatsdk.app.interfaces.LoginListener
+import com.rapidops.salesmatechatsdk.app.interfaces.UpdateListener
 
 abstract class SalesmateChatSDK {
 
@@ -41,9 +43,17 @@ abstract class SalesmateChatSDK {
 
     abstract fun recordEvent(eventName: String, data: HashMap<String, String>)
 
-    abstract fun login(userId: String,userDetails: UserDetails)
+    abstract fun login(
+        userId: String,
+        userDetails: UserDetails,
+        loginListener: LoginListener? = null
+    )
 
-    abstract fun update(userId: String, userDetails: UserDetails)
+    abstract fun update(
+        userId: String,
+        userDetails: UserDetails,
+        updateListener: UpdateListener? = null
+    )
 
     abstract fun logout()
 

@@ -202,12 +202,12 @@ internal abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
             .show(supportFragmentManager, AppCompatAlertDialog::class.java.simpleName)
     }
 
-    fun showSoftError(kpsException: SalesmateChatException) {
-        when (kpsException.kind) {
+    fun showSoftError(salesmateChatException: SalesmateChatException) {
+        when (salesmateChatException.kind) {
             SalesmateChatException.Kind.UNEXPECTED -> showUnknownErrorAlertMessage()
             SalesmateChatException.Kind.NETWORK -> showAlertMessage(getString(R.string.df_no_network_connection_tv_msg))
             SalesmateChatException.Kind.REST_API -> {
-                kpsException.error?.let {
+                salesmateChatException.error?.let {
                     showAlertMessage(it.message)
                 }
             }

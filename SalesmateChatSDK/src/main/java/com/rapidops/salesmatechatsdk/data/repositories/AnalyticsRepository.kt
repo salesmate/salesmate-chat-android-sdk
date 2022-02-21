@@ -37,7 +37,7 @@ internal class AnalyticsRepository(
             Rapidops.sharedInstance().init(
                 context,
                 BuildConfig.TRACK_API_URL,
-                "123",
+                appSettingsDataSource.salesMateChatSetting.appKey,
                 appSettingsDataSource.androidUniqueId
             )
         } catch (e: Exception) {

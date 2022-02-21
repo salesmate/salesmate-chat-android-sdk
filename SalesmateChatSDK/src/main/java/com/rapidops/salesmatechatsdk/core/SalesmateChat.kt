@@ -12,12 +12,19 @@ import com.rapidops.salesmatechatsdk.app.di.module.ContextModule
 import com.rapidops.salesmatechatsdk.app.di.module.DataModule
 import com.rapidops.salesmatechatsdk.app.di.module.NetworkModule
 import com.rapidops.salesmatechatsdk.app.di.module.ViewModelModule
+import com.rapidops.salesmatechatsdk.app.interfaces.LoginListener
+import com.rapidops.salesmatechatsdk.app.interfaces.UpdateListener
 import com.rapidops.salesmatechatsdk.app.socket.SocketController
+import com.rapidops.salesmatechatsdk.app.utils.NetworkUtil
+import com.rapidops.salesmatechatsdk.domain.exception.SalesmateChatException
+import com.rapidops.salesmatechatsdk.domain.exception.SalesmateException
 import com.rapidops.salesmatechatsdk.domain.usecases.GenerateTokenUseCase
 import com.rapidops.salesmatechatsdk.domain.usecases.SendAnalyticsUseCase
 import com.rapidops.salesmatechatsdk.domain.usecases.SendUserDetailsAnalyticsUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 internal class SalesmateChat(
@@ -92,41 +99,75 @@ internal class SalesmateChat(
         }
     }
 
-    override fun login(userId: String, userDetails: UserDetails) {
-        GlobalScope.launch {
-            try {
-                val userDetailMap = hashMapOf<String, String>()
-                userDetailMap["first_name"] = userDetails.getFirstName()
-                userDetailMap["last_name"] = userDetails.getLastName()
-                userDetailMap["email"] = userDetails.getEmail()
-                userDetailMap["user_id"] = userId
-                val param = SendUserDetailsAnalyticsUseCase.Param(userDetailMap)
-                sendUserDetailsAnalyticsUseCase.execute(param)
-                daggerDataComponent.getAppSettingsDataSource().verifiedId = userId
-                generateTokenUseCase.execute()
-                socketController.resetSocketAndConnect()
-            } catch (e: Exception) {
-                e.printStackTrace()
+    override fun login(userId: String, userDetails: UserDetails, loginListener: LoginListener?) {
+        if (NetworkUtil.isNetworkAvailable(application)) {
+            if (userId.isNotBlank()) {
+                GlobalScope.launch {
+                    try {
+                        val userDetailMap = hashMapOf<String, String>()
+                        userDetailMap["first_name"] = userDetails.getFirstName()
+                        userDetailMap["last_name"] = userDetails.getLastName()
+                        userDetailMap["email"] = userDetails.getEmail()
+                        userDetailMap["user_id"] = userId
+                        val param = SendUserDetailsAnalyticsUseCase.Param(userDetailMap)
+                        sendUserDetailsAnalyticsUseCase.execute(param)
+                        daggerDataComponent.getAppSettingsDataSource().verifiedId = userId
+                        generateTokenUseCase.execute()
+                        socketController.resetSocketAndConnect()
+                        withContext(Dispatchers.Main){
+                            loginListener?.onLogin()
+                        }
+                    } catch (e: Exception) {
+                        val salesmateException = getSalesMateException(e)
+                        withContext(Dispatchers.Main){
+                            loginListener?.onError(salesmateException)
+                        }
+                        e.printStackTrace()
+                    }
+                }
+            } else {
+                loginListener?.onError(SalesmateException.EmptyUserIdException)
             }
+        } else {
+            loginListener?.onError(SalesmateException.NoInternetException)
         }
     }
 
-    override fun update(userId: String, userDetails: UserDetails) {
-        GlobalScope.launch {
-            val userDetailMap = hashMapOf<String, String>()
-            if (userDetails.getFirstName().isNotEmpty()) {
-                userDetailMap["first_name"] = userDetails.getFirstName()
+    override fun update(userId: String, userDetails: UserDetails, updateListener: UpdateListener?) {
+        if (NetworkUtil.isNetworkAvailable(application)) {
+            if (userId.isNotBlank()) {
+                GlobalScope.launch {
+                    try {
+                        val userDetailMap = hashMapOf<String, String>()
+                        if (userDetails.getFirstName().isNotEmpty()) {
+                            userDetailMap["first_name"] = userDetails.getFirstName()
+                        }
+                        if (userDetails.getLastName().isNotEmpty()) {
+                            userDetailMap["last_name"] = userDetails.getLastName()
+                        }
+                        if (userDetails.getEmail().isNotEmpty()) {
+                            userDetailMap["email"] = userDetails.getEmail()
+                        }
+                        userDetailMap["user_id"] = userId
+                        val param = SendUserDetailsAnalyticsUseCase.Param(userDetailMap)
+                        sendUserDetailsAnalyticsUseCase.execute(param)
+                        daggerDataComponent.getAppSettingsDataSource().verifiedId = userId
+                        withContext(Dispatchers.Main){
+                            updateListener?.onUpdate()
+                        }
+                    } catch (e: Exception) {
+                        val salesmateException = getSalesMateException(e)
+                        withContext(Dispatchers.Main){
+                            updateListener?.onError(salesmateException)
+                        }
+                        e.printStackTrace()
+                    }
+                }
+            } else {
+                updateListener?.onError(SalesmateException.EmptyUserIdException)
             }
-            if (userDetails.getLastName().isNotEmpty()) {
-                userDetailMap["last_name"] = userDetails.getLastName()
-            }
-            if (userDetails.getEmail().isNotEmpty()) {
-                userDetailMap["email"] = userDetails.getEmail()
-            }
-            userDetailMap["user_id"] = userId
-            val param = SendUserDetailsAnalyticsUseCase.Param(userDetailMap)
-            sendUserDetailsAnalyticsUseCase.execute(param)
-            daggerDataComponent.getAppSettingsDataSource().verifiedId = userId
+        } else {
+            updateListener?.onError(SalesmateException.NoInternetException)
         }
     }
 
@@ -138,4 +179,23 @@ internal class SalesmateChat(
     override fun getVisitorId(): String {
         return daggerDataComponent.getAppSettingsDataSource().verifiedId
     }
+
+    private fun getSalesMateException(exception: Exception): SalesmateException {
+        if (exception is SalesmateChatException) {
+            when (exception.kind) {
+                SalesmateChatException.Kind.UNEXPECTED, SalesmateChatException.Kind.NETWORK -> {
+                    return SalesmateException.UnExpectedError
+                }
+                SalesmateChatException.Kind.REST_API -> {
+                    exception.error?.let {
+                        return SalesmateException(it.name, it.message)
+                    }
+                    return SalesmateException("", exception.message ?: "", exception)
+                }
+            }
+        } else {
+            return SalesmateException("", exception.message ?: "", exception)
+        }
+    }
+
 }

@@ -3,8 +3,11 @@ package com.rapidops.salesmatechat
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.rapidops.salesmatechat.databinding.ActivityMainBinding
+import com.rapidops.salesmatechatsdk.app.interfaces.LoginListener
+import com.rapidops.salesmatechatsdk.app.interfaces.UpdateListener
 import com.rapidops.salesmatechatsdk.core.SalesmateChatSDK
 import com.rapidops.salesmatechatsdk.core.UserDetails
+import com.rapidops.salesmatechatsdk.domain.exception.SalesmateException
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +39,16 @@ class MainActivity : AppCompatActivity() {
             val lastName = binding.edtLastName.text.toString().trim()
             val userId = binding.edtUserId.text.toString().trim()
             userDetail.withEmail(email).withFirstName(firstName).withLastName(lastName)
-            SalesmateChatSDK.getInstance().login(userId, userDetail)
+            SalesmateChatSDK.getInstance().login(userId, userDetail, object : LoginListener {
+                override fun onLogin() {
+                    binding.txtLoginUpdateStatus.text = "Login successfully"
+                }
+
+                override fun onError(salesmateException: SalesmateException) {
+                    binding.txtLoginUpdateStatus.text = salesmateException.errorMessage
+                    salesmateException.printStackTrace()
+                }
+            })
         }
 
         binding.btnUpdate.setOnClickListener {
@@ -48,7 +60,16 @@ class MainActivity : AppCompatActivity() {
             userDetail.withEmail(email)
                 .withFirstName(firstName)
                 .withLastName(lastName)
-            SalesmateChatSDK.getInstance().update(userId, userDetail)
+            SalesmateChatSDK.getInstance().update(userId, userDetail, object : UpdateListener {
+                override fun onUpdate() {
+                    binding.txtLoginUpdateStatus.text = "Update successfully"
+                }
+
+                override fun onError(salesmateException: SalesmateException) {
+                    binding.txtLoginUpdateStatus.text = salesmateException.errorMessage
+                    salesmateException.printStackTrace()
+                }
+            })
         }
 
         binding.btnLogout.setOnClickListener {
