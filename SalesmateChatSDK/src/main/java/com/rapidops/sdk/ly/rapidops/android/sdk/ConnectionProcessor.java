@@ -167,7 +167,8 @@ public class ConnectionProcessor implements Runnable {
 
                 JSONObject jsonObject = new JSONObject();
                 try {
-                    jsonObject.put("app_key", Long.parseLong(Rapidops.sharedInstance().getConnectionQueue().getAppKey()));
+//                    jsonObject.put("app_key", Long.parseLong(Rapidops.sharedInstance().getConnectionQueue().getAppKey()));
+                    jsonObject.put("app_key", Rapidops.sharedInstance().getConnectionQueue().getAppKey());
                     jsonObject.put("device_id", Rapidops.sharedInstance().getDeviceID());
 
                     jsonObject.put("session_id", Rapidops.sharedInstance().getDeviceID());

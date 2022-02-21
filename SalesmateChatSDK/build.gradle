@@ -36,8 +36,8 @@ android {
 
             buildConfigField "String", "BASE_URL", "\"$baseUrl\""
             buildConfigField "String", "BASE_API_URL", generateAPIUrl(baseUrl, "messenger/")
-            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "apis/sm-web-anl/v1")        //Dev
-//            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "sm-web-anl/v1")         //Prod
+            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "analytics/v1")        //Dev
+//            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "analytics/v1")         //Prod
 
 
 
@@ -52,7 +52,7 @@ android {
 
             buildConfigField "String", "BASE_URL", "\"$baseUrl\""
             buildConfigField "String", "BASE_API_URL", generateAPIUrl(baseUrl, "messenger/")
-            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "sm-web-anl/v1")
+            buildConfigField "String", "TRACK_API_URL", generateAPIUrl(baseUrl, "analytics/v1")
 
 
             //buildConfigField "String", "BASE_URL", "\"https://apis.salesmate.io/messenger/\""
