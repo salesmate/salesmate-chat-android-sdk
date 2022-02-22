@@ -109,7 +109,7 @@ internal class SalesmateChat(
                         userDetailMap["last_name"] = userDetails.getLastName()
                         userDetailMap["email"] = userDetails.getEmail()
                         userDetailMap["user_id"] = userId
-                        val param = SendUserDetailsAnalyticsUseCase.Param(userDetailMap)
+                        val param = SendUserDetailsAnalyticsUseCase.Param(userDetailMap, userId)
                         sendUserDetailsAnalyticsUseCase.execute(param)
                         daggerDataComponent.getAppSettingsDataSource().verifiedId = userId
                         generateTokenUseCase.execute()
@@ -149,7 +149,7 @@ internal class SalesmateChat(
                             userDetailMap["email"] = userDetails.getEmail()
                         }
                         userDetailMap["user_id"] = userId
-                        val param = SendUserDetailsAnalyticsUseCase.Param(userDetailMap)
+                        val param = SendUserDetailsAnalyticsUseCase.Param(userDetailMap, userId)
                         sendUserDetailsAnalyticsUseCase.execute(param)
                         daggerDataComponent.getAppSettingsDataSource().verifiedId = userId
                         withContext(Dispatchers.Main){

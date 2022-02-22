@@ -45,10 +45,13 @@ internal class SendUserDetailsAnalyticsUseCase @Inject constructor(
         body["hour"] = DateTime.now().hourOfDay.toString()
 
         analyticsDataSource.sendUserDetails(body)
+        if (params.userId.isNotBlank()) {
+            analyticsDataSource.setVerifiedId(params.userId)
+        }
         return true
     }
 
-    data class Param(val userDetailMap: Map<String, String>)
+    data class Param(val userDetailMap: Map<String, String>, val userId: String = "")
 
 }
 

@@ -503,6 +503,10 @@ public class Rapidops {
         connectionQueue_.setTenantID(tenantID);
     }
 
+    public void setVerifiedId(String verifiedId){
+        connectionQueue_.setVerifiedID(verifiedId);
+    }
+
     /**
      * Checks whether Rapidops Analytics.init has been already called.
      *

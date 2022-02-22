@@ -174,9 +174,15 @@ public class ConnectionProcessor implements Runnable {
                     jsonObject.put("session_id", Rapidops.sharedInstance().getDeviceID());
                     jsonObject.put("visitor_id", Rapidops.sharedInstance().getDeviceID());
                     jsonObject.put("uuid", UUID.randomUUID().toString());
+                    jsonObject.put("user_id", UUID.randomUUID().toString());
                     String tenantID = Rapidops.sharedInstance().getConnectionQueue().getTenantID();
                     if(tenantID != null) {
                         jsonObject.put("tenant_id", tenantID);
+                    }
+
+                    String verifiedID = Rapidops.sharedInstance().getConnectionQueue().getVerifiedID();
+                    if(verifiedID != null && !verifiedID.isEmpty()) {
+                        jsonObject.put("user_id", verifiedID);
                     }
 
 

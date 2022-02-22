@@ -8,7 +8,6 @@ import com.rapidops.salesmatechatsdk.domain.datasources.IAppSettingsDataSource
 import com.rapidops.salesmatechatsdk.domain.exception.APIResponseMapper
 import com.rapidops.sdk.ly.rapidops.android.sdk.Rapidops
 import java.util.*
-import kotlin.collections.HashMap
 
 internal class AnalyticsRepository(
     context: Context,
@@ -33,7 +32,9 @@ internal class AnalyticsRepository(
             customHeaderValues["x-client-timezone"] = TimeZone.getDefault().id
             Rapidops.sharedInstance().addCustomNetworkRequestHeaders(customHeaderValues)
 
-            Rapidops.sharedInstance().setTenantID(appSettingsDataSource.salesMateChatSetting.tenantId)
+            Rapidops.sharedInstance()
+                .setTenantID(appSettingsDataSource.salesMateChatSetting.tenantId)
+            Rapidops.sharedInstance().setVerifiedId(appSettingsDataSource.verifiedId)
             Rapidops.sharedInstance().init(
                 context,
                 BuildConfig.TRACK_API_URL,
@@ -58,5 +59,9 @@ internal class AnalyticsRepository(
         return APIResponseMapper.getResponse {
             service.track(url, body)
         }
+    }
+
+    override fun setVerifiedId(userId: String) {
+        Rapidops.sharedInstance().setVerifiedId(userId)
     }
 }

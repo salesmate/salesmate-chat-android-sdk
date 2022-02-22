@@ -33,6 +33,7 @@ public class ConnectionQueue {
     private DeviceId deviceId_;
     private SSLContext sslContext_;
     private String tenantID_;
+    private String verifiedID_;
 
     private Map<String, String> requestHeaderCustomValues;
 
@@ -51,6 +52,14 @@ public class ConnectionQueue {
 
     void setTenantID(final String tenantID) {
         tenantID_ = tenantID;
+    }
+
+    void setVerifiedID(final String verifiedId) {
+        verifiedID_ = verifiedId;
+    }
+
+    String getVerifiedID() {
+        return verifiedID_;
     }
 
     Context getContext() {
