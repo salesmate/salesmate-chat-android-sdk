@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "553785851520",
+    "project_id": "salesmate-chat",
+    "storage_bucket": "salesmate-chat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553785851520:android:d68ea49a19b50abccd3065",
+        "android_client_info": {
+          "package_name": "com.rapidops.salesmatechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "553785851520-51ohcq6i37e6vrojtej4qear5lh3rgb8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHN2pueWm3gFIVDoK-z8gfcVkUgDAlUK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "553785851520-51ohcq6i37e6vrojtej4qear5lh3rgb8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

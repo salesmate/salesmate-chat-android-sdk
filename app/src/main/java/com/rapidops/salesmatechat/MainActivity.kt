@@ -1,7 +1,10 @@
 package com.rapidops.salesmatechat
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.rapidops.salesmatechat.databinding.ActivityMainBinding
 import com.rapidops.salesmatechatsdk.app.interfaces.LoginListener
 import com.rapidops.salesmatechatsdk.app.interfaces.UpdateListener
@@ -10,6 +13,12 @@ import com.rapidops.salesmatechatsdk.core.UserDetails
 import com.rapidops.salesmatechatsdk.domain.exception.SalesmateException
 
 class MainActivity : AppCompatActivity() {
+
+
+    companion object {
+        private val TAG = MainActivity::class.java.name
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
@@ -79,5 +88,23 @@ class MainActivity : AppCompatActivity() {
         binding.btnGetVisitorId.setOnClickListener {
             binding.txtGetVisitorId.text = SalesmateChatSDK.getInstance().getVisitorId()
         }
+
+        binding.btnGenerateFirebaseToken.setOnClickListener {
+            generateFirebaseToken()
+        }
+    }
+
+    private fun generateFirebaseToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            val token = task.result
+            Log.d(TAG, "Firebase message token:- $token")
+            token?.let {
+
+            }
+        })
     }
 }

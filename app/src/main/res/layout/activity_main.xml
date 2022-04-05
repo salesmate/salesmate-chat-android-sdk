@@ -149,6 +149,13 @@
                 android:layout_marginTop="14dp"
                 android:text="Send Event" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnGenerateFirebaseToken"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Firebase Token" />
+
         </LinearLayout>
 
     </LinearLayout>
